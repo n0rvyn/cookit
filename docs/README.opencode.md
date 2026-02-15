@@ -1,48 +1,21 @@
 # Cookit for OpenCode
 
-This repo is a Claude marketplace repo, but OpenCode can use all skills here.
+OpenCode does not use Claude marketplace metadata directly.
 
-OpenCode installs skills by GitHub path (folders containing `SKILL.md`).
+Use native OpenCode skill loading by cloning this repo and linking skill folders.
 
-## Install One Skill
+## Quick Install
 
-```bash
-python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --repo n0rvyn/cookit \
-  --path ios-development/skills/testing-guide
+Tell OpenCode:
+
+```text
+Fetch and follow instructions from https://raw.githubusercontent.com/n0rvyn/cookit/main/.opencode/INSTALL.md
 ```
 
-## Install All iOS Skills
+## Update
 
 ```bash
-python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --repo n0rvyn/cookit \
-  --path ios-development/skills/testing-guide \
-  ios-development/skills/swiftdata-patterns \
-  ios-development/skills/localization-setup \
-  ios-development/skills/validate-design-tokens \
-  ios-development/skills/generate-design-system
+git -C ~/.config/opencode/cookit pull --ff-only
 ```
 
-## Install All mactools Skills
-
-```bash
-python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --repo n0rvyn/cookit \
-  --path mactools/skills/calendar \
-  mactools/skills/contacts \
-  mactools/skills/mail \
-  mactools/skills/notes \
-  mactools/skills/ocr \
-  mactools/skills/omnifocus \
-  mactools/skills/photos \
-  mactools/skills/reminders \
-  mactools/skills/safari \
-  mactools/skills/spotlight
-```
-
-## Verify
-
-1. Restart OpenCode after installation.
-2. Ask a task that should trigger one installed skill.
-3. If it does not trigger, verify the path and ensure the target folder has `SKILL.md`.
+If new skills were added, re-run the symlink step from `.opencode/INSTALL.md`.

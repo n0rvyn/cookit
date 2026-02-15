@@ -25,7 +25,7 @@ Install plugin:
 Tell Codex:
 
 ```text
-Fetch and follow instructions from https://raw.githubusercontent.com/n0rvyn/cookit/main/docs/README.codex.md
+Fetch and follow instructions from https://raw.githubusercontent.com/n0rvyn/cookit/main/.codex/INSTALL.md
 ```
 
 Detailed docs: `docs/README.codex.md`
@@ -35,7 +35,7 @@ Detailed docs: `docs/README.codex.md`
 Tell OpenCode:
 
 ```text
-Fetch and follow instructions from https://raw.githubusercontent.com/n0rvyn/cookit/main/docs/README.opencode.md
+Fetch and follow instructions from https://raw.githubusercontent.com/n0rvyn/cookit/main/.opencode/INSTALL.md
 ```
 
 Detailed docs: `docs/README.opencode.md`
