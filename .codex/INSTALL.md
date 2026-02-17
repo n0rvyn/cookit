@@ -22,10 +22,10 @@ fi
 2. Create skill source links (including command-as-skill):
 
 ```bash
-mkdir -p ~/.agents/skills
-ln -sfn ~/.codex/cookit/ios-development/skills ~/.agents/skills/cookit-ios-development
-ln -sfn ~/.codex/cookit/mactools/skills ~/.agents/skills/cookit-mactools
-ln -sfn ~/.codex/cookit/ios-development/commands ~/.agents/skills/cookit-ios-commands
+mkdir -p ~/.codex/skills
+ln -sfn ~/.codex/cookit/ios-development/skills ~/.codex/skills/cookit-ios-development
+ln -sfn ~/.codex/cookit/mactools/skills ~/.codex/skills/cookit-mactools
+ln -sfn ~/.codex/cookit/ios-development/commands ~/.codex/skills/cookit-ios-commands
 ```
 
 3. Restart Codex.
@@ -33,9 +33,9 @@ ln -sfn ~/.codex/cookit/ios-development/commands ~/.agents/skills/cookit-ios-com
 ## Verify
 
 ```bash
-ls -la ~/.agents/skills/cookit-ios-development
-ls -la ~/.agents/skills/cookit-mactools
-ls -la ~/.agents/skills/cookit-ios-commands
+ls -la ~/.codex/skills/cookit-ios-development
+ls -la ~/.codex/skills/cookit-mactools
+ls -la ~/.codex/skills/cookit-ios-commands
 ```
 
 ## Updating
@@ -49,7 +49,7 @@ If new skills or command docs were added in the repo, re-run the symlink command
 ## Uninstall
 
 ```bash
-rm ~/.agents/skills/cookit-ios-development
-rm ~/.agents/skills/cookit-mactools
-rm ~/.agents/skills/cookit-ios-commands
+rm ~/.codex/skills/cookit-ios-development
+rm ~/.codex/skills/cookit-mactools
+rm ~/.codex/skills/cookit-ios-commands
 ```
