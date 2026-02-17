@@ -1,4 +1,5 @@
 ---
+name: design-review
 description: 设计质量审查，聚焦视觉层级、色彩、间距与整体一致性。
 ---
 

@@ -1,4 +1,5 @@
 ---
+name: appstoreconnect-review
 description: App Store Connect 上架材料逐项检查与填写指导。
 ---
 

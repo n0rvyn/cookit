@@ -1,4 +1,5 @@
 ---
+name: ui-review
 description: iOS/SwiftUI 的 UI 与交互规范审查，用于模块完成后的质量检查。
 ---
 

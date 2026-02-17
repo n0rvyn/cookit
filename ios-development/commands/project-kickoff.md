@@ -1,4 +1,5 @@
 ---
+name: project-kickoff
 description: 新项目启动开题流程，完成需求澄清、范围收敛和执行建议。
 ---
 

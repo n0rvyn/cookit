@@ -1,4 +1,5 @@
 ---
+name: generate-design-system
 description: 基于 Apple HIG Design Token 标准生成 SwiftUI Design System 代码。
 ---
 
