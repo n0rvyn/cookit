@@ -1,6 +1,6 @@
 ---
 name: reviewing-architecture
-description: "Use when a plan adds a new trigger, scheduler, observer, or entry point; replaces or deprecates an existing component; or modifies data flow paths. Checks entry point uniqueness, replacement completeness, data flow tracing, and fallback validation."
+description: "Use when a plan adds a new trigger, scheduler, observer, or entry point; replaces or deprecates an existing component; or modifies data flow paths. Checks entry point uniqueness, replacement completeness, data flow tracing, and fallback validation. Note: these checks are also included as the AR strategy in verifying-plans; use this skill for ad-hoc architectural review outside of plan verification."
 ---
 
 ## Trigger

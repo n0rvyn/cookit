@@ -312,6 +312,21 @@ xcodebuild build -scheme [项目名] -destination 'platform=iOS Simulator,name=i
 2. 查 `docs/03-decisions/` - 可能已有决策
 3. 查 `docs/05-features/` - 功能的预期行为和关键代码位置
 4. 查 `docs/09-lessons-learned/` - 可能是已知坑
+
+## Plan Execution with Design References
+
+When executing a plan task that contains design anchor fields:
+
+| Field | Action |
+|-------|--------|
+| `Design ref:` | Read the referenced design doc sections before implementing |
+| `Expected values:` | After implementing, verify each value matches |
+| `Replaces:` | After implementing, Grep for old code references, confirm handled |
+| `Data flow:` | After implementing, trace path end-to-end, confirm connectivity |
+| `Quality markers:` | During implementation, use specified approach, do not simplify |
+| `Verify after:` | After implementing, execute each checklist item |
+
+Gray areas not covered by the plan: ask the user, do not improvise.
 ```
 
 #### 8.2.1 平台 API 规则生成
