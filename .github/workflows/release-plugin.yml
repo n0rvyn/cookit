@@ -1,0 +1,176 @@
+name: Release Plugin Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Which plugin to release"
+        type: choice
+        required: true
+        default: ios-development
+        options:
+          - ios-development
+          - mactools
+          - all
+      bump:
+        description: "Semver bump type"
+        type: choice
+        required: true
+        default: patch
+        options:
+          - patch
+          - minor
+          - major
+      update_marketplace:
+        description: "Also bump .claude-plugin/marketplace.json metadata.version"
+        type: boolean
+        required: true
+        default: true
+      create_tag:
+        description: "Create and push a git tag for this release"
+        type: boolean
+        required: true
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump versions
+        id: bump
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TARGET="${{ inputs.target }}"
+          BUMP="${{ inputs.bump }}"
+          UPDATE_MARKETPLACE="${{ inputs.update_marketplace }}"
+          MARKET_FILE=".claude-plugin/marketplace.json"
+
+          bump_semver() {
+            local version="$1"
+            local kind="$2"
+            IFS='.' read -r major minor patch <<< "$version"
+            case "$kind" in
+              patch) patch=$((patch + 1)) ;;
+              minor) minor=$((minor + 1)); patch=0 ;;
+              major) major=$((major + 1)); minor=0; patch=0 ;;
+              *) echo "Unsupported bump type: $kind" >&2; exit 1 ;;
+            esac
+            echo "${major}.${minor}.${patch}"
+          }
+
+          if [[ "$TARGET" == "all" ]]; then
+            PLUGINS=("ios-development" "mactools")
+          else
+            PLUGINS=("$TARGET")
+          fi
+
+          changed=()
+          for plugin in "${PLUGINS[@]}"; do
+            plugin_file="${plugin}/.claude-plugin/plugin.json"
+            current_version="$(jq -r '.version' "$plugin_file")"
+            new_version="$(bump_semver "$current_version" "$BUMP")"
+
+            tmp="$(mktemp)"
+            jq --arg v "$new_version" '.version = $v' "$plugin_file" > "$tmp"
+            mv "$tmp" "$plugin_file"
+
+            tmp="$(mktemp)"
+            jq --arg name "$plugin" --arg v "$new_version" \
+              '(.plugins[] | select(.name == $name) | .version) = $v' \
+              "$MARKET_FILE" > "$tmp"
+            mv "$tmp" "$MARKET_FILE"
+
+            changed+=("${plugin}:${current_version}->${new_version}")
+
+            if [[ "$TARGET" != "all" ]]; then
+              echo "target_new_version=$new_version" >> "$GITHUB_OUTPUT"
+            fi
+          done
+
+          if [[ "$UPDATE_MARKETPLACE" == "true" ]]; then
+            market_current="$(jq -r '.metadata.version' "$MARKET_FILE")"
+            market_new="$(bump_semver "$market_current" "$BUMP")"
+            tmp="$(mktemp)"
+            jq --arg v "$market_new" '.metadata.version = $v' "$MARKET_FILE" > "$tmp"
+            mv "$tmp" "$MARKET_FILE"
+            echo "market_new_version=$market_new" >> "$GITHUB_OUTPUT"
+            changed+=("marketplace:${market_current}->${market_new}")
+          fi
+
+          {
+            echo "release_target=$TARGET"
+            echo "release_bump=$BUMP"
+            echo "changes<<EOF"
+            for line in "${changed[@]}"; do
+              echo "$line"
+            done
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Commit changes
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add .claude-plugin/marketplace.json ios-development/.claude-plugin/plugin.json mactools/.claude-plugin/plugin.json
+
+          if git diff --cached --quiet; then
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          msg="chore(release): bump ${{ steps.bump.outputs.release_target }} (${{ steps.bump.outputs.release_bump }})"
+          git commit -m "$msg"
+          git push origin HEAD:main
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create and push tag
+        if: steps.commit.outputs.committed == 'true' && inputs.create_tag == true
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="${{ inputs.target }}"
+
+          if [[ "$target" == "all" ]]; then
+            if [[ -n "${{ steps.bump.outputs.market_new_version }}" ]]; then
+              tag="cookit-marketplace-v${{ steps.bump.outputs.market_new_version }}"
+            else
+              tag="release-all-$(date +%Y%m%d%H%M%S)"
+            fi
+          else
+            tag="${target}-v${{ steps.bump.outputs.target_new_version }}"
+          fi
+
+          git tag -a "$tag" -m "Release $tag"
+          git push origin "$tag"
+
+      - name: Summary
+        shell: bash
+        run: |
+          {
+            echo "## Release Summary"
+            echo ""
+            echo "- Target: \`${{ steps.bump.outputs.release_target }}\`"
+            echo "- Bump: \`${{ steps.bump.outputs.release_bump }}\`"
+            echo ""
+            echo "### Version Changes"
+            while IFS= read -r line; do
+              echo "- \`$line\`"
+            done <<< "${{ steps.bump.outputs.changes }}"
+          } >> "$GITHUB_STEP_SUMMARY"
