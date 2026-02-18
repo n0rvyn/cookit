@@ -16,7 +16,7 @@ except:
 " 2>/dev/null)
 
 if echo "$file_path" | grep -qE '\.(pbxproj|xcworkspace)'; then
-    echo '{"decision":"block","reason":"Direct editing of .pbxproj/.xcworkspace files is prohibited. Use Xcode or xcodebuild to manage project structure."}'
+    echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Direct editing of .pbxproj/.xcworkspace files is prohibited. Use Xcode or xcodebuild to manage project structure."}}'
 else
-    echo '{"decision":"allow"}'
+    exit 0
 fi
