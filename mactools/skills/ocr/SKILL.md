@@ -1,7 +1,8 @@
 ---
 name: ocr
 description: 使用 macOS Vision 框架对图片和扫描件 PDF 进行 OCR 文字识别。当用户需要从图片、截图、扫描件中提取文字时使用。关键词：OCR、文字识别、图片文字、截图文字、扫描件、识别。
-disable-model-invocation: false
+context: fork
+model: haiku
 allowed-tools: Bash(*skills/ocr/scripts/*)
 ---
 

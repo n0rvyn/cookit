@@ -1,7 +1,8 @@
 ---
 name: photos
 description: 搜索和查看 Apple Photos 照片库。当用户需要查找照片、浏览相册、获取照片信息时使用。关键词：照片、Photos、相册、图片搜索、相片。
-disable-model-invocation: false
+context: fork
+model: haiku
 allowed-tools: Bash(*skills/photos/scripts/*)
 ---
 

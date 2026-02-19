@@ -1,7 +1,6 @@
 ---
 name: reminders
 description: 查询、创建、完成、删除 macOS 提醒事项。当用户需要查看待办提醒、创建提醒、标记完成、搜索提醒事项时使用。关键词：提醒事项、Reminders、提醒、待办、remind、reminder。
-disable-model-invocation: false
 allowed-tools: Bash(*skills/reminders/scripts/*)
 ---
 

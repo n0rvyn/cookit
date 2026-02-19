@@ -1,7 +1,8 @@
 ---
 name: spotlight
 description: 通过 macOS Spotlight 全局检索本地文件并读取内容，作为私有知识库使用。支持 Word、Excel、PPT、PDF、Markdown 等格式的文本提取。当用户要求搜索本地文件、查找文档、检索电脑上的资料、查看本地文件内容时使用。关键词：搜索文件、找文件、本地搜索、Spotlight、知识库、电脑上、磁盘上、硬盘上、本地文档。
-disable-model-invocation: false
+context: fork
+model: haiku
 allowed-tools: Bash(*skills/spotlight/scripts/*)
 ---
 

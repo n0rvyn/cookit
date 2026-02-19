@@ -3,7 +3,6 @@ name: committing-changes
 description: "Use when the user says 'commit' or wants to save progress after completing a task. Analyzes uncommitted changes, groups them logically, and commits with conventional format messages."
 context: fork
 model: haiku
-disable-model-invocation: true
 ---
 
 ## Input

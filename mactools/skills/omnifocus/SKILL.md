@@ -1,7 +1,6 @@
 ---
 name: omnifocus
 description: "Use this skill for OmniFocus task and project operations: list, create, complete, inbox, flagged, and due items."
-disable-model-invocation: false
 allowed-tools: Bash(*skills/omnifocus/scripts/*)
 ---
 

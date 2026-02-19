@@ -1,7 +1,8 @@
 ---
 name: contacts
 description: 搜索和查看 macOS 通讯录中的联系人信息。当用户需要查找联系人电话、邮箱、地址等信息时使用。关键词：通讯录、Contacts、联系人、电话、邮箱。
-disable-model-invocation: false
+context: fork
+model: haiku
 allowed-tools: Bash(*skills/contacts/scripts/*)
 ---
 
