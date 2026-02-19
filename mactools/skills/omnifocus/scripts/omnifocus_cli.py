@@ -1127,6 +1127,7 @@ tell application "OmniFocus"
         set newProject to make new project with properties {{name:"{project_name_escaped}"}}
         return "Project created in root
 Name: {project_name_escaped}"
+    end tell
 end tell
 '''
     return run_applescript(script)
