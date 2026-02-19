@@ -224,13 +224,22 @@ mkdir -p docs/{01-discovery,02-architecture,03-decisions,04-implementation,05-fe
 | 09-lessons-learned/ | 踩坑记录 |
 | 10-app-store-connect/ | ASC 提交文档（隐私政策、用户协议、支持页、营销文案） |
 
-#### 8.2 创建 CLAUDE.md（项目根目录）
+#### 8.2 创建 CLAUDE.md
+
+**步骤 A：使用 Claude Code /init 生成基础 CLAUDE.md**
+
+提示用户运行 `/init`。/init 会分析代码库并生成基础的 CLAUDE.md，包含：
+- Build 命令检测
+- 项目结构分析
+- 通用开发指引
+
+等待 /init 完成。
+
+**步骤 B：追加项目特定内容**
+
+在 /init 生成的 CLAUDE.md 末尾追加以下内容（不替换 /init 生成的部分）：
 
 ```markdown
-# [项目名] - Claude Code 项目指令
-
-> 通用规则见 ~/.claude/CLAUDE.md
-
 ## 文档真相源
 
 所有项目文档以 `docs/00-AI-CONTEXT.md` 为唯一真源。本文件只负责引导。
@@ -248,20 +257,6 @@ mkdir -p docs/{01-discovery,02-architecture,03-decisions,04-implementation,05-fe
 | 开发指南/计划 | `docs/06-plans/` |
 | 变更历史 | `docs/07-changelog/` |
 | 踩坑记录 | `docs/09-lessons-learned/` |
-
-## 开发工作流
-
-**Build 命令**：
-\`\`\`bash
-xcodebuild build -scheme [项目名] -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -quiet 2>&1 | grep -E "error:|warning:|BUILD"
-\`\`\`
-
-### 修改代码后必须
-
-1. 更新 `docs/04-implementation/file-structure.md`
-2. 记录到 `docs/07-changelog/YYYY-MM-DD.md`
-3. 架构级变更 -> 创建 ADR 到 `docs/03-decisions/`
-4. 同样的坑可能再踩 -> 写入 `docs/09-lessons-learned/`
 
 ## 计划执行规则
 
@@ -644,6 +639,14 @@ pages: {}
 - 生成 `fastlane/Fastfile`
 - 生成 `.github/workflows/release.yml`
 - 说明需要配置的 GitHub Secrets
+
+### 9. 下一步
+
+项目初始化完成。根据项目复杂度选择：
+
+- **需要深度设计探索** → `/brainstorm` → `/write-dev-guide` → `/run-phase`
+- **设计已明确，直接开始** → `/write-dev-guide` → `/run-phase`
+- **简单项目，直接做** → `/plan`
 
 ## 原则
 
