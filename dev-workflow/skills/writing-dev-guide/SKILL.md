@@ -1,6 +1,7 @@
 ---
 name: writing-dev-guide
 description: "Use when starting a new project's development after design is approved, or the user says 'write dev guide'. Creates a phased, project-level development guide that serves as the cornerstone document for all subsequent /plan cycles."
+user-invocable: false
 ---
 
 ## When to Use

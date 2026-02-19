@@ -1,6 +1,7 @@
 ---
 name: writing-feature-spec
 description: "Generate feature spec (docs/05-features/) comparing design intent against implementation. Use when a feature is complete and needs documentation before review."
+user-invocable: false
 ---
 
 ## Overview

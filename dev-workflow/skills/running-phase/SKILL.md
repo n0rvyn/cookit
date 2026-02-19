@@ -1,6 +1,7 @@
 ---
 name: running-phase
 description: "Use when the user says 'run phase', 'start phase N', 'next phase', or when continuing development guided by a dev-guide. Orchestrates the plan-execute-review cycle for one phase of a development guide."
+user-invocable: false
 ---
 
 ## Overview
@@ -8,7 +9,7 @@ description: "Use when the user says 'run phase', 'start phase N', 'next phase',
 This skill orchestrates one iteration of the development cycle:
 
 ```
-Locate Phase → /plan → [user approves] → execute → Document Features → review → fix gaps → Phase done
+Locate Phase → /write-plan → /verify-plan → /execute-plan → Document Features → review → fix gaps → Phase done
 ```
 
 It does not do the work itself. It coordinates the sequence and ensures nothing is skipped.
@@ -30,19 +31,29 @@ It does not do the work itself. It coordinates the sequence and ensures nothing 
 
 If the user specifies a different Phase number, use that instead.
 
-### Step 2: Enter /plan Mode
+### Step 2: Plan, Verify, Execute
 
-This is the only step requiring manual user action.
+#### 2a. Write Plan
 
-Prompt the user:
+Invoke `dev-workflow:writing-plans` with Phase context:
+- Goal: Phase N's goal from the dev-guide
+- Scope: Phase N's scope items
+- Acceptance criteria: Phase N's acceptance criteria
+- Design doc reference: from dev-guide header (if exists)
 
-> Phase N scope and acceptance criteria are clear. Enter `/plan` mode now.
->
-> Context for the plan: "Based on `docs/06-plans/<project>-dev-guide.md` Phase N, plan the implementation. Scope: [list from Phase]. Acceptance criteria: [list from Phase]."
+The plan will be saved to `docs/06-plans/YYYY-MM-DD-phase-N-<name>.md`.
 
-Wait for the user to approve the plan and for Claude to execute it.
+#### 2b. Verify Plan
 
-When execution is complete (user confirms or the plan's tasks are done), proceed to Step 3.
+Invoke `dev-workflow:verifying-plans` on the plan just written.
+
+If verification finds 必须修订 items: apply the revisions to the plan, then re-verify.
+
+#### 2c. Execute Plan
+
+Invoke `dev-workflow:executing-plans` to execute the verified plan.
+
+When execution completes (all tasks done and verified), proceed to Step 3.
 
 ### Step 3: Document Features
 
@@ -83,10 +94,11 @@ If any review found issues:
 ### Step 6: Phase Completion
 
 1. Update the dev-guide: check off this Phase's acceptance criteria
-2. Remind the user to update project docs:
+2. Mark Phase status in the dev-guide: add `**Status:** ✅ Completed — YYYY-MM-DD` after the Phase heading
+3. Remind the user to update project docs:
    - `docs/07-changelog/` — record changes
    - `docs/03-decisions/` — if architectural decisions were made
-3. Report:
+4. Report:
    > Phase N complete.
    > Next: Phase N+1 — [name]: [goal].
    > Run `/run-phase` to continue, or `/commit` to save progress first.
@@ -94,6 +106,6 @@ If any review found issues:
 ## Rules
 
 - **Never skip Step 4.** Reviews are not optional.
-- **Never auto-approve the plan.** Step 2 requires explicit user action.
+- **Never skip verification.** Step 2b must run before 2c.
 - **Phase order matters.** Don't start Phase N+1 if Phase N has unchecked acceptance criteria (unless user explicitly overrides).
 - **Consolidate review output.** Don't dump 4 separate reports — merge into one summary with sections.

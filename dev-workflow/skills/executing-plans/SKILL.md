@@ -1,6 +1,7 @@
 ---
 name: executing-plans
 description: "Use when you have a written implementation plan to execute. Batch execution with review checkpoints."
+user-invocable: false
 ---
 
 ## Process
