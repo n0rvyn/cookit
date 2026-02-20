@@ -42,4 +42,4 @@ When the agent completes:
 2. Report the verdict:
    - **Approved** — plan is ready for execution via `dev-workflow:executing-plans`
    - **Must revise** — list the specific revision items; apply revisions to the plan, then re-dispatch the verifier (max 2 revision cycles)
-3. If approved, suggest next step: `dev-workflow:executing-plans` or Claude `/plan` mode
+3. If approved, suggest next step: `dev-workflow:executing-plans`

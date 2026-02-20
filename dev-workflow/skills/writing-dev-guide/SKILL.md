@@ -1,6 +1,6 @@
 ---
 name: writing-dev-guide
-description: "Use when starting a new project's development after design is approved, or the user says 'write dev guide'. Creates a phased, project-level development guide that serves as the cornerstone document for all subsequent /plan cycles."
+description: "Use when starting a new project's development after design is approved, or the user says 'write dev guide'. Creates a phased, project-level development guide that serves as the cornerstone document for all subsequent /write-plan cycles."
 user-invocable: false
 ---
 
@@ -11,7 +11,7 @@ This skill dispatches the `dev-guide-writer` agent to create a phased developmen
 ## Not This Skill
 
 - Single feature plan → use `dev-workflow:writing-plans`
-- Per-phase implementation details → use Claude `/plan` mode
+- Per-phase implementation details → use `/write-plan`
 - Design exploration → use `dev-workflow:brainstorming`
 
 ## Process

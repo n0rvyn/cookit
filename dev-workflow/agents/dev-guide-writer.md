@@ -96,7 +96,7 @@ Save to: `docs/06-plans/YYYY-MM-DD-<project>-dev-guide.md`
 - Feature A
 - Feature B
 
-**Architecture decisions:** Key technical decisions this Phase needs to make (list decision points, don't pre-decide — leave to /plan stage).
+**Architecture decisions:** Key technical decisions this Phase needs to make (list decision points, don't pre-decide — leave to /write-plan stage).
 
 **Acceptance criteria:**
 - [ ] Specific verifiable condition 1
@@ -131,6 +131,6 @@ Save to: `docs/06-plans/YYYY-MM-DD-<project>-dev-guide.md`
 
 **Writing guidelines:**
 - Acceptance criteria must be concrete and testable (not "works well")
-- Architecture decisions are listed as questions, not answers — the answers come during /plan
+- Architecture decisions are listed as questions, not answers — the answers come during /write-plan
 - Review checklist is per-Phase, tailored to what that Phase produces
 - Each Phase's scope references specific features from the project brief / design doc

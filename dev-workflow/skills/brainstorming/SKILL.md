@@ -68,5 +68,4 @@ If the design is primarily architectural (data model, service layer, component b
 ### 6. Next Steps
 
 After design is approved, inform the user:
-- Use `dev-workflow:writing-plans` to create a structured implementation plan
-- Or use Claude `/plan` mode to plan and implement directly
+- Use `/write-plan` to create a structured implementation plan

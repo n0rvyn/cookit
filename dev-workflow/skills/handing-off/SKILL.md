@@ -20,10 +20,10 @@ model: haiku
 当前任务：[一句话描述]
 
 ### 执行计划（如有）
-来源：[~/.claude/plans/xxx.md | "用户消息内联提供" | 无]
+来源：[docs/06-plans/xxx.md | ~/.claude/plans/xxx.md | "用户消息内联提供" | 无]
 状态：[全部完成 | 进行中(N/M) | 中断 | 无计划]
 
-（plan mode 计划文件在 ~/.claude/plans/ 目录下，新会话可直接 Read）
+（/write-plan 计划文件在 docs/06-plans/，内置 /plan 计划文件在 ~/.claude/plans/，新会话可直接 Read）
 
 ### 问题
 [遇到的核心问题，包含具体报错/现象]
