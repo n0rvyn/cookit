@@ -6,125 +6,63 @@ user-invocable: false
 
 ## Overview
 
-Produces a feature spec by extracting design intent from planning documents and comparing it against the current implementation. The spec serves as the primary input for `/feature-review`.
-
-Core principle: **design is the source of truth.** User Stories come from design documents, not from reverse-engineering code. Implementation deviations are recorded as facts, not judged.
-
-```
-Scope → Collect design sources → Analyze implementation → Extract User Stories → Detect deviations → Write spec
-```
+This skill dispatches the `feature-spec-writer` agent to generate a feature spec in a separate context, keeping the main conversation lean.
 
 ## Process
 
-### Step 1: Determine Feature Scope
+### Step 0: Resolve Feature Identity (dispatcher-side interaction)
 
-1. Ask the user which feature to document
-2. Use context clues to suggest candidates:
+Before dispatching, confirm with the user:
+
+1. **Feature name** — use context clues to suggest candidates:
    - Current branch name
    - Recent commits (`git log --oneline -20`)
    - Files changed on this branch vs base
-3. Confirm the feature name — this becomes the output filename: `docs/05-features/{feature-name}.md`
+2. **Feature scope** — brief description of what the feature covers
 
-### Step 2: Collect Design Sources
+If the user hasn't specified a feature, ask before proceeding.
 
-Read design documents in priority order:
+### Step 1: Gather Context
 
-1. `docs/06-plans/*-design.md` — sections related to this feature
-2. `docs/06-plans/*-dev-guide.md` — Phase descriptions covering this feature
-3. `docs/06-plans/*.md` — implementation plans with relevant tasks
-4. If none of the above contain design intent for this feature → ask the user to describe the expected behavior. Do not reverse-engineer intent from code.
+Collect the following:
 
-Record which documents and sections were used. These become the "design source" references in the output.
+1. **Feature name** — confirmed in Step 0
+2. **Feature scope** — confirmed in Step 0
+3. **Design doc paths** — search `docs/06-plans/*-design.md` for sections related to this feature
+4. **Dev-guide path** — search `docs/06-plans/*-dev-guide.md` and identify the relevant Phase
+5. **Key implementation files** — search for files related to the feature (by name, imports, or recent modifications)
+6. **Project root** — current working directory
 
-### Step 3: Analyze Implementation
+### Step 2: Dispatch Agent
 
-Read the code to understand what was actually built:
+Use the Task tool to launch the `feature-spec-writer` agent with all gathered context. Structure the task prompt as:
 
-1. Identify key files implementing this feature
-2. Find user interaction entry points: Button actions, NavigationLink destinations, gesture handlers, menu items, toolbar actions
-3. Trace data flow: what models are involved, how state changes propagate
-4. Note the file and line number of each entry point
+```
+Generate a feature spec with the following inputs:
 
-### Step 4: Extract User Stories from Design
-
-From the design documents collected in Step 2 (not from code), extract User Stories in the format:
-
-> 用户可以 {action}
-
-For each User Story, search the codebase for the corresponding implementation entry point:
-
-- **Found, behavior matches design** → ✅ with file:line reference
-- **Found, behavior differs from design** → ⚠️ deviation (detail in Step 5)
-- **Not found in code** → ❌ not implemented
-
-### Step 5: Detect Deviations
-
-Compare design intent vs actual code for every User Story marked ⚠️ or ❌. Classify each deviation:
-
-| Type | Meaning |
-|------|---------|
-| `简化` | Feature works but is reduced compared to design |
-| `推迟` | Design specifies it but code does not implement it |
-| `变更` | Behavior differs from design intent |
-
-Deviations are factual records. Do not judge them as good or bad.
-
-### Step 6: Write Feature Spec
-
-Save to `docs/05-features/{feature-name}.md` using this template:
-
-```markdown
-# {Feature Name}
-
-> {One-line description}
-
-**Design sources:**
-- `docs/06-plans/YYYY-MM-DD-xxx-design.md` § {section}
-- `docs/06-plans/xxx-dev-guide.md` Phase N
-
----
-
-## User Stories
-
-- 用户可以 {action A} → `{File.swift:line}` ✅
-- 用户可以 {action B} → ❌ not implemented
-- 用户可以 {action C} → `{File.swift:line}` ⚠️ see deviation record
-
-## Expected Behavior
-
-{Functional behavior extracted from design documents. This describes design intent, not code behavior.}
-
-### Scenario 1: {scenario name}
-{Description from the user's perspective}
-
-## Key Files
-
-| File | Responsibility |
-|------|----------------|
-| `path/File.swift` | description |
-
-## Boundary Conditions / Constraints
-
-- {condition}
-
-## Deviation Record
-
-| # | Type | Design Intent | Current Implementation | Source |
-|---|------|---------------|----------------------|--------|
-| 1 | 简化 | {what design says} | {what code does} | design.md § X |
-
-No deviations: write "None."
-
-## Change History
-
-| Date | Change |
-|------|--------|
-| YYYY-MM-DD | Initial spec (generated by /write-feature-spec) |
+Feature name: {name}
+Feature scope: {scope}
+Design doc paths:
+- {path 1} § {relevant section}
+- {path 2} § {relevant section}
+Dev-guide: {path} Phase {N}
+Key implementation files:
+- {file 1}
+- {file 2}
+Project root: {path}
 ```
 
-## Rules
+### Step 3: Present Results
 
-- **Design is the source of truth.** User Stories are extracted from design documents, never reverse-engineered from code.
-- **No design source → ask the user.** Do not guess intent from code.
-- **Deviations are facts, not judgments.** Record what differs; do not label deviations as problems.
-- **Output format must be compatible with `/feature-review`.** The "用户可以..." + file:line format is consumed directly by that skill.
+When the agent completes:
+
+1. **If the agent reports "no design source found, stopped":**
+   - Ask the user to either provide a design document path, or describe the expected behavior for this feature
+   - If user provides a description: re-dispatch the agent with the user's description as additional context
+   - If user provides a document path: re-dispatch with the corrected path
+2. **Otherwise**, present a summary to the user:
+   - Spec file path
+   - User Story status counts (✅ / ⚠️ / ❌)
+   - Number of deviations detected
+3. If deviations were found, briefly list them
+4. Suggest next step: `/feature-review` to review against the spec
