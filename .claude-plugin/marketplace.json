@@ -45,6 +45,21 @@
         "local-tools"
       ],
       "strict": true
+    },
+    {
+      "name": "product-lens",
+      "source": "./product-lens",
+      "description": "Product evaluation plugin for indie developers: demand validation, market analysis, moat assessment, and portfolio comparison",
+      "version": "1.0.0",
+      "category": "product",
+      "tags": [
+        "product",
+        "evaluation",
+        "indie",
+        "market-analysis",
+        "comparison"
+      ],
+      "strict": true
     }
   ]
 }
