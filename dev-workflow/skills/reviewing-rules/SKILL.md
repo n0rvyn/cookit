@@ -4,71 +4,39 @@ description: "Use when Claude exhibited unexpected behavior, for periodic rule h
 disable-model-invocation: true
 ---
 
-## 触发场景
+## Overview
 
-- 会话中 Claude 出现预期外偏差
-- 定期规则健康检查
-- 新增规则后检查一致性
+This skill dispatches the `rules-auditor` agent to audit CLAUDE.md rules in a separate context, keeping the main conversation lean.
 
-## 输入
+## Process
 
-可选：用户描述本次偏差现象（如"Claude 自作主张加了动画"）
+### Step 1: Gather Context
 
-## 执行流程
+Collect the following before dispatching:
 
-1. 读取 `~/.claude/CLAUDE.md` 和项目 `CLAUDE.md`
-2. 以 AI 执行视角分析：
+1. **Deviation description** — from the user's message (e.g., "Claude added animations without asking"). Set to "periodic check" if none provided
+2. **Global CLAUDE.md path** — `~/.claude/CLAUDE.md`
+3. **Project CLAUDE.md path** — check for `CLAUDE.md` in project root (may not exist)
 
-### 2.1 冲突检测
-找出可能被我利用来选择性遵守的规则对：
-- 规则 A 说 X，规则 B 说 Y，X 和 Y 可能矛盾
-- 输出格式：`| 位置 | 冲突 | 我可能的解释 |`
+### Step 2: Dispatch Agent
 
-### 2.2 漏洞检测
-找出规则表述中我可能钻的空子：
-- "优先"、"尽量"、"一般" → 无强制力
-- 条件触发不明确 → 我可声称条件不满足
-- 输出格式：`| 位置 | 漏洞 | 我可能的绕法 |`
-
-### 2.3 缺失检测
-基于近期偏差或常见问题，找出缺失的规则：
-- 输出格式：`| 缺失规则 | 会导致的问题 |`
-
-### 2.4 冗余检测
-找出重复表述（不一定要删，但需知晓）
-
-3. 针对发现的问题，提出具体修复建议
-4. 用户确认后执行修复
-
-## 输出格式
+Use the Task tool to launch the `rules-auditor` agent with all gathered context. Structure the task prompt as:
 
 ```
-## Rules Review Report
+Audit CLAUDE.md rules with the following inputs:
 
-### 输入的偏差现象
-[用户描述，或"定期检查"]
-
-### 冲突
-| 位置 | 冲突 | 我可能的解释 |
-|------|------|--------------|
-
-### 漏洞
-| 位置 | 漏洞 | 我可能的绕法 |
-|------|------|--------------|
-
-### 缺失
-| 缺失规则 | 会导致的问题 |
-|---------|--------------|
-
-### 修复建议
-1. [具体修改内容]
-2. ...
-
-是否执行修复？
+Deviation description: {description or "periodic check"}
+Global CLAUDE.md: ~/.claude/CLAUDE.md
+Project CLAUDE.md: {path or "none"}
 ```
 
-## 原则
+### Step 3: Present Results
 
-- 以 AI 执行视角审视，不考虑人类可读性
-- 假设我会寻找规则漏洞，主动暴露这些漏洞
-- 修复建议要具体可执行，不要泛泛而谈
+When the agent completes:
+
+1. Present the Rules Review Report returned by the agent
+2. If fix recommendations were made:
+   - List each recommendation
+   - Ask the user: "Execute these fixes?"
+3. If user approves: apply the recommended changes to the CLAUDE.md files
+4. If user declines: done
