@@ -6,106 +6,201 @@ user-invocable: false
 
 ## Overview
 
-This skill orchestrates one iteration of the development cycle:
+This skill orchestrates one iteration of the development cycle by dispatching agents for document-generation steps and keeping only code execution in the main context.
 
 ```
-Locate Phase → /write-plan → /verify-plan → /execute-plan → Document Features → review → fix gaps → Phase done
+Locate/Resume Phase
+  → dispatch plan-writer agent (separate context)
+  → dispatch plan-verifier agent (separate context)
+  → execute plan (main context — writes code)
+  → dispatch feature-spec-writer agent (separate context)
+  → dispatch review agents in parallel (separate contexts)
+  → fix gaps (main context)
+  → Phase done
 ```
 
-It does not do the work itself. It coordinates the sequence and ensures nothing is skipped.
+It does not do the work itself. It dispatches agents and coordinates the sequence.
+
+## State File
+
+Location: `.claude/dev-workflow-state.yml`
+
+This file tracks progress across sessions. Update it **before** starting each step (so crash-resume works). Read/write via the Read and Write tools.
+
+```yaml
+project: <name>
+current_phase: 2
+phase_name: "Phase Name"
+phase_step: plan    # plan | verify | execute | spec | review | fix | done
+dev_guide: docs/06-plans/YYYY-MM-DD-project-dev-guide.md
+plan_file: null
+verification_report: null
+batch_progress: null
+review_reports: []
+gaps_remaining: 0
+last_updated: "YYYY-MM-DDTHH:MM:SS"
+```
 
 ## Process
 
-### Step 1: Locate Current Phase
+### Step 1: Resume or Locate Phase
 
-1. Find the dev-guide: `docs/06-plans/*-dev-guide.md` (if multiple, ask user which one)
-2. Read the document and check each Phase's acceptance criteria
-3. Phases with all criteria checked = completed
-4. Identify the first incomplete Phase
-5. Present Phase summary:
-   - Goal
-   - Scope
-   - Architecture decisions to make
-   - Acceptance criteria
-6. Ask: "Start Phase N?"
+1. Check for `.claude/dev-workflow-state.yml` (Read tool)
+   - If exists AND `phase_step` is not `done`:
+     - Present: "Phase {N} ({name}) in progress — step: {phase_step}. Resume?"
+     - If user accepts: skip to the step indicated by `phase_step`
+     - If user declines: ask which Phase to start
+2. If no state file or starting fresh:
+   - Find dev-guide: `docs/06-plans/*-dev-guide.md` (if multiple, ask user)
+   - Read the document and check each Phase's acceptance criteria
+   - Phases with all criteria checked = completed
+   - Identify the first incomplete Phase
+   - Present Phase summary: Goal, Scope, Architecture decisions, Acceptance criteria
+   - Ask: "Start Phase N?"
+3. Initialize state file:
+
+```yaml
+project: <from dev-guide title>
+current_phase: <N>
+phase_name: "<Phase name>"
+phase_step: plan
+dev_guide: <dev-guide path>
+plan_file: null
+verification_report: null
+batch_progress: null
+review_reports: []
+gaps_remaining: 0
+last_updated: "<now>"
+```
 
 If the user specifies a different Phase number, use that instead.
 
-### Step 2: Plan, Verify, Execute
+### Step 2: Plan (agent dispatch)
 
-#### 2a. Write Plan
+1. Update state: `phase_step: plan`, `last_updated: <now>`
+2. Gather Phase context from dev-guide:
+   - Goal: Phase N's goal
+   - Scope: Phase N's scope items
+   - Acceptance criteria: Phase N's acceptance criteria
+   - Design doc reference: from dev-guide header (if exists)
+3. Use the Task tool to dispatch the `plan-writer` agent:
 
-Invoke `dev-workflow:writing-plans` with Phase context:
-- Goal: Phase N's goal from the dev-guide
-- Scope: Phase N's scope items
-- Acceptance criteria: Phase N's acceptance criteria
-- Design doc reference: from dev-guide header (if exists)
+```
+Write an implementation plan with the following inputs:
 
-The plan will be saved to `docs/06-plans/YYYY-MM-DD-phase-N-<name>.md`.
+Goal: {Phase goal}
+Scope:
+{Phase scope items}
 
-#### 2b. Verify Plan
+Acceptance criteria:
+{Phase acceptance criteria}
 
-Invoke `dev-workflow:verifying-plans` on the plan just written.
+Design doc: {path or "none"}
+Project root: {project root}
 
-If verification finds 必须修订 items: apply the revisions to the plan, then re-verify.
+Context: This is Phase {N} of the dev-guide at {dev-guide path}.
+```
 
-#### 2c. Execute Plan
+4. When agent returns: note the plan file path from the summary
+5. Update state: `plan_file: <path>`, `last_updated: <now>`
+6. Present plan summary to user (task count, key files)
 
-Invoke `dev-workflow:executing-plans` to execute the verified plan.
+### Step 3: Verify (agent dispatch)
 
-When execution completes (all tasks done and verified), proceed to Step 3.
+1. Update state: `phase_step: verify`, `last_updated: <now>`
+2. Use the Task tool to dispatch the `plan-verifier` agent:
 
-### Step 3: Document Features
+```
+Verify this implementation plan:
 
-Before running reviews, generate feature specs for completed user journeys in this Phase.
+Plan file: {plan_file path from state}
+Design doc: {design doc path or "none"}
+Project root: {project root}
+```
 
-1. Check the Phase scope for feature completions (user journeys, not individual components)
-2. For each completed feature: run `/write-feature-spec`
-3. Infrastructure-only Phase (no user journeys): skip this step
+3. When agent returns: present the verification summary
+4. If verdict is `must-revise`:
+   a. Apply the specific revisions to the plan file (light edits in main context)
+   b. Re-dispatch the plan-verifier agent with the updated plan (max 2 revision cycles)
+5. Update state: `verification_report: <summary>`, `last_updated: <now>`
 
-This ensures `/feature-review` in Step 4 has a spec to work with.
+### Step 4: Execute (main context)
 
-### Step 4: Run Reviews
+1. Update state: `phase_step: execute`, `last_updated: <now>`
+2. Invoke `dev-workflow:executing-plans` to execute the verified plan
+   - This stays in the main context because it writes code and needs checkpoint approval
+3. When execution completes, update state: `last_updated: <now>`
 
-Based on the Phase's Review checklist, run reviews in sequence:
+### Step 5: Document Features (agent dispatch)
 
-1. **Always:** `/execution-review`
-2. **If Phase modified UI files:** `/ui-review`
-3. **If Phase created new pages/components:** `/design-review`
-4. **If Phase completed a full user journey:** `/feature-review`
-5. **If this is the submission prep Phase:** `/submission-preview`
+1. Update state: `phase_step: spec`, `last_updated: <now>`
+2. Check the Phase scope for completed user journeys
+   - Infrastructure-only Phase (no user journeys): skip to Step 6
+3. For each completed feature:
+   - Confirm feature name and scope with the user
+   - Use the Task tool to dispatch the `feature-spec-writer` agent:
 
-For each review:
-- Invoke the command
-- Collect the output
-- Continue to the next review
+```
+Generate a feature spec with the following inputs:
 
-After all reviews complete, present a consolidated summary of all findings.
+Feature name: {name}
+Feature scope: {scope}
+Design doc paths:
+{relevant design doc paths and sections}
+Dev-guide: {dev-guide path} Phase {N}
+Key implementation files:
+{list of key files}
+Project root: {project root}
+```
 
-### Step 5: Fix Gaps
+4. Present spec summary when agent returns
+5. Update state: `last_updated: <now>`
+
+### Step 6: Reviews (parallel agent dispatch)
+
+1. Update state: `phase_step: review`, `last_updated: <now>`
+2. Determine which reviews to run from the Phase's Review checklist:
+   - **Always:** `implementation-reviewer` agent
+   - **If Phase modified UI files:** `/ui-review`
+   - **If Phase created new pages/components:** `/design-review`
+   - **If Phase completed a full user journey:** `/feature-review`
+   - **If this is the submission prep Phase:** `/submission-preview`
+3. Dispatch ALL applicable review agents **in parallel** using the Task tool in a single message:
+   - For `implementation-reviewer`: use the agent directly
+   - For other reviews: dispatch via Task tool with appropriate context
+4. When all return: collect results, present a consolidated summary of all findings
+5. Update state: `review_reports: [<paths>]`, `last_updated: <now>`
+
+### Step 7: Fix Gaps
 
 If any review found issues:
 
-1. List all gaps sorted by severity (red first, then yellow)
-2. Ask the user: "Fix these gaps before moving on, or mark as known issues?"
-3. If fixing: address the gaps, then re-run only the reviews that had failures
-4. If skipping: note the known issues and proceed
+1. Update state: `phase_step: fix`, `last_updated: <now>`
+2. List all gaps sorted by severity (critical first, then warnings)
+3. Ask the user: "Fix these gaps before moving on, or mark as known issues?"
+4. If fixing: address the gaps, then re-run only the reviews that had failures
+5. If skipping: note the known issues and proceed
+6. Update state: `gaps_remaining: <count>`, `last_updated: <now>`
 
-### Step 6: Phase Completion
+### Step 8: Phase Completion
 
-1. Update the dev-guide: check off this Phase's acceptance criteria
-2. Mark Phase status in the dev-guide: add `**Status:** ✅ Completed — YYYY-MM-DD` after the Phase heading
+1. Update state: `phase_step: done`, `last_updated: <now>`
+2. Update the dev-guide:
+   - Check off this Phase's acceptance criteria
+   - Add status line: `**Status:** ✅ Completed — YYYY-MM-DD` after the Phase heading
 3. Remind the user to update project docs:
    - `docs/07-changelog/` — record changes
    - `docs/03-decisions/` — if architectural decisions were made
 4. Report:
-   > Phase N complete.
-   > Next: Phase N+1 — [name]: [goal].
-   > Run `/run-phase` to continue, or `/commit` to save progress first.
+
+> Phase N complete.
+> Next: Phase N+1 — [name]: [goal].
+> Run `/run-phase` to continue, or `/commit` to save progress first.
 
 ## Rules
 
-- **Never skip Step 4.** Reviews are not optional.
-- **Never skip verification.** Step 2b must run before 2c.
+- **Never skip Step 6.** Reviews are not optional.
+- **Never skip verification.** Step 3 must run before Step 4.
 - **Phase order matters.** Don't start Phase N+1 if Phase N has unchecked acceptance criteria (unless user explicitly overrides).
-- **Consolidate review output.** Don't dump 4 separate reports — merge into one summary with sections.
+- **Consolidate review output.** Merge all review results into one summary with sections.
+- **State before action.** Update state file before starting each step, not after.
