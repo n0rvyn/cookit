@@ -1,7 +1,7 @@
 ---
 name: evaluate
 description: "Use when the user wants to evaluate a product — assess demand, market viability, moat, and execution quality from an indie developer perspective. Works on local projects (by reading code) or external apps (via web search)."
-user-invocable: false
+disable-model-invocation: true
 ---
 
 ## Process

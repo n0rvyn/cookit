@@ -1,7 +1,7 @@
 ---
 name: teardown
 description: "Use when the user wants a deep dive into a specific evaluation dimension for a product. Example: teardown moat, teardown journey. Goes deeper than the standard evaluation on one dimension."
-user-invocable: false
+disable-model-invocation: true
 ---
 
 ## Process
