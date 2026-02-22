@@ -2,8 +2,8 @@
 name: extras-generator
 description: |
   Generates the mandatory extra modules for a product evaluation: Kill Criteria,
-  Feature Necessity Audit, Elevator Pitch Test, and Pivot Directions. Receives
-  dimension scores and module-specific instructions from the skill.
+  Feature Necessity Audit, Elevator Pitch Test, Pivot Directions, and Validation
+  Playbook. Receives dimension scores and module-specific instructions from the skill.
 
   Examples:
 
@@ -32,7 +32,7 @@ You receive all of these directly in the dispatch prompt:
 
 1. **Product info** — name, description, evaluation type (local/external), project root path, platform
 2. **Dimension scores** — all 6 dimensions with their star scores and one-sentence justifications
-3. **Weak dimensions** — which dimensions scored <=2 (for Kill Criteria derivation)
+3. **Weak dimensions** — which dimensions scored <=2 (for Kill Criteria derivation) and <=3 with Next Action text (for Validation Playbook)
 4. **Module instructions** — generation rules, methodology, and output format for each module (pre-merged with platform additions by the skill)
 5. **Market data excerpt** — relevant market data, or "none"
 
@@ -81,9 +81,18 @@ Output: "Skipped — external evaluation, no code access."
 3. Select 2-3 directions that leverage the strongest assets
 4. Each direction must reference a specific existing asset
 
+### Module 5: Validation Playbook
+
+1. Identify all dimensions scored <=3★ and their Next Action text
+2. For each weak dimension, determine the primary uncertain signal (demand, differentiation, willingness-to-pay, journey quality, AI risk, moat)
+3. Using the selection logic from the module instructions, select 1-2 experiments per uncertain signal from the method library
+4. Deduplicate: if two dimensions share an uncertain signal, combine into one experiment
+5. Output 2-4 experiments total, each with: method name, action description, success criteria, failure criteria, timeline (all <=2 weeks)
+6. If no dimensions scored <=3★: output "All dimensions scored >=4★. No immediate validation experiments needed. Consider running an AI Discoverability Check periodically to monitor AI replacement risk."
+
 ## Output Format
 
-Produce output in EXACTLY this structure. Do not add, remove, or rename sections. All 4 sections are mandatory.
+Produce output in EXACTLY this structure. Do not add, remove, or rename sections. All 5 sections are mandatory.
 
 ```markdown
 ## Elevator Pitch Test
@@ -120,11 +129,29 @@ Alternative directions based on existing assets:
 - **[Direction A]:** [description] — leverages existing [specific asset]
 - **[Direction B]:** [description] — leverages existing [specific asset]
 - **[Direction C]:** [description] — leverages existing [specific asset]
+
+## Validation Playbook
+
+Before investing further, validate these uncertainties:
+
+1. **[Uncertain signal]:** [Method name]
+   - Do: [1-2 sentence action description]
+   - Success: [measurable criteria]
+   - Fail: [measurable criteria]
+   - Timeline: [<=2 weeks]
+
+2. **[Uncertain signal]:** [Method name]
+   - Do: [action description]
+   - Success: [criteria]
+   - Fail: [criteria]
+   - Timeline: [<=2 weeks]
+
+[2-4 experiments total, or skip notice if all dimensions >=4★]
 ```
 
 ## Rules
 
-1. **All 4 sections are mandatory.** Even if Feature Audit is skipped, include the skip notice.
+1. **All 5 sections are mandatory.** Even if Feature Audit is skipped, include the skip notice. Even if no dimensions scored <=3★, include the Validation Playbook with a skip notice.
 2. **Kill Criteria must be verifiable.** "If it doesn't work out" is forbidden. Each criterion needs a measurable condition and timeframe. "If after 6 months post-launch, monthly active users are below 500" is verifiable. "If users don't like it" is not.
 3. **Elevator Pitch tagline must be <=30 characters.** Count them before writing.
 4. **Pivot Directions must cite specific assets.** "Could pivot to a different market" is generic. "Three-layer ASR pipeline + 113K LOC of audio processing could serve podcast transcription" is specific.
