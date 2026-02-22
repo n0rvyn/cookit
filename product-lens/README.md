@@ -10,6 +10,7 @@ Product evaluation plugin for indie developers. Assesses demand, market viabilit
 | `/compare` | Compare multiple products; produces scoring matrix and recommendations |
 | `/demand-check` | Quick first-pass demand validation (5-minute filter) |
 | `/teardown` | Deep dive into a single evaluation dimension |
+| `/feature-assess` | Evaluate whether an existing app should add a specific feature (local projects only) |
 
 ## Evaluation Dimensions
 
@@ -31,17 +32,41 @@ Each dimension's sub-questions are split into **universal** (always apply) and *
 - **Elevator Pitch Test** — can you describe value in a tagline + one sentence?
 - **Pivot Directions** — adjacent opportunities based on existing code assets and domain knowledge
 
+## Feature Assessment
+
+For evaluating whether an existing app should add a specific feature. Uses 4 custom dimensions designed for what AI + code analysis can assess:
+
+| Dimension | Core Question |
+|-----------|--------------|
+| **Demand Fit (需求契合)** | Is there evidence users want this feature, and what type of need does it address? |
+| **Journey Contribution (旅程贡献)** | Does this feature strengthen the core loop or create a side branch? |
+| **Build Cost (实现代价)** | What is the architectural invasiveness, maintenance burden, and opportunity cost? |
+| **Strategic Value (战略价值)** | Does this feature deepen the moat, open revenue paths, or create lock-in? |
+
+Each dimension produces a **signal** (Positive / Neutral / Negative) with a **confidence level** (High / Medium / Low). Final verdict: **GO / DEFER / KILL** -- one fatal flaw vetoes everything; no weighted aggregate.
+
+### Conditional Follow-up
+
+- **GO** → **Integration Map**: code-level integration points, reusable infrastructure, modification scope, implementation sequence
+- **DEFER/KILL** → **Alternative Directions**: lower-cost variants, complementary features, signal clarification paths
+
 ## Architecture
 
 ### Pipeline
 
 The evaluation uses a multi-step pipeline to ensure framework compliance:
 
+Product evaluation pipeline:
 ```
 market-scanner → pre-merge sub-questions → 6x dimension-evaluator (parallel) → validate → extras-generator → assemble → present
 ```
 
-Each dimension is evaluated by a separate agent call that receives **only** its own sub-questions, scoring anchors, and output template. The skill layer handles reference file reading, platform overlay merging, parallel dispatch, validation, and report assembly.
+Feature assessment pipeline:
+```
+app-context-scanner + market-scanner (parallel) → pre-merge sub-questions → 4x feature-dimension-evaluator (parallel) → verdict → feature-followup-generator → validate → assemble → present
+```
+
+Each dimension is evaluated by a separate agent call that receives **only** its own sub-questions, scoring/signal anchors, and output template. The skill layer handles reference file reading, platform overlay merging, parallel dispatch, validation, and report assembly.
 
 ### Agents
 
@@ -50,6 +75,9 @@ Each dimension is evaluated by a separate agent call that receives **only** its 
 | `dimension-evaluator` | Opus | Evaluates one dimension; receives pre-merged sub-questions and strict output template |
 | `extras-generator` | Sonnet | Generates Kill Criteria, Feature Audit, Elevator Pitch, Pivot Directions |
 | `market-scanner` | Sonnet | Market research; gathers competitor data, pricing, and market signals |
+| `app-context-scanner` | Sonnet | Scans local codebase; produces structured app context summary |
+| `feature-dimension-evaluator` | Opus | Evaluates one feature dimension; signal + confidence format |
+| `feature-followup-generator` | Sonnet | Generates Integration Map (GO) or Alternative Directions (DEFER/KILL) |
 
 ### Skills
 
@@ -59,6 +87,7 @@ Each dimension is evaluated by a separate agent call that receives **only** its 
 | `compare` | N x parallel pipelines + comparison matrix + maturity signals | No |
 | `demand-check` | Demand dimension + elevator pitch only; runs in main context | Yes |
 | `teardown` | Single dimension-evaluator in deep mode | No |
+| `feature-assess` | Pipeline: app-context-scanner + market-scanner → 4x feature-dimension-evaluator (parallel) → verdict → feature-followup-generator → assembly | No |
 
 ### Reference Files
 
@@ -78,6 +107,17 @@ references/
     feature-audit.md            # Methodology + output format
     elevator-pitch.md           # Constraints + iOS App Store variant
     pivot-directions.md         # Methodology + output format
+  feature-assess/
+    _calibration.md              # Feature-level evaluation framing + signal format
+    _verdict.md                  # Verdict computation rules (GO/DEFER/KILL)
+    dimensions/
+      01-demand-fit.md           # Self-contained: universal + platform variants + signal anchors
+      02-journey-contribution.md
+      03-build-cost.md
+      04-strategic-value.md
+    modules/
+      integration-map.md         # GO follow-up: code-level integration analysis
+      alternative-directions.md  # DEFER/KILL follow-up: lower-cost variants + alternatives
 ```
 
 Each dimension file is self-contained with platform variants as sections within the file. Adding a new platform overlay means adding a `### [Platform]` section to each dimension file — not creating separate overlay files.
@@ -125,4 +165,10 @@ Significance threshold: when comparing products, score differences <= 0.5 are no
 
 # Deep dive into one dimension
 /teardown moat /path/to/my-app
+
+# Evaluate whether to add a feature
+/feature-assess /path/to/my-app "Add a tagging system for notes"
+
+# Feature assessment using current directory
+/feature-assess "Add social sharing"
 ```

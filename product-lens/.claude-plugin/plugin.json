@@ -1,6 +1,6 @@
 {
   "name": "product-lens",
   "version": "1.0.0",
-  "description": "Product evaluation plugin for indie developers: demand validation, market analysis, moat assessment, and portfolio comparison",
+  "description": "Product evaluation plugin for indie developers: demand validation, market analysis, moat assessment, portfolio comparison, and feature assessment",
   "author": { "name": "Norvyn" }
 }
