@@ -207,7 +207,7 @@ description: 新项目启动开题流程，完成需求澄清、范围收敛和�
 #### 8.1 创建 docs 目录结构
 
 ```bash
-mkdir -p docs/{01-discovery,02-architecture,03-decisions,04-implementation,05-features,06-plans,07-changelog,09-lessons-learned,10-app-store-connect}
+mkdir -p docs/{01-discovery,02-architecture,03-decisions,04-implementation,05-features,06-plans,07-changelog,08-product-evaluation,09-lessons-learned,10-app-store-connect}
 ```
 
 目录说明：
@@ -221,6 +221,7 @@ mkdir -p docs/{01-discovery,02-architecture,03-decisions,04-implementation,05-fe
 | 05-features/ | 功能预期行为、关键代码位置 |
 | 06-plans/ | 开发指南、设计文档、实施计划 |
 | 07-changelog/ | 变更历史 |
+| 08-product-evaluation/ | product-lens 评估报告 |
 | 09-lessons-learned/ | 踩坑记录 |
 | 10-app-store-connect/ | ASC 提交文档（隐私政策、用户协议、支持页、营销文案） |
 
@@ -256,6 +257,7 @@ mkdir -p docs/{01-discovery,02-architecture,03-decisions,04-implementation,05-fe
 | 功能行为 | `docs/05-features/` |
 | 开发指南/计划 | `docs/06-plans/` |
 | 变更历史 | `docs/07-changelog/` |
+| 产品评估 | `docs/08-product-evaluation/` |
 | 踩坑记录 | `docs/09-lessons-learned/` |
 
 ## 计划执行规则
@@ -410,6 +412,7 @@ mkdir -p docs/{01-discovery,02-architecture,03-decisions,04-implementation,05-fe
 - 架构设计：`docs/02-architecture/`
 - 开发指南/计划：`docs/06-plans/`
 - 功能行为：`docs/05-features/`
+- 产品评估：`docs/08-product-evaluation/`
 ```
 
 #### 8.4 创建 docs/02-architecture/README.md
