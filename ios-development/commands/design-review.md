@@ -137,6 +137,24 @@ App 设计质量审查。关注视觉层级、色彩策略、间距节奏、整�
 
 **代码检查**：调用 `validate-design-tokens` skill 扫描文件。
 
+### A9. Navigation Depth
+
+**检查项**：
+- [ ] Navigation depth ≤3 levels from root? (NavigationStack push count)
+- [ ] Sheet-in-sheet or modal-on-modal patterns? (>1 level = too deep)
+- [ ] Can users always navigate back without confusion?
+
+**代码检查**：Search for NavigationStack/NavigationLink/sheet/fullScreenCover nesting. Count max depth.
+
+### A10. Interaction Feedback
+
+**检查项**：
+- [ ] Write operations (save, delete, send) have feedback? (haptic, animation, toast, state change)
+- [ ] Destructive actions require confirmation?
+- [ ] Loading state visible for async operations?
+
+**代码检查**：Search for .sensoryFeedback, withAnimation, .alert, .confirmationDialog near save/delete/submit. Flag write operations without feedback.
+
 ---
 
 ## Part B: 视觉打磨（人工验证）
