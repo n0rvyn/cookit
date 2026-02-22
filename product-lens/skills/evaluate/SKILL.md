@@ -37,7 +37,7 @@ Locate the plugin's reference files by searching for `**/product-lens/references
 - `_calibration.md` (always)
 - `_scoring.md` (always)
 - `dimensions/01-demand-authenticity.md` through `dimensions/06-execution-quality.md` (all 6)
-- `modules/kill-criteria.md`, `modules/feature-audit.md`, `modules/elevator-pitch.md`, `modules/pivot-directions.md` (all 4)
+- `modules/kill-criteria.md`, `modules/feature-audit.md`, `modules/elevator-pitch.md`, `modules/pivot-directions.md`, `modules/validation-playbook.md` (all 5)
 
 ### Step 4: Gather Market Context
 
@@ -100,6 +100,7 @@ For each of the 6 returned results, verify:
 3. Count of `### Q` sub-sections matches the expected sub-question count for that dimension
 4. Each sub-section contains `**Evidence:**` and `**Assessment:**` fields
 5. `**Anchor match:**` field exists in the Dimension Score section
+6. `### Next Action` section exists after `### Dimension Score`
 
 **If any dimension fails validation:**
 - Re-dispatch that single dimension-evaluator with a correction note prepended to the original prompt: "Your previous output had these issues: [list specific failures]. Produce the corrected output following the template exactly."
@@ -109,10 +110,11 @@ For each of the 6 returned results, verify:
 Extract from each valid result:
 - Dimension star score (for the overview table and extras-generator)
 - One-sentence justification (for the overview table)
+- Next Action text (for Priority Actions section in the final report)
 
 ### Step 8: Dispatch extras-generator
 
-Read the 4 module files from `references/modules/`. For each module file that has a `## Platform Additions` or `## Platform Constraints` section:
+Read the 5 module files from `references/modules/`. For each module file that has a `## Platform Additions` or `## Platform Constraints` section:
 - If iOS: extract the `### iOS` section and append it to the module's base instructions
 - Otherwise: use the base instructions only
 
@@ -120,7 +122,8 @@ Dispatch the `extras-generator` agent with:
 - **Product info:** name, description, evaluation type, project root path, platform
 - **Dimension scores:** all 6 dimension names with their star scores and one-sentence justifications
 - **Weak dimensions:** list of dimensions scored <=2
-- **Module instructions:** the 4 module files' content (pre-merged with platform additions)
+- **Dimensions scored <=3:** list of dimensions scored <=3, with their Next Action text (for Validation Playbook)
+- **Module instructions:** the 5 module files' content (pre-merged with platform additions)
 - **Market data excerpt:** full market-scanner output (for Pivot Directions context)
 
 Wait for completion.
@@ -151,6 +154,12 @@ Assemble the final report by combining dimension results and extras output:
 | Execution Quality (执行质量) | [stars] | [justification] |
 | **Weighted Total** | **X.X** | |
 
+## Priority Actions
+
+[Ordered list of Next Actions from dimensions scored ≤3★, sorted by score ASC (lower = more urgent).
+Each item: "**[Dimension Name] (N★):** [Next Action text from dimension-evaluator output]"
+If no dimensions scored ≤3★, write: "All dimensions scored ≥4★. See individual dimension Next Actions for consolidation opportunities."]
+
 ## Dimension Details
 
 [All 6 dimension evaluation results in order, each preserving its internal structure
@@ -164,6 +173,9 @@ Assemble the final report by combining dimension results and extras output:
 
 ## Pivot Directions
 [from extras-generator output]
+
+## Validation Playbook
+[from extras-generator output — experiments targeting dimensions scored ≤3★]
 ```
 
 Validate extras output:
@@ -171,8 +183,19 @@ Validate extras output:
 - `## Kill Criteria` section exists with >=3 numbered items
 - `## Feature Necessity Audit` section exists (content or skip notice)
 - `## Pivot Directions` section exists with >=2 named directions
+- `## Validation Playbook` section exists with >=2 numbered experiments (each with Do/Success/Fail/Timeline fields), or a skip notice if all dimensions scored >=4★
 
 If validation fails: re-dispatch extras-generator once with a correction note. If still non-compliant, include with warning annotation.
+
+### Step 9.5: Save Report
+
+If the evaluation target is a local project:
+1. Check if `docs/08-product-evaluation/` directory exists. If not, create it.
+2. Save the report to `docs/08-product-evaluation/{YYYY-MM-DD}-evaluate.md`
+3. Check for previous reports in the same directory (files matching `*-evaluate.md`). If found, append a `## Changes Since Last Evaluation` section comparing dimension scores and highlighting movements >=1★.
+   - Format: `| Dimension | Previous | Current | Change |` table
+   - Only include dimensions with score movement >=1★
+   - If this is the first report, omit this section
 
 ### Step 10: Present Results
 
@@ -181,4 +204,4 @@ Display the assembled report.
 Post-processing:
 1. **Highlight the Elevator Pitch result** — if "Cannot articulate", call it out prominently at the top
 2. **Flag weak dimensions** — any dimension scored <=2 stars gets an explicit warning
-3. **Summarize actionable next steps** — based on the evaluation, what should the developer do first?
+3. **Verify Priority Actions section** — confirm it lists all dimensions scored ≤3★ in ascending score order, each with its Next Action from the dimension-evaluator output. This replaces generic "next steps" with specific, dimension-derived actions.
