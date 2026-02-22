@@ -1,6 +1,6 @@
 ---
 name: verifying-plans
-description: "Use when a plan has been written and is about to be executed, or the user says 'verify plan'. Applies Verification-First method with falsifiable error candidates, failure reverse reasoning, optional Design Token consistency checks, Design Faithfulness anchoring, and Architecture Review."
+description: "Use when a plan has been written and needs validation before execution, or the user says 'verify plan', 'check the plan', 'review the plan', 'validate plan', '检查计划', '验证计划'. Applies Verification-First method with falsifiable error candidates, failure reverse reasoning, optional Design Token consistency checks, Design Faithfulness anchoring, and Architecture Review."
 ---
 
 ## Overview
@@ -40,6 +40,21 @@ When the agent completes:
 
 1. Present the Plan Verification Summary returned by the agent
 2. Report the verdict:
-   - **Approved** — plan is ready for execution via `dev-workflow:executing-plans`
+   - **Approved** — proceed to Step 4
    - **Must revise** — list the specific revision items; apply revisions to the plan, then re-dispatch the verifier (max 2 revision cycles)
-3. If approved, suggest next step: `dev-workflow:executing-plans`
+
+### Step 4: Mark Verified
+
+When the plan is approved:
+
+1. Append a verification marker to the end of the plan file:
+
+```markdown
+
+---
+## Verification
+- **Verdict:** Approved
+- **Date:** {YYYY-MM-DD}
+```
+
+2. Suggest next step: `dev-workflow:executing-plans`

@@ -9,9 +9,12 @@ user-invocable: false
 ### Step 1: Load and Review Plan
 
 1. Read the plan file
-2. Review critically — identify gaps, ambiguities, or concerns
-3. If concerns: raise them before starting. Do not proceed with a plan you disagree with
-4. If no concerns: proceed to execution
+2. **Verification pre-check**: Look for a `## Verification` section with `Verdict: Approved` in the plan file
+   - If found: verification is done, continue
+   - If not found: invoke `dev-workflow:verifying-plans` before proceeding
+3. Review critically — identify gaps, ambiguities, or concerns
+4. If concerns: raise them before starting. Do not proceed with a plan you disagree with
+5. If no concerns: proceed to execution
 
 ### Step 2: Execute in Batches
 

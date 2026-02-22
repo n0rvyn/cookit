@@ -105,24 +105,11 @@ Context: This is Phase {N} of the dev-guide at {dev-guide path}.
 5. Update state: `plan_file: <path>`, `last_updated: <now>`
 6. Present plan summary to user (task count, key files)
 
-### Step 3: Verify (agent dispatch)
+### Step 3: Verify
 
 1. Update state: `phase_step: verify`, `last_updated: <now>`
-2. Use the Task tool to dispatch the `plan-verifier` agent:
-
-```
-Verify this implementation plan:
-
-Plan file: {plan_file path from state}
-Design doc: {design doc path or "none"}
-Project root: {project root}
-```
-
-3. When agent returns: present the verification summary
-4. If verdict is `must-revise`:
-   a. Apply the specific revisions to the plan file (light edits in main context)
-   b. Re-dispatch the plan-verifier agent with the updated plan (max 2 revision cycles)
-5. Update state: `verification_report: <summary>`, `last_updated: <now>`
+2. Invoke `dev-workflow:verifying-plans` with the plan from Step 2
+3. Update state: `verification_report: <summary>`, `last_updated: <now>`
 
 ### Step 4: Execute (main context)
 

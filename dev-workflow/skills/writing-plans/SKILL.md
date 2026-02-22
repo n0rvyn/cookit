@@ -45,7 +45,7 @@ Additional context:
 {any relevant details from the conversation}
 ```
 
-### Step 3: Present Results
+### Step 3: Present and Verify
 
 When the agent completes:
 
@@ -54,4 +54,4 @@ When the agent completes:
    - Plan file path
    - Number of tasks
    - Key files to be created/modified
-3. Suggest next step: `dev-workflow:verifying-plans` to validate the plan before execution
+3. Invoke `dev-workflow:verifying-plans` to validate the plan before execution
