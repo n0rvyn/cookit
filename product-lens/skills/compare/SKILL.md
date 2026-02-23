@@ -1,7 +1,6 @@
 ---
 name: compare
 description: "Use when the user wants to compare multiple products or projects to decide which to focus on. Evaluates each app and produces a scoring matrix with recommendations."
-disable-model-invocation: true
 ---
 
 ## Process

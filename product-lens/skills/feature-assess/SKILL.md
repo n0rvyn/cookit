@@ -1,7 +1,6 @@
 ---
 name: feature-assess
 description: "Use when the user wants to evaluate whether an existing app should add a specific feature. Analyzes demand fit, journey contribution, build cost, and strategic value. Produces a GO/DEFER/KILL verdict with conditional follow-up: integration map (GO) or alternative directions (DEFER/KILL). Works on local projects only (requires code access)."
-disable-model-invocation: true
 ---
 
 ## Process

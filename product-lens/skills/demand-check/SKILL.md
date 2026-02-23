@@ -1,7 +1,6 @@
 ---
 name: demand-check
 description: "Use for a quick demand reality check on a product idea or project. Runs only the demand validation dimension and Elevator Pitch test. Fast first-pass filter before committing to build."
-disable-model-invocation: true
 ---
 
 ## Overview
