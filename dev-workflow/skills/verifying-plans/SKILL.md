@@ -22,6 +22,14 @@ Collect the following before dispatching:
 
 If the plan file path is unclear, ask the user.
 
+### Step 1.5: Retrieve Error Patterns (if search tool available)
+
+After collecting plan and design doc paths, extract technical keywords from the plan (framework names, API names, component names found in the plan file) and search for known error patterns:
+
+1. Call `search(query="<technical keywords from plan>", source_type=["error", "lesson"], project_root="<cwd>")`
+2. If results are returned: collect them as `retrieved_context` — a compact list of (source_path, section, content preview) for each hit
+3. If the search tool is unavailable or returns no results: set `retrieved_context` to empty and continue
+
 ### Step 2: Dispatch Agent
 
 Use the Task tool to launch the `plan-verifier` agent with all gathered context. Structure the task prompt as:
@@ -32,6 +40,9 @@ Verify this implementation plan:
 Plan file: {path}
 Design doc: {path or "none"}
 Project root: {path}
+
+Retrieved error patterns and lessons (from knowledge base):
+{retrieved_context — one entry per line, or "none" if empty}
 ```
 
 ### Step 3: Present Results

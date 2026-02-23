@@ -1,10 +1,14 @@
 # Swift/iOS 通用编码规范
+<!-- SECTION MARKERS: Each "section" comment line immediately precedes the ##
+     heading it labels. Use Grep("<!-- section:", file) to find sections, then
+     Read(file, offset, limit) to fetch only the relevant lines. -->
 
 > **适用**: Swift 6+ / iOS 18+ / SwiftUI / SwiftData
 > **引用方式**: 项目级 coding-standards 引用本文件，只保留项目特定规则
 
 ---
 
+<!-- section: 1. Swift 命名规范 keywords: naming, types, variables, functions, enums, protocols, lowerCamelCase, UpperCamelCase -->
 ## 1. Swift 命名规范
 
 基于 [Swift API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/)
@@ -69,6 +73,7 @@ enum NetworkError: Error {
 
 ---
 
+<!-- section: 2. 代码组织 keywords: file structure, MARK, organization, code layout -->
 ## 2. 代码组织
 
 ### 2.1 文件结构
@@ -117,6 +122,7 @@ private extension TrainingLogViewModel { ... }
 
 ---
 
+<!-- section: 3. 并发编程 (Swift 6+) keywords: concurrency, async, await, MainActor, actor, Swift 6, sendable -->
 ## 3. 并发编程 (Swift 6+)
 
 ### 3.1 核心原则
@@ -203,6 +209,7 @@ protocol DataServiceProtocol {
 
 ---
 
+<!-- section: 4. SwiftUI 最佳实践 keywords: SwiftUI, view, state, binding, observable, environment -->
 ## 4. SwiftUI 最佳实践
 
 ### 4.1 View 命名
@@ -258,6 +265,7 @@ struct TrainingLogView: View {
 
 ---
 
+<!-- section: 5. iOS 版本适配 keywords: version, compatibility, availability, iOS version, deprecation -->
 ## 5. iOS 版本适配
 
 ### 5.1 #available 检查
@@ -283,6 +291,7 @@ if #available(iOS 26, *) {
 
 ---
 
+<!-- section: 6. Git 工作流 keywords: git, commit, branch, workflow, version control -->
 ## 6. Git 工作流
 
 ### 6.1 分支策略
@@ -328,6 +337,7 @@ Closes #123
 
 ---
 
+<!-- section: 7. 代码审查清单 keywords: code review, checklist, review -->
 ## 7. 代码审查清单
 
 ### 7.1 必查项
@@ -348,6 +358,7 @@ Closes #123
 
 ---
 
+<!-- section: 8. 性能优化 keywords: performance, optimization, memory, lazy, profiling -->
 ## 8. 性能优化
 
 ### 8.1 SwiftUI 性能
@@ -393,6 +404,7 @@ for item in items {
 
 ---
 
+<!-- section: 9. 避坑指南 keywords: pitfalls, gotchas, common mistakes, warnings -->
 ## 9. 避坑指南
 
 ### 9.1 SwiftData 常见坑
@@ -437,6 +449,7 @@ var body: some View {
 
 ---
 
+<!-- section: 10. 本地化规范 keywords: localization, strings, localized, l10n -->
 ## 10. 本地化规范
 
 ### 10.1 String Catalog

@@ -25,9 +25,28 @@ Determine what aspect of SwiftData the user needs help with:
 - Data migration
 - Concurrency safety
 
-### 2. Read Reference Guide
+### 2. Read Relevant Section of Reference Guide
 
-Read `references/swiftdata-guide.md` section corresponding to the user's need.
+Grep for section markers:
+
+```
+Grep("<!-- section:", "references/swiftdata-guide.md")
+```
+
+Match the user's need to the section keywords, then read only that section:
+
+```
+Read("references/swiftdata-guide.md", offset=<marker_line + 1>, limit=<lines_to_next_marker>)
+```
+
+Section-to-need mapping:
+- @Model definition → section "1. @Model 定义"
+- Relationships → section "2. 关系定义"
+- Querying → section "3. 查询"
+- Migration → section "4. 数据迁移"
+- Concurrency → section "5. 并发安全"
+- Performance → section "6. 性能优化"
+- Testing → section "7. 测试"
 
 ### 3. Provide Contextual Guidance
 

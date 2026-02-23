@@ -1,7 +1,11 @@
 # SwiftData Best Practices
+<!-- SECTION MARKERS: Each "section" comment line immediately precedes the ##
+     heading it labels. Use Grep("<!-- section:", file) to find sections, then
+     Read(file, offset, limit) to fetch only the relevant lines. -->
 
 SwiftData 是 Apple 在 iOS 17+ / macOS 14+ 引入的声明式数据持久化框架，替代 Core Data。
 
+<!-- section: 1. @Model 定义 keywords: @Model, SwiftData model, properties, optional, @Transient, @Attribute -->
 ## 1. @Model 定义
 
 ### 基本类型
@@ -66,6 +70,7 @@ final class User {
 }
 ```
 
+<!-- section: 2. 关系定义 keywords: relationships, one-to-many, many-to-many, @Relationship, inverse, delete rule, cascade -->
 ## 2. 关系定义
 
 ### 一对多
@@ -122,6 +127,7 @@ final class Comment {
 }
 ```
 
+<!-- section: 3. 查询 keywords: @Query, predicate, filter, sort, FetchDescriptor, dynamic query -->
 ## 3. 查询
 
 ### @Query 基础
@@ -223,6 +229,7 @@ struct ItemListContent: View {
 }
 ```
 
+<!-- section: 4. 数据迁移 keywords: migration, versioned schema, ModelMigrationPlan, lightweight migration -->
 ## 4. 数据迁移
 
 ### Schema version
@@ -296,6 +303,7 @@ enum ItemMigrationPlan: SchemaMigrationPlan {
 - 删除属性
 - 重命名实体或属性（使用 `@Attribute(.originalName:)` 标记）
 
+<!-- section: 5. 并发安全 keywords: concurrency, ModelContext, thread safety, MainActor, background task -->
 ## 5. 并发安全
 
 ### @MainActor 使用
@@ -395,6 +403,7 @@ actor BackgroundProcessor {
 }
 ```
 
+<!-- section: 6. 性能优化 keywords: performance, lazy loading, batch, memory, optimization -->
 ## 6. 性能优化
 
 ### 批量操作
@@ -432,6 +441,7 @@ let items = try? modelContext.fetch(descriptor)
 
 SwiftData 默认惰性加载关系，只在访问时加载。保持这个默认行为。
 
+<!-- section: 7. 测试 keywords: testing, in-memory, ModelContainer, unit test, SwiftData testing -->
 ## 7. 测试
 
 ### 内存数据库

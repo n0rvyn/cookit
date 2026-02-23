@@ -1,10 +1,14 @@
 # iOS UI 检查清单
+<!-- SECTION MARKERS: Each "section" comment line immediately precedes the ##
+     heading it labels. Use Grep("<!-- section:", file) to find sections, then
+     Read(file, offset, limit) to fetch only the relevant lines. -->
 
 > 用于 execution-review 阶段检查 UI 代码合规性。
 > 适用：iOS 26 / SwiftUI / Swift 6（兼容 iOS 18+）
 
 ---
 
+<!-- section: 1. 间距与布局 keywords: spacing, layout, padding, 8pt grid, safe area, touch target -->
 ## 1. 间距与布局
 
 ### 1.1 8pt 网格
@@ -24,6 +28,7 @@
 
 ---
 
+<!-- section: 2. 颜色 keywords: color, dark mode, contrast, semantic color, accessibility -->
 ## 2. 颜色
 
 ### 2.1 语义颜色优先
@@ -53,6 +58,7 @@
 
 ---
 
+<!-- section: 3. 字体 keywords: typography, dynamic type, font size, SF Pro -->
 ## 3. 字体
 
 ### 3.1 动态字体
@@ -71,6 +77,7 @@
 
 ---
 
+<!-- section: 4. 交互 keywords: interaction, button, loading, gesture, form, feedback -->
 ## 4. 交互
 
 ### 4.1 即时反馈
@@ -123,6 +130,7 @@
 
 ---
 
+<!-- section: 5. 可访问性 keywords: accessibility, VoiceOver, reduce motion, contrast -->
 ## 5. 可访问性
 
 ### 5.1 VoiceOver
@@ -141,6 +149,7 @@
 
 ---
 
+<!-- section: 6. 导航 keywords: navigation, NavigationStack, TabBar, back button -->
 ## 6. 导航
 
 ### 6.1 返回导航
@@ -158,6 +167,7 @@
 
 ---
 
+<!-- section: 7. 系统控件 keywords: system controls, List, Sheet, Alert, Picker, TextField -->
 ## 7. 系统控件
 
 ### 7.1 优先使用原生（控件 + 行为 API）
@@ -190,6 +200,7 @@
 
 ---
 
+<!-- section: 8. 列表与滚动 keywords: list, scroll, LazyVStack, performance, ScrollView -->
 ## 8. 列表与滚动
 
 ### 8.1 List 规范
@@ -207,6 +218,7 @@
 
 ---
 
+<!-- section: 9. 表单 keywords: form, input, validation, keyboard, TextField -->
 ## 9. 表单
 
 ### 9.1 输入验证
@@ -223,6 +235,7 @@
 
 ---
 
+<!-- section: 10. SwiftUI 反模式 keywords: anti-patterns, avoid, wrong, deprecated -->
 ## 10. SwiftUI 反模式
 
 > 显式黑名单：AI 易犯的 SwiftUI 错误模式。
@@ -301,6 +314,7 @@
 
 ---
 
+<!-- section: 11. 设计质量 keywords: design quality, visual, professional, polish -->
 ## 11. 设计质量
 
 > 供 `/design-review` 命令参考。关注视觉打磨感而非代码合规。

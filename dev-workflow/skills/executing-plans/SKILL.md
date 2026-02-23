@@ -20,6 +20,12 @@ user-invocable: false
 
 Default batch size: 3 tasks.
 
+**Before starting each batch (if search tool available):**
+1. Collect task titles and key technical terms from the batch (file names, API names, component names mentioned in task steps)
+2. Call `search(query="<batch task titles and keywords>", source_type=["error", "lesson"], project_root="<cwd>")`
+3. If results are returned: present them as "Relevant lessons for this batch:" before executing any task in the batch
+4. If the search tool is unavailable or returns no results: skip silently and begin task execution
+
 For each task in the batch:
 1. Read the task fully before starting
 2. If the task has design anchor fields (Design ref, Expected values, etc.), read the referenced design section first

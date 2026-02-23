@@ -1,7 +1,11 @@
 # iOS/Swift Development Rules
+<!-- SECTION MARKERS: Each "section" comment line immediately precedes the ##
+     heading it labels. Use Grep("<!-- section:", file) to find sections, then
+     Read(file, offset, limit) to fetch only the relevant lines. -->
 
 > Extracted from global CLAUDE.md for plugin-based delivery. These rules are automatically loaded in iOS projects via the ios-development plugin.
 
+<!-- section: Build-Check-Fix Cycle keywords: build, xcodebuild, check, fix, compile cycle, timing -->
 ## Build-Check-Fix Cycle
 
 ```
@@ -16,6 +20,7 @@ Write Code -> xcodebuild build -> Check errors -> Fix -> Repeat
 
 **不要**：每几行代码就跑、只改注释/文档时跑
 
+<!-- section: 通用约束 keywords: constraints, forbidden, required, main thread, API key, hardcoded -->
 ## 通用约束
 
 ```
@@ -33,6 +38,7 @@ Write Code -> xcodebuild build -> Check errors -> Fix -> Repeat
 必须：写自定义状态管理/手势检测/布局逻辑前，先搜索平台是否提供声明式 API 解决同一问题（Apple 文档 / SwiftUI API 列表）。未搜索就写状态机或手工计算 = 违反本规则
 ```
 
+<!-- section: Swift 6 并发原则 keywords: Swift 6, concurrency, MainActor, Sendable, @Model, actor -->
 ## Swift 6 并发原则
 
 > 详细规范由 `references/swift-coding-standards.md` 提供。以下为关键要点。
@@ -43,6 +49,7 @@ Write Code -> xcodebuild build -> Check errors -> Fix -> Repeat
 - `nonisolated` 用于不访问 actor 状态的纯计算方法
 - 闭包捕获 `@MainActor` 属性时，用 `MainActor.run { ... }` 包裹
 
+<!-- section: .foregroundColor 迁移策略 keywords: foregroundColor, foregroundStyle, migration, deprecation -->
 ## .foregroundColor 迁移策略
 
 项目中 `.foregroundColor()` 存在大量调用（验证命令：`rg -c '\.foregroundColor\(' --type swift | awk -F: '{s+=$2}END{print s}'`）。无法一次性替换。
@@ -50,6 +57,7 @@ Write Code -> xcodebuild build -> Check errors -> Fix -> Repeat
 - 改现有文件时：顺带替换该文件中的 `.foregroundColor()`
 - 不做：专门发起批量替换（风险高、收益低）
 
+<!-- section: iOS UI 规则（分层生效） keywords: UI rules, layers, design system, hardcoded values -->
 ## iOS UI 规则（分层生效）
 
 **Layer 1 - 硬性禁令**（无条件生效，见上方「通用约束」）：
@@ -67,6 +75,7 @@ Write Code -> xcodebuild build -> Check errors -> Fix -> Repeat
 1. 计划中所有 UI 尺寸必须标注对应设计系统变量
 2. 无对应变量的值 → 标注 `⚠️ 待定` 并询问用户
 
+<!-- section: 计划阶段架构审查（条件触发） keywords: architecture review, plan, triggers, parallel paths -->
 ## 计划阶段架构审查（条件触发）
 
 触发条件：计划涉及新增触发/调度入口、新增数据处理路径、或重构已有机制的核心路径。
@@ -88,11 +97,13 @@ Write Code -> xcodebuild build -> Check errors -> Fix -> Repeat
    ```
 4. 标注了"问用户"的架构冲突，禁止在未得到用户回复前继续编写计划的该部分
 
+<!-- section: 计划编写原则 keywords: plan writing, plan draft, requirements -->
 ## 计划编写原则
 
 - **约束前置** 计划开头列出：用户明确要求、技术约束、禁止事项
 - **UX 决策显式化** 导航方式、过渡动画、交互反馈需在计划中列出，不留给实现时判断
 
+<!-- section: 计划自检（M&M 测试） keywords: plan self-check, M&M test, surface, hidden, reinventing -->
 ## 计划自检（M&M 测试）
 
 > 触发条件：计划涉及 ≥ 3 个文件变更，或涉及架构/数据流变更。
@@ -116,6 +127,7 @@ Write Code -> xcodebuild build -> Check errors -> Fix -> Repeat
 答：{具体逻辑} — {已查 / 未查对应平台 API}（未查 = 必须先查再继续）
 ```
 
+<!-- section: 计划执行原则 keywords: execution, ambiguity, interruption, clarification -->
 ## 计划执行原则
 
 **歧义词检查**（执行前必做）：
@@ -138,6 +150,7 @@ Write Code -> xcodebuild build -> Check errors -> Fix -> Repeat
 计划说「{原文}」，我的理解是：{具体实现方式}。是否正确？
 ```
 
+<!-- section: 计划执行中断处理（必须遵守） keywords: interruption, pause, resume, mid-execution -->
 ## 计划执行中断处理（必须遵守）
 
 **触发条件**：执行计划时遇到以下情况之一：
@@ -162,6 +175,7 @@ Write Code -> xcodebuild build -> Check errors -> Fix -> Repeat
 
 **禁止**：以任何技术理由自行选择方案
 
+<!-- section: 错误修复原则 keywords: error fix, bug fix, reproduce, confirm -->
 ## 错误修复原则
 
 > 触发条件：用户指出实现逻辑或行为错误。
@@ -179,6 +193,7 @@ Write Code -> xcodebuild build -> Check errors -> Fix -> Repeat
 3. **等待用户确认后再改**
 
 
+<!-- section: 删除代码原则 keywords: delete code, search references, dead code -->
 ## 删除代码原则
 
 删除任何状态变量、函数、文件前，必须：
@@ -187,6 +202,7 @@ Write Code -> xcodebuild build -> Check errors -> Fix -> Repeat
 2. **检查用途**：每个引用位置的功能是什么？删除后功能是否受影响？
 3. **关联处理**：功能需要保留则保留代码或用替代方案实现
 
+<!-- section: 死代码/未接入代码处置原则 keywords: dead code, unused code, unreferenced, disposal -->
 ## 死代码/未接入代码处置原则
 
 触发条件：发现代码存在但未被调用、功能写好但未接入主路径、或代码路径不可达

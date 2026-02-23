@@ -26,9 +26,27 @@ Determine what the user needs:
 - Pluralization handling
 - Localization testing
 
-### 2. Read Reference Guide
+### 2. Read Relevant Section of Reference Guide
 
-Read `references/localization-guide.md` section corresponding to the user's need.
+Grep for section markers:
+
+```
+Grep("<!-- section:", "references/localization-guide.md")
+```
+
+Read only the section matching the user's scenario:
+
+```
+Read("references/localization-guide.md", offset=<marker_line + 1>, limit=<lines_to_next_marker>)
+```
+
+Section-to-need mapping:
+- Initial setup / xcstrings → section "1. String Catalogs (.xcstrings)"
+- String management → section "2. String(localized:) 最佳实践"
+- Pluralization → section "3. 复数和变量处理"
+- Organization → section "4. 组织策略"
+- Validation / testing → section "5. 本地化验证"
+- Common issues → section "6. 常见问题"
 
 ### 3. Provide Contextual Guidance
 

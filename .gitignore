@@ -1,2 +1,13 @@
 # Ignore plans directory
 docs/06-plans/
+06-discussions/
+
+# RAG index and transient flags (rebuilt from source files)
+.claude/rag/index.db
+.claude/rag/.dirty
+rag-server/.venv/
+rag-server/__pycache__/
+rag-server/embed/embed
+
+# Dev-workflow transient state
+.claude/dev-workflow-state.yml

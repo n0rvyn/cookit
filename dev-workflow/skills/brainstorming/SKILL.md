@@ -19,6 +19,13 @@ If the user already has 2+ concrete options and needs to pick one, use `dev-work
 
 ### 1. Explore Project Context
 
+**First, search the knowledge base (if search tool available):**
+1. Extract 3-5 domain keywords from the user's request (component type, domain area, technology names)
+2. Call `search(query="<domain keywords>", source_type=["doc", "error", "lesson"], project_root="<cwd>")`
+3. If results are returned: note existing architecture decisions and lessons; use them to avoid proposing approaches already tried or decided against
+4. If the search tool is unavailable or returns no results: skip silently
+
+Then:
 - Read relevant code, configs, and docs
 - Understand what exists before proposing anything new
 

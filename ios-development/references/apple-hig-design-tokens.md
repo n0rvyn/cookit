@@ -1,9 +1,13 @@
 # A 100-score parameterizable iOS + macOS design token system
+<!-- SECTION MARKERS: Each "section" comment line immediately precedes the ##
+     heading it labels. Use Grep("<!-- section:", file) to find sections, then
+     Read(file, offset, limit) to fetch only the relevant lines. -->
 
 **A fully parameterizable design token architecture that generates complete, Apple HIG-compliant token sets for iOS and macOS from a single style configuration.** This system uses the W3C DTCG specification, a three-tier token hierarchy (primitive → semantic → component), and OKLCH-based color generation to produce theme variants — sporty, diet, minimalist, or any custom mood — while maintaining WCAG AA accessibility and pixel-perfect platform fidelity. It integrates with Style Dictionary for cross-platform output and ships with phased prompts for Claude Code and Figma AI to turn tokens into production SwiftUI code and design files.
 
 ---
 
+<!-- section: Part 1: Token architecture keywords: token architecture, design tokens, primitive, semantic, component, DTCG, W3C -->
 ## Part 1: Token architecture and the three-tier hierarchy
 
 The system follows the industry-standard **primitive → semantic → component** token pattern used by GitHub Primer, Shopify Polaris, IBM Carbon, and Salesforce Lightning, aligned to the **W3C Design Tokens Community Group (DTCG) specification v2025.10**.
@@ -57,6 +61,7 @@ All tokens follow the **category-property-variant-state** pattern with kebab-cas
 
 ---
 
+<!-- section: Part 2: Apple HIG reference values keywords: HIG values, spacing, corner radius, shadow, typography, Apple spec -->
 ## Part 2: Apple HIG reference values — the complete specification
 
 ### iOS typography scale (default "Large" Dynamic Type)
@@ -281,6 +286,7 @@ Symbols scale with the paired text style — a body-sized symbol renders at **17
 
 ---
 
+<!-- section: Part 3: iOS 26 Liquid Glass keywords: Liquid Glass, iOS 26, materials, blur, specular -->
 ## Part 3: iOS 26 — Liquid Glass and the new design language
 
 iOS 26 shipped September 2025 with **Liquid Glass**, Apple's largest visual overhaul since iOS 7. This translucent material uses real-time refraction, specular highlights that respond to device motion, and adaptive shadows — creating UI elements that behave like real glass. The design unifies across all Apple platforms simultaneously.
@@ -326,6 +332,7 @@ The glass material renders dynamically — there is no static hex value. Token t
 
 ---
 
+<!-- section: Part 4: OKLCH color generation keywords: OKLCH, color generation, hue, chroma, lightness, palette -->
 ## Part 4: Parameterizable color generation with OKLCH
 
 The color system uses **OKLCH** (Lightness-Chroma-Hue) because it is perceptually uniform: equal numeric changes produce equal perceived changes, unlike HSL where blue and yellow at 50% lightness look vastly different.
@@ -419,6 +426,7 @@ Every generated color pair is validated against WCAG AA: **4.5:1** for normal te
 
 ---
 
+<!-- section: Part 5: Semantic and component tokens keywords: semantic tokens, component tokens, button, card, textfield -->
 ## Part 5: Complete semantic and component token specification
 
 ### Semantic color tokens (JSON, DTCG format)
@@ -872,6 +880,7 @@ Style Dictionary transforms the DTCG JSON source into: Swift extensions with `UI
 
 ---
 
+<!-- section: Part 9: Phased prompts keywords: Claude Code prompts, Figma AI, generation, workflow -->
 ## Part 9: Phased prompts for Claude Code and Figma AI
 
 ### CLAUDE.md system context file

@@ -25,9 +25,27 @@ Determine what the user needs:
 - TDD workflow
 - Test coverage goals
 
-### 2. Read Reference Guide
+### 2. Read Relevant Section of Reference Guide
 
-Read `references/testing-guide.md` section corresponding to the user's need.
+Grep for section markers:
+
+```
+Grep("<!-- section:", "references/testing-guide.md")
+```
+
+Read only the section matching the user's scenario:
+
+```
+Read("references/testing-guide.md", offset=<marker_line + 1>, limit=<lines_to_next_marker>)
+```
+
+Section-to-need mapping:
+- Unit tests → section "1. Unit Test 组织"
+- UI tests → section "2. UI Test 最佳实践"
+- Mocking / DI → section "3. Mock 和 Dependency Injection"
+- Async testing → section "4. 异步测试"
+- TDD → section "5. TDD 流程"
+- Coverage → section "6. 测试覆盖率"
 
 ### 3. Provide Contextual Guidance
 

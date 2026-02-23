@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# RAG post-commit hook
+# Writes a .dirty flag so the MCP server re-indexes at next query time.
+# Install with: python3 rag-server/cli.py install-hook
+#
+# This hook is installed to .git/hooks/post-commit by `rag install-hook`.
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+FLAG_DIR="${REPO_ROOT}/.claude/rag"
+FLAG_FILE="${FLAG_DIR}/.dirty"
+
+mkdir -p "${FLAG_DIR}"
+touch "${FLAG_FILE}"

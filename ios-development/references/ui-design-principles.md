@@ -1,4 +1,7 @@
 # UI 设计原则（专业级参考）
+<!-- SECTION MARKERS: Each "section" comment line immediately precedes the ##
+     heading it labels. Use Grep("<!-- section:", file) to find sections, then
+     Read(file, offset, limit) to fetch only the relevant lines. -->
 
 > 目标：让 AI 辅助开发的 UI 达到专业设计师 90 分水准。
 > 适用平台：iOS/macOS（SwiftUI 优先）、Web App
@@ -6,6 +9,7 @@
 
 ---
 
+<!-- section: 1. 字体系统（Typography） keywords: typography, font scale, type scale, line height, font weight, Dynamic Type -->
 ## 1. 字体系统（Typography）
 
 ### 1.1 字号阶梯（Type Scale）
@@ -97,6 +101,7 @@ Apple 推荐正文最小 17pt，绝对最小 11pt。
 
 ---
 
+<!-- section: 2. 间距系统（Spacing） keywords: spacing, padding, margin, whitespace, 8pt grid, density -->
 ## 2. 间距系统（Spacing）
 
 ### 2.1 8pt 网格
@@ -194,6 +199,7 @@ Apple 推荐正文最小 17pt，绝对最小 11pt。
 
 ---
 
+<!-- section: 3. 颜色系统（Color） keywords: color, OKLCH, contrast, palette, semantic color, dark mode -->
 ## 3. 颜色系统（Color）
 
 ### 3.1 色彩比例法则
@@ -295,6 +301,7 @@ Apple 推荐正文最小 17pt，绝对最小 11pt。
 
 ---
 
+<!-- section: 4. 视觉层级（Visual Hierarchy） keywords: visual hierarchy, emphasis, weight, scale, prominence -->
 ## 4. 视觉层级（Visual Hierarchy）
 
 ### 4.1 三种工具建立层级
@@ -370,6 +377,7 @@ Level 5: 最弱信息     → .caption + .regular + .tertiary
 
 ---
 
+<!-- section: 5. 布局原则（Layout） keywords: layout, alignment, grid, columns, containment -->
 ## 5. 布局原则（Layout）
 
 ### 5.1 对齐
@@ -431,6 +439,7 @@ Level 5: 最弱信息     → .caption + .regular + .tertiary
 
 ---
 
+<!-- section: 6. 视觉流（Visual Flow） keywords: visual flow, reading order, F-pattern, Z-pattern -->
 ## 6. 视觉流（Visual Flow）
 
 ### 6.1 阅读模式
@@ -458,6 +467,7 @@ Level 5: 最弱信息     → .caption + .regular + .tertiary
 
 ---
 
+<!-- section: 7. Gestalt 原则（感知分组） keywords: Gestalt, grouping, proximity, similarity, closure -->
 ## 7. Gestalt 原则（感知分组）
 
 ### 7.1 接近性（Proximity）
@@ -515,6 +525,7 @@ A B C    D E F
 
 ---
 
+<!-- section: 8. UX 法则（Laws of UX） keywords: UX laws, Fitts, Hick, Miller, affordance -->
 ## 8. UX 法则（Laws of UX）
 
 ### 8.1 菲茨定律（Fitts's Law）
@@ -585,6 +596,7 @@ A B C    D E F
 
 ---
 
+<!-- section: 9. 动效原则（Motion） keywords: motion, animation, transition, easing, duration -->
 ## 9. 动效原则（Motion）
 
 ### 9.1 时长
@@ -675,6 +687,7 @@ A B C    D E F
 
 ---
 
+<!-- section: 10. 组件规范（Component Standards） keywords: components, button, card, input, modal, list -->
 ## 10. 组件规范（Component Standards）
 
 ### 10.1 按钮层级
@@ -735,6 +748,7 @@ A B C    D E F
 
 ---
 
+<!-- section: 11. iOS / macOS 平台特定（Apple HIG） keywords: Apple HIG, iOS, macOS, platform guidelines, navigation bar -->
 ## 11. iOS / macOS 平台特定（Apple HIG）
 
 ### 11.1 iOS 页面边距
@@ -879,6 +893,7 @@ Apple 提供的 `readableContentGuide` 根据设备宽度和字号自动调整�
 
 ---
 
+<!-- section: 15. iOS 26 Liquid Glass keywords: Liquid Glass, iOS 26, material, blur, frosted glass -->
 ## 15. iOS 26 Liquid Glass
 
 > iOS 26 已发布（2025 年 9 月）。使用 iOS 26 SDK 编译的 App 自动获得 Liquid Glass。项目最低部署目标 iOS 18 时，需用 `#available(iOS 26, *)` 包裹 Glass-only API。

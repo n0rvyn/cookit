@@ -1,7 +1,11 @@
 # Testing Workflow Guide
+<!-- SECTION MARKERS: Each "section" comment line immediately precedes the ##
+     heading it labels. Use Grep("<!-- section:", file) to find sections, then
+     Read(file, offset, limit) to fetch only the relevant lines. -->
 
 iOS/Swift 测试最佳实践，涵盖 Unit Test、UI Test、Mock 模式和 TDD 流程。
 
+<!-- section: 1. Unit Test 组织 keywords: unit test, Given-When-Then, setUp, tearDown, XCTestCase, naming -->
 ## 1. Unit Test 组织
 
 ### Given-When-Then 模式
@@ -80,6 +84,7 @@ final class ViewModelTests: XCTestCase {
 }
 ```
 
+<!-- section: 2. UI Test 最佳实践 keywords: UI test, XCUITest, Page Object, element identification, wait -->
 ## 2. UI Test 最佳实践
 
 ### Page Object 模式
@@ -204,6 +209,7 @@ override class func setUp() {
 }
 ```
 
+<!-- section: 3. Mock 和 Dependency Injection keywords: mock, dependency injection, protocol, test double, stub, fake -->
 ## 3. Mock 和 Dependency Injection
 
 ### Protocol-based Mocking
@@ -336,6 +342,7 @@ final class FakeDatabase: DatabaseProtocol {
 }
 ```
 
+<!-- section: 4. 异步测试 keywords: async test, await, XCTestExpectation, actor, concurrency testing -->
 ## 4. 异步测试
 
 ### async/await 测试
@@ -384,6 +391,7 @@ func testNotification_WhenPosted_TriggersCallback() {
 }
 ```
 
+<!-- section: 5. TDD 流程 keywords: TDD, test-driven, red-green-refactor, test first -->
 ## 5. TDD 流程
 
 ### Red-Green-Refactor
@@ -450,6 +458,7 @@ final class ShoppingCart {
 - 简单的 CRUD 操作
 - 探索性编程（不确定最终方案）
 
+<!-- section: 6. 测试覆盖率 keywords: coverage, test coverage, code coverage, metrics -->
 ## 6. 测试覆盖率
 
 ### 目标设定

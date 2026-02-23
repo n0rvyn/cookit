@@ -7,6 +7,15 @@ description: 对照计划与代码执行结果，做实现完成度与偏差审�
 
 Verify implementation matches plan. Use **after execution**.
 
+## Step 0: Retrieve Known Issues (if search tool available)
+
+Before invoking the implementation reviewer, search for known issues related to the modified modules:
+
+1. Identify the modified modules from the plan file or recent git changes (file names, component names, Swift type names)
+2. Call `search(query="<modified module names and component keywords>", source_type=["error", "lesson"], project_root="<cwd>")`
+3. If results are returned: note them as "Known issues for these modules:" — include them in the review context when presenting findings in the Output section
+4. If the search tool is unavailable or returns no results: skip silently
+
 ## Step 1: Invoke Implementation Reviewer
 
 Use the `dev-workflow:implementation-reviewer` agent to perform the full plan-vs-code verification and design fidelity audit (if design doc exists).

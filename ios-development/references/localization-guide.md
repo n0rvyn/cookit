@@ -1,7 +1,11 @@
 # Localization Workflow Guide
+<!-- SECTION MARKERS: Each "section" comment line immediately precedes the ##
+     heading it labels. Use Grep("<!-- section:", file) to find sections, then
+     Read(file, offset, limit) to fetch only the relevant lines. -->
 
 iOS/Swift 本地化最佳实践，涵盖 .xcstrings 管理、String Catalogs 和本地化验证。
 
+<!-- section: 1. String Catalogs (.xcstrings) keywords: String Catalog, xcstrings, localization setup, language, translation -->
 ## 1. String Catalogs (.xcstrings)
 
 ### 创建和管理
@@ -70,6 +74,7 @@ xcodebuild -importLocalizations \
   -project MyApp.xcodeproj
 ```
 
+<!-- section: 2. String(localized:) 最佳实践 keywords: String(localized:), LocalizedStringKey, table parameter, comment -->
 ## 2. String(localized:) 最佳实践
 
 ### 基本用法
@@ -161,6 +166,7 @@ Text(Strings.welcome)
 Button(Strings.getStarted) { }
 ```
 
+<!-- section: 3. 复数和变量处理 keywords: pluralization, inflect, variables, plural rules -->
 ## 3. 复数和变量处理
 
 ### Pluralization
@@ -262,6 +268,7 @@ String(localized: "Price: $\(price, format: .number.precision(.fractionLength(2)
 String(localized: "Last updated: \(date, format: .dateTime)")
 ```
 
+<!-- section: 4. 组织策略 keywords: organization, module, naming, file structure, reuse -->
 ## 4. 组织策略
 
 ### 推荐的文件结构
@@ -318,6 +325,7 @@ Button(String(localized: "Cancel", table: "Common")) { }
 // → 维护麻烦
 ```
 
+<!-- section: 5. 本地化验证 keywords: validation, pseudolocalization, preview, testing localization -->
 ## 5. 本地化验证
 
 ### Xcode 预览不同语言
@@ -378,6 +386,7 @@ struct LanguageSwitcher: View {
 "Save" → "[!!! Śàvè !!!]"
 ```
 
+<!-- section: 6. 常见问题 keywords: common issues, truncation, RTL, hardcoded strings, missing translations -->
 ## 6. 常见问题
 
 ### 文本截断

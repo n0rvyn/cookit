@@ -17,14 +17,20 @@ From calling command or user:
 
 ## Process
 
-### 1. Read Token Specification
+### 1. Read Token Specification (section-targeted)
 
-Read `references/apple-hig-design-tokens.md` to extract:
-- Spacing system (Part 2: 8pt grid)
-- Typography scales (iOS vs macOS)
-- Corner radius conventions
-- Shadow specifications
-- OKLCH color generation algorithm (Part 4)
+Grep for section markers:
+
+```
+Grep("<!-- section:", "references/apple-hig-design-tokens.md")
+```
+
+Read the following sections by their marker line offsets:
+
+- Spacing system: section "Part 2: Apple HIG reference values" — contains 8pt grid, corner radius, shadow, typography
+- OKLCH color generation: section "Part 4: Parameterizable color generation with OKLCH"
+
+Read each section individually with offset and limit derived from the Grep output.
 
 ### 2. Generate Theme Colors
 
