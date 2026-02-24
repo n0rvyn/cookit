@@ -384,7 +384,7 @@ For each step i from 0 to 10 (mapped to lightness values):
 
 This produces scales like Tailwind CSS v4's OKLCH colors, where chroma peaks at steps 400–600 and hue may drift slightly across the scale for organic warmth.
 
-### Three theme configurations
+### Starter configurations（仅作参考，实际颜色应来自产品讨论）
 
 | Parameter | 🏃 Sporty | 🥗 Diet | ✨ Minimalist |
 |-----------|----------|---------|--------------|
@@ -423,6 +423,22 @@ In dark mode, backgrounds go dark while accent colors get *lighter* to maintain 
 ### Accessibility enforcement
 
 Every generated color pair is validated against WCAG AA: **4.5:1** for normal text, **3:1** for large text and UI components. Apple's "Increase Contrast" mode requires a fourth color variant per token (light, dark, light-high-contrast, dark-high-contrast). The OKLCH lightness channel directly correlates to perceived brightness, making contrast predictions more reliable than HSL-based approaches.
+
+### Proportion rules → semantic role assignment
+
+Use a proportion rule to assign palette layers to semantic token roles. Derive the palette layers from the primary color using `secondaryHueOffset` and `tertiaryHueOffset`.
+
+| Proportion rule | 背景/中性层（Background） | 品牌主色层（Primary） | 强调/CTA 层（Accent） | 适用场景 |
+|----------------|------------------------|-------------------|-------------------|---------|
+| **60/30/10** | `appBackground`, `appSurface`, `appText`, `appTextSecondary` | `appPrimary`, `appPrimaryLight`, `appPrimaryDark` | `appAccent`, `appAccentLight` | 品牌感强、有明确主色调的 app |
+| **80/15/5** | `appBackground`, `appSurface`, `appText`, `appTextSecondary`, `appSecondary` | `appPrimary`, `appPrimaryLight`, `appPrimaryDark` | `appAccent` | 内容驱动、minimalist 风格的 app |
+
+**中性层参数**：与主色 hue 相同，但 `chromaPeak ≤ 0.06`、`chromaBase ≤ 0.01`（`neutralChroma`），保持色调统一感的同时不抢眼。
+
+**Accent 层 hue**：由 `secondaryHueOffset` 决定：
+- Complementary (180°): `H_accent = primaryHue + 180`
+- Analogous (±30°): `H_accent = primaryHue ± 30`
+- Triadic (120°): `H_accent = primaryHue + 120`
 
 ---
 
