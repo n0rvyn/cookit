@@ -28,7 +28,10 @@ Call `search` with:
 - `top_k`: the requested result count
 - `project_root`: current working directory
 
-If the search tool is unavailable: tell the user "The RAG search tool is not connected. Ensure the MCP server is running and registered in ~/.claude.json."
+If the search tool is unavailable:
+  Tell the user: "The RAG search tool is not connected. Ensure the MCP server is running
+  and registered in ~/.claude.json. Proceeding with local file search fallback."
+  Skip to Step 4 (Spotlight/Grep fallback).
 
 ### Step 3: Present RAG Results
 
@@ -51,20 +54,25 @@ If the user names result(s): call `Read` with the file path, offset, and limit f
 
 If results were found, stop here.
 
-### Step 4: Spotlight Fallback (zero RAG results)
+### Step 4: Fallback (zero RAG results OR search tool unavailable)
 
-If the result list contains a `result_count: 0` entry (or is empty), the RAG index has no match. Invoke the `spotlight-search` sub-agent with the same query:
+**Tier 1 — Spotlight (preferred, requires mactools):**
 
-```
-Invoking Spotlight search for: "<query>"
-```
+Check if mactools is available by checking if the spotlight-search sub-agent is registered.
+If available: invoke `spotlight-search` sub-agent with the same query (current behavior).
+If Spotlight returns results: present them prefixed with "[Spotlight fallback]" and stop.
 
-Pass the query to the `spotlight-search` agent and wait for its `[Spotlight Result]` output.
+**Tier 2 — Grep/Glob (always available, no external dependency):**
 
-Present the Spotlight result to the user as-is, prefixed with:
+If mactools not available OR Spotlight returns 0 results:
+1. `Grep(query, path="docs/", output_mode="content", context=2)`
+2. `Grep(query, path="docs/09-lessons-learned/", output_mode="content", context=2)`
+3. `Glob("**/*.md", path=".")` then Grep the top matches
+Present results prefixed with "[Local file search fallback — 字面匹配，无语义排名，结果相关性低于 RAG]"
 
-```
-[RAG: no results — Spotlight fallback]
-```
+If mactools is absent, also append:
+"💡 Install mactools for richer Spotlight-based local search."
 
-If Spotlight also finds nothing, say: "Neither the RAG index nor Spotlight found relevant results. Check that `rag build` has been run for this project, and that the topic exists in local files."
+**If both tiers return nothing:**
+"Neither RAG, Spotlight, nor local file search found results for '{query}'.
+ Check that `rag build` has been run and that mactools is installed for Spotlight support."

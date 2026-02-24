@@ -7,6 +7,11 @@ description: "Use when a plan has been written and needs validation before execu
 
 This skill dispatches the `plan-verifier` agent to validate an implementation plan in a separate context, keeping the main conversation lean.
 
+**Optional flag: `--fast`**
+When passed: use Sonnet instead of Opus for verification.
+Appropriate for plans with < 5 tasks or simple single-concern changes.
+Default (no flag): Opus for thorough verification.
+
 ## Process
 
 ### Step 1: Gather Context
@@ -32,7 +37,13 @@ After collecting plan and design doc paths, extract technical keywords from the 
 
 ### Step 2: Dispatch Agent
 
-Use the Task tool to launch the `plan-verifier` agent with all gathered context. Structure the task prompt as:
+Use the Task tool to launch the `plan-verifier` agent:
+- Default (no --fast): add `model: "opus"` to the Task tool call
+- With --fast flag: add `model: "sonnet"` to the Task tool call
+
+Note: must explicitly set model; the parent session runs Sonnet and inheritance gives Sonnet, not Opus.
+
+Structure the task prompt as:
 
 ```
 Verify this implementation plan:
