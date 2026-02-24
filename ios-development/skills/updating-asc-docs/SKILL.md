@@ -78,16 +78,19 @@ disable-model-invocation: true
 
 将审计发现的差异逐项修改到 `.md` 文件中。修改前必须让用户确认修改方案。
 
-### 4. 同步到 Notion
+### 4. 同步到 Notion（可选）
 
-使用 `/notion-page-sync` 的逻辑同步更新后的文件：
-
-1. 读取 `.claude/notion-sync.local.md` 获取 token 和配置
-2. 对每个更新的文件，调用：
-```bash
-NOTION_TOKEN="<token>" python3 ~/.claude/skills/notion/scripts/notion_api.py update-page --file <filepath> <page_id>
-```
-3. 输出同步结果汇总表
+检查 `.claude/notion-sync.local.md` 是否存在：
+- 存在：使用 `/notion-page-sync` 的逻辑同步更新后的文件：
+  1. 读取 `.claude/notion-sync.local.md` 获取 token 和配置
+  2. 对每个更新的文件，调用：
+  ```bash
+  NOTION_TOKEN="<token>" python3 ~/.claude/skills/notion/scripts/notion_api.py update-page --file <filepath> <page_id>
+  ```
+  3. 输出同步结果汇总表
+- 不存在：跳过，输出提示：
+  "⚠️ Notion sync skipped — .claude/notion-sync.local.md not found.
+   To enable: install the notion-page-sync skill and configure .claude/notion-sync.local.md."
 
 ### 5. 输出 App Store Connect 操作清单
 

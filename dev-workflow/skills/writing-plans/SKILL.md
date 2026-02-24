@@ -4,6 +4,15 @@ description: "Use when you have a spec or requirements for a multi-step task, be
 user-invocable: false
 ---
 
+## Behavior Note
+
+When invoked **standalone** (user runs writing-plans directly): this skill automatically chains
+to `dev-workflow:verifying-plans` at Step 3 — plan writing and verification happen in one flow.
+
+When invoked via **`running-phase`** orchestration: running-phase calls the `plan-writer` agent
+directly (not this skill) and manages verification as a separate explicit step. Both paths
+produce a verified plan; the difference is control granularity.
+
 ## Overview
 
 This skill dispatches the `plan-writer` agent to generate an implementation plan in a separate context, keeping the main conversation lean.

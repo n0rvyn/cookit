@@ -24,7 +24,7 @@ ls docs/05-features/ docs/07-changelog/ docs/03-decisions/ 2>/dev/null
 ```
 
 If these directories exist, remind the user:
-- New features completed → run `/write-feature-spec` to generate feature specs
+- New features completed → run `dev-workflow:writing-feature-spec` to generate feature specs
 - Architectural decisions made → update `docs/03-decisions/`
 - Changes worth logging → update `docs/07-changelog/`
 

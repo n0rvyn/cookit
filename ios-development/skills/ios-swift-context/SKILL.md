@@ -41,13 +41,28 @@ From the current task description, identify which keyword sets are relevant:
 | Interruption during execution | 计划执行中断处理（必须遵守） |
 | User reported a behavior bug | 错误修复原则 |
 | Deleting code or variables | 删除代码原则, 死代码/未接入代码处置原则 |
+| Working with iOS 18 APIs (@Entry, Tab, MeshGradient, @Previewable) | swift-api-changes-ios18 |
+| Working with iOS 26 APIs (glassEffect, FoundationModels) | swift-api-changes-ios26 |
+| Seeing deprecation warnings in Xcode | swift-api-changes-ios18 (migration), validate-design-tokens |
+| Using TabView | swift-api-changes-ios18 → TabView Architecture |
+| Adding LLM/AI features | swift-api-changes-ios26 → Foundation Models |
 
 ### Step 3: Read only the matched sections
 
-For each matched section, use the line number from the Grep result as `offset` and read until the next section marker or approximately 60 lines (whichever comes first):
+For each matched section in `ios-swift-rules.md`, use the line number from the Grep result as
+`offset` and read until the next section marker or approximately 60 lines (whichever comes first):
 
 ```
 Read("references/ios-swift-rules.md", offset=<section_line>, limit=<next_section_line - section_line>)
+```
+
+For `swift-api-changes-*` files: search for the specific section keyword rather than reading
+the entire file. Example: if the task involves `glassEffect`, grep for that keyword to find the
+section offset, then read only that section:
+
+```
+Grep("glassEffect", "references/swift-api-changes-ios26.md")
+→ Read("references/swift-api-changes-ios26.md", offset=<section_line>, limit=<lines_to_next_section>)
 ```
 
 If the task is not clearly scoped (e.g., the task description is very broad or covers the whole codebase), read `通用约束` and `Swift 6 并发原则` at minimum — these two sections apply to all Swift work.

@@ -104,12 +104,26 @@ Context: This is Phase {N} of the dev-guide at {dev-guide path}.
 4. When agent returns: note the plan file path from the summary
 5. Update state: `plan_file: <path>`, `last_updated: <now>`
 6. Present plan summary to user (task count, key files)
+7. Auto-select verification speed: count tasks in the returned plan file.
+   If task count < 5: mark `--fast` flag for Step 3 (use Sonnet for verification).
+   If task count ≥ 5: no flag (use Opus default).
 
 ### Step 3: Verify
 
 1. Update state: `phase_step: verify`, `last_updated: <now>`
-2. Invoke `dev-workflow:verifying-plans` with the plan from Step 2
+2. Invoke `dev-workflow:verifying-plans` with the plan from Step 2 (pass `--fast` flag if set in Step 2)
 3. Update state: `verification_report: <summary>`, `last_updated: <now>`
+
+**If still "Must revise" after 2 revision cycles:**
+Present the remaining issues to the user:
+> "Plan verification failed after 2 revision attempts. Remaining issues:
+> [list specific issues from verifier output]
+>
+> Options:
+> A. Stop and manually revise the plan, then re-run this step
+> B. Proceed with imperfect plan (issues noted in execution — treat as extra caution points)"
+
+Wait for user choice. If A: stop. If B: mark state `verification_report: "partial"` and continue.
 
 ### Step 4: Execute (main context)
 
@@ -153,8 +167,14 @@ Project root: {project root}
    - **If Phase completed a full user journey:** `/feature-review`
    - **If this is the submission prep Phase:** `/submission-preview`
 3. Dispatch ALL applicable review agents **in parallel** using the Task tool in a single message:
-   - For `implementation-reviewer`: use the agent directly
-   - For other reviews: dispatch via Task tool with appropriate context
+   - `implementation-reviewer` agent (always): pass plan file path + project root
+   - `ios-development:ui-reviewer` (if UI files modified): pass list of modified `*View.swift` files
+   - `ios-development:design-reviewer` (if new pages/components): pass list of new View files
+   - `ios-development:feature-reviewer` (if full user journey completed): pass feature scope + key files
+   - `dev-workflow:implementation-reviewer` handles plan vs code; ios agents handle quality
+
+   Each agent receives a fresh context — they have no memory of how the code was written.
+   This removes confirmation bias from self-review.
 4. When all return: collect results, present a consolidated summary of all findings
 5. Update state: `review_reports: [<paths>]`, `last_updated: <now>`
 

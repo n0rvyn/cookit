@@ -14,7 +14,13 @@ Run both before submission. They don't overlap.
 
 ### Step 1: Load Reference
 
-Read `~/.claude/docs/App-Review-Guidelines.md`.
+Search for the reference file:
+```
+Glob("**/ios-development/references/app-review-guidelines.md")
+```
+If found: Read it.
+If not found: proceed using the embedded checklist in this skill (sections 1-5 are fully
+embedded in Steps 3-4 below — the reference file is a convenience copy only).
 
 ### Step 2: Detect Project Characteristics
 
