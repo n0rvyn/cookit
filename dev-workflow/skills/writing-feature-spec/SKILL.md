@@ -1,6 +1,6 @@
 ---
 name: writing-feature-spec
-description: "Generate feature spec (docs/05-features/) comparing design intent against implementation. Use when a feature is complete and needs documentation before review."
+description: "Generate feature spec (docs/05-features/) capturing what was built, design decisions made, and user journeys completed. Use for cross-session context recovery, publication notes, or as input for external review. Not a prerequisite for self-review."
 user-invocable: false
 ---
 
@@ -65,4 +65,11 @@ When the agent completes:
    - User Story status counts (✅ / ⚠️ / ❌)
    - Number of deviations detected
 3. If deviations were found, briefly list them
-4. Suggest next step: `/feature-review` to review against the spec
+4. After spec is saved, offer:
+   "Spec saved at {path}. This can be used to:"
+   - "Quickly restore context in a future session (share spec with new Claude session)"
+   - "Document the feature for changelog or release notes"
+   - "Feed to an external reviewer for independent review:
+      Dispatch via Task tool with:
+        subagent_type: 'ios-development:feature-reviewer'
+        prompt: 'Review feature: {name}. Spec: {path}. Key files: {files list}. Project root: {root}'"
