@@ -13,6 +13,28 @@ Check SwiftUI code for Design Token compliance.
 
 ## Validation Rules
 
+**Pre-check: Read deployment target**
+
+```
+Grep("IPHONEOS_DEPLOYMENT_TARGET", "*.xcodeproj/project.pbxproj", output_mode="content")
+```
+
+- If target < 18.0: skip Section 0 entirely, output:
+  `ℹ️ Deprecated API check skipped — deployment target {X} < iOS 18`
+- If target ≥ 18.0 or not found: run Section 0.
+
+### 0. Deprecated API Detection (iOS 18+ minimum deployment target)
+
+**Search for `.cornerRadius(`:**
+- Flag as ❌ deprecated (removed from SwiftUI public API, deprecated since iOS 17)
+- Correct pattern: `.clipShape(.rect(cornerRadius: N))` or `RoundedRectangle(cornerRadius: N)`
+
+**Search for `.foregroundColor(`:**
+- Flag as ⚠️ deprecated (replaced by `.foregroundStyle(`)
+
+**Search for `NavigationView {`:**
+- Flag as ❌ deprecated (replaced by `NavigationStack` / `NavigationSplitView`)
+
 ### 1. Spacing Compliance
 
 **Search for**:
@@ -43,7 +65,11 @@ Check SwiftUI code for Design Token compliance.
 
 **Invalid patterns**:
 - `Color(hex: "#FF0000")`
-- `Color.blue`  // Should be `Color.appPrimary` if brand color
+
+`Color.blue` → ⚠️ Context-dependent
+  - If used for brand/primary action: replace with `Color.appPrimary`
+  - If used for links, info icons, system tints: ✅ acceptable (this IS a semantic system color)
+  - Rule: flag with "Verify: is this a brand color or a system semantic color?"
 
 ### 3. Typography Compliance
 
