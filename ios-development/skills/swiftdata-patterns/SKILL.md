@@ -85,7 +85,14 @@ Extract relevant code examples from the guide and adapt to user's context.
 ### 5. Highlight Common Pitfalls
 
 - Cross-thread ModelContext usage
-- Forgetting to call save()
+- **Misunderstanding autosave behavior**
+  - SwiftData autosaves automatically (triggered by run loop idle, app background, etc.)
+  - Explicit `modelContext.save()` IS needed for:
+    - Immediately before app enters background (AppDelegate/SceneDelegate lifecycle)
+    - After batch imports where you need the data visible immediately
+    - In tests that need synchronous state verification
+  - Do NOT call save() after every individual insert — let autosave handle it
+  - iOS 18+ (minimum deployment target): autosave behavior is stable and reliable
 - Overusing relationships (performance)
 - Not handling migration for schema changes
 
