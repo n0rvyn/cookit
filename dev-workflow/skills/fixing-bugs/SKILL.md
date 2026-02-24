@@ -85,13 +85,32 @@ If input is incomplete, ask for:
      ```
    - Parallel paths without coordination = architectural issue; flag as "⚠️ needs architectural fix" and inform user; do not fix only one path
 
-7. **Fix the root cause**
+7. **Plan the fix**
+
+   Before writing any code, classify fix complexity:
+
+   **Simple** — ALL must be true:
+   - Fix is confined to ≤2 file locations
+   - All changes are directly evident from verified assertions
+   - Step 5 not triggered, or all consumers showed ✅
+   - Step 6 not triggered, or no parallel path issues flagged
+
+   **Complex** — ANY is true:
+   - Fix spans 3+ file locations
+   - Step 5 found any ❌ consumer beyond the original bug site
+   - Step 6 flagged parallel paths without coordination
+   - Fix requires architectural changes
+
+   → If **Simple**: use Claude Code's built-in `/plan` to outline the fix before implementing
+   → If **Complex**: invoke `dev-workflow:writing-plans` to create a structured plan
+
+8. **Fix the root cause**
    - Address the actual cause, not just the symptom
    - Consider edge cases and related scenarios
    - Ensure the fix doesn't introduce new issues
    - After the fix is complete, suggest: "Consider running `/collect-lesson` to record this bug pattern for future retrieval."
 
-8. **Verify the fix**
+9. **Verify the fix**
    - Build the project
    - Reproduce the original bug scenario - confirm it's fixed
    - Test related scenarios to catch regressions
