@@ -183,3 +183,10 @@ description: 产品+UX 综合审查，从用户旅程角度验证功能完整性
 2. **代码可验证的先验证**：Part A/B 的结论基于代码证据（file:line）
 3. **与其他 review 不重复**：不检查 UI 合规（/ui-review）、视觉质量（/design-review）、代码质量（ios-reviewer）
 4. **针对性检查清单**：Part C 根据代码分析定制，不照搬模板
+
+## Completion Criteria
+
+- 功能 spec 已获取（或用户提供了预期行为描述）
+- 报告包含 Part A（产品完整性）、Part B（UX 完整性）、Part C（人工验证清单）
+- User Story 覆盖率已量化（N/M）
+- 每个发现附 file:line 引用

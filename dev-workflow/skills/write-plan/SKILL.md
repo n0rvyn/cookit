@@ -72,3 +72,8 @@ When the agent completes:
    - Number of tasks
    - Key files to be created/modified
 3. Invoke `dev-workflow:verify-plan` to validate the plan before execution
+
+## Completion Criteria
+
+- Plan file written to `docs/06-plans/`
+- Verification invoked and plan approved (or user chose to proceed with noted issues)

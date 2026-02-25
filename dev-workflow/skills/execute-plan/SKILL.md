@@ -80,3 +80,9 @@ If `.claude/dev-workflow-state.yml` exists and `phase_step` is `execute`:
   - `batch_progress`: `"{completed}/{total}"` (e.g., `"2/4"`)
   - `last_updated`: current timestamp
 - This enables cross-session resume if the session ends mid-execution
+
+## Completion Criteria
+
+- All plan tasks executed and verified
+- Full project build passes (Step 5)
+- Wrap-up suggestions presented (implementation-reviewer, finish-branch)

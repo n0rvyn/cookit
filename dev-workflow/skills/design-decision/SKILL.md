@@ -63,3 +63,9 @@ Before rejecting a complex option, verify:
 - Am I over-applying simplicity dogma?
 
 User knows their domain better than I do. If they insist on an approach I find complex, ask why before pushing back.
+
+## Completion Criteria
+
+- Comparison table presented (Rule 13 format)
+- User has selected an approach
+- If no option is suitable: alternative framing proposed and user acknowledged

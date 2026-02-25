@@ -85,3 +85,10 @@ All Phases confirmed → proceed to Step 5.
 After user confirms:
 
 > Development guide saved. Use `/run-phase` to start the Phase 1 development cycle (plan → execute → review).
+
+## Completion Criteria
+
+- Dev-guide file saved to `docs/06-plans/`
+- Structure confirmed by user (Step 3)
+- All phases individually confirmed by user (Step 4)
+- Next step (run-phase) communicated

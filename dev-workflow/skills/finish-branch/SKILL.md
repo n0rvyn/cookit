@@ -93,3 +93,10 @@ git worktree list | grep $(git branch --show-current)
 - If in a worktree and chose Option 1, 2, or 4: clean up the worktree
 - If in a worktree and chose Option 3: keep the worktree
 - If not in a worktree: skip this step
+
+## Completion Criteria
+
+- Tests pass (Step 1)
+- User has selected an integration option (Step 3)
+- Chosen option fully executed (Step 4)
+- Worktree cleaned up if applicable (Step 5)

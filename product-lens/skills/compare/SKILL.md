@@ -161,3 +161,11 @@ Across all evaluated projects:
 Post-processing:
 - Flag any project where 2+ dimensions scored <=2 stars (strong stop signal)
 - If all projects score poorly, say so directly — "none of these are strong candidates" is a valid conclusion
+
+## Completion Criteria
+
+- All target products individually evaluated (6 dimensions each)
+- Scoring matrix with weighted totals presented
+- Focus/Maintain/Stop recommendation provided
+- Development maturity signals compared (for local projects)
+- Individual reports included

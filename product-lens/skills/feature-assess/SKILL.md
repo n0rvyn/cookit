@@ -229,3 +229,10 @@ Post-processing:
 3. **Flag Low-confidence dimensions** — these are the investigation opportunities
 4. **If GO: highlight the first implementation step** from the Integration Map
 5. **If DEFER: highlight what to investigate first** to resolve uncertainty
+
+## Completion Criteria
+
+- All 4 dimensions evaluated and validated
+- GO/DEFER/KILL verdict computed with reasoning
+- Follow-up module delivered (Integration Map for GO; Alternative Directions for DEFER/KILL)
+- Final report assembled and presented

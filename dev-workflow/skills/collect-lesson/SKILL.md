@@ -82,3 +82,8 @@ Report back: `Saved as {id} at {path}`
 ### Graceful Degradation
 
 If `add_entry` tool is unavailable: print the draft entry and tell the user to copy it manually to `docs/09-lessons-learned/E{NNN}-{slug}.md` with the front-matter format shown in the entry.
+
+## Completion Criteria
+
+- Lesson entry saved via `add_entry` with confirmed id and path
+- Or: draft printed for manual copy (graceful degradation path)

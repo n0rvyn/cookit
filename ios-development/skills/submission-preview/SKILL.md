@@ -283,3 +283,11 @@ Report ends with:
 3. **Don't guess visual compliance**: App Store screenshots, UI appearance, crash behavior → manual checklist
 4. **Guidelines reference**: every finding cites the specific guideline number
 5. **Actionable fixes**: every issue includes a specific fix, not "fix this"
+
+## Completion Criteria
+
+- Project characteristics detected (Step 2)
+- All applicable guideline sections checked with code evidence
+- Report delivered with severity classification (High/Medium/Passed)
+- Manual verification checklist generated
+- 串联提示 to `/appstoreconnect-review` included

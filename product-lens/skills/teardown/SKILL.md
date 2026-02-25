@@ -92,3 +92,9 @@ Display the deep-dive report from the dimension-evaluator. The deep mode output 
 Post-processing:
 - If the dimension scored <=2, highlight this prominently
 - If Related Dimensions section identifies signals for other dimensions, suggest running `/evaluate` for the full picture or `/teardown [other dimension]` for a focused follow-up
+
+## Completion Criteria
+
+- Target dimension identified and deep-evaluated (depth mode: deep)
+- Deep-dive report with per-sub-question analysis presented
+- Follow-up suggestions provided (if related dimensions have signals)

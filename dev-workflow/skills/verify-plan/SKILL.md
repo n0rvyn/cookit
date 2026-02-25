@@ -80,3 +80,8 @@ When the plan is approved:
 ```
 
 2. Suggest next step: `dev-workflow:execute-plan`
+
+## Completion Criteria
+
+- Plan file has `## Verification` section with `Verdict: Approved` appended
+- Or: user explicitly chose to proceed after 2 revision cycles (verdict noted as "partial")

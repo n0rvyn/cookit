@@ -105,3 +105,9 @@ After completing commits, provide:
 1. Summary of commits created (list with hashes)
 2. Total number of commits
 3. Confirmation that working tree is clean
+
+## Completion Criteria
+
+- All logical change groups committed
+- `git status` shows clean working tree (or only intentionally unstaged files)
+- Commit summary with hashes presented

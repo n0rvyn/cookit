@@ -40,3 +40,9 @@ When the agent completes:
    - Ask the user: "Execute these fixes?"
 3. If user approves: apply the recommended changes to the CLAUDE.md files
 4. If user declines: done
+
+## Completion Criteria
+
+- Audit report presented to user
+- If fixes recommended: user has approved or declined each recommendation
+- If approved: changes applied to CLAUDE.md files

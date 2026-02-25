@@ -153,3 +153,11 @@ When the root cause isn't obvious from assertions alone:
 1. **Find a working example** — locate similar working code in the same codebase
 2. **Compare systematically** — list every difference between working and broken, however small
 3. **Don't assume irrelevance** — "that can't matter" is how bugs hide
+
+## Completion Criteria
+
+- Root cause identified with code evidence (file:line)
+- Fix applied and build passes
+- Original bug scenario verified fixed (Step 9 completed)
+- All ❌ consumers from value domain trace fixed (if Step 5 triggered)
+- No parallel path coordination issues left unresolved (if Step 6 triggered)

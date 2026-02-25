@@ -302,3 +302,9 @@ TextField("Email", text: $email)
 ---
 💡 代码合规检查完成。如需进一步审查视觉层级、色彩策略、间距节奏等设计质量，请运行 `/design-review`。
 ```
+
+## Completion Criteria
+
+- 报告包含 Part A（视觉规范）、Part B（交互完整性）、Part C（人工验证清单）
+- 每个发现附 file:line 引用
+- 串联提示已附加

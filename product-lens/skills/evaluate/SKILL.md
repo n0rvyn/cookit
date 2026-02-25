@@ -204,3 +204,10 @@ Post-processing:
 1. **Highlight the Elevator Pitch result** — if "Cannot articulate", call it out prominently at the top
 2. **Flag weak dimensions** — any dimension scored <=2 stars gets an explicit warning
 3. **Verify Priority Actions section** — confirm it lists all dimensions scored ≤3★ in ascending score order, each with its Next Action from the dimension-evaluator output. This replaces generic "next steps" with specific, dimension-derived actions.
+
+## Completion Criteria
+
+- All 6 dimensions evaluated and validated
+- Extras modules (Elevator Pitch, Kill Criteria, Feature Audit, Pivot Directions, Validation Playbook) generated
+- Final report assembled with weighted total
+- Report saved to `docs/08-product-evaluation/` (if local project)

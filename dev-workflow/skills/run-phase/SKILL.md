@@ -210,3 +210,9 @@ If any review found issues:
 - **Phase order matters.** Don't start Phase N+1 if Phase N has unchecked acceptance criteria (unless user explicitly overrides).
 - **Consolidate review output.** Merge all review results into one summary with sections.
 - **State before action.** Update state file before starting each step, not after.
+
+## Completion Criteria
+
+- Phase acceptance criteria checked off in dev-guide (Step 8)
+- State file `phase_step` set to `done`
+- Next phase communicated to user

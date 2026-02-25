@@ -75,3 +75,9 @@ If the design is primarily architectural (data model, service layer, component b
 
 After design is approved, inform the user:
 - Use `dev-workflow:write-plan` to create a structured implementation plan
+
+## Completion Criteria
+
+- User has approved a design direction (Step 4 sections all confirmed)
+- Design document saved to `docs/06-plans/` (Step 5 completed)
+- Next step (write-plan) communicated

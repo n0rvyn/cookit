@@ -76,3 +76,10 @@ Combine the implementation-reviewer agent's output with iOS-specific findings:
 - iOS issues: {N}
 - Doc gaps: {N}
 ```
+
+## Completion Criteria
+
+- implementation-reviewer agent 已完成 plan-vs-code 审查
+- iOS 专项扫描（Localization/Concurrency/Abstraction/Error Handling）已完成
+- 文档更新检查已完成
+- 合并摘要已输出
