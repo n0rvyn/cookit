@@ -190,9 +190,59 @@ disable-model-invocation: true
 - LLM 调用超时如何处理？
 - 如何避免无限循环？
 
+### 6.6 平台 API 可行性验证
+
+在确认功能范围之前，验证架构依赖的关键平台 API 和能力是否真的能按设计方式使用。
+
+#### 6.6.1 提取关键依赖
+
+从步骤 6 的功能列表和技术选型中，列出架构成立所依赖的关键 API/能力点。重点关注：
+
+- **跨 target 数据流**：Extension ↔ Main App、Widget ↔ Main App 之间传递的每种数据类型
+- **受限框架**：HealthKit、CallKit、Messages、SMS、Push Notification、NFC 等 Apple 管控较严的框架
+- **需要特殊 Entitlement 的能力**：App Groups、Keychain Sharing、Associated Domains 等
+- **Extension 中使用的 API**：Extension 对可用 API 有独立限制
+
+输出格式：
+
+```
+[关键依赖清单]
+1. {API/能力} — 用于 {什么功能} — 架构中的角色：{做什么}
+2. ...
+```
+
+#### 6.6.2 逐项查官方文档验证
+
+对清单中每一项，用 WebFetch 访问 Apple Developer Documentation 对应页面，确认：
+
+- 该 API 在目标 target 类型中是否可用
+- 数据是否允许在设计的路径上流转（特别是跨进程/跨 target）
+- 有无明确的使用限制或禁止事项
+- 需要哪些 Entitlement，Entitlement 是否对个人/组织开发者开放
+
+**搜索策略**：
+- 直接访问框架文档页：`https://developer.apple.com/documentation/{框架名}`
+- 访问对应 Extension 类型的文档：`https://developer.apple.com/documentation/{extension类型}`
+- 如果文档中未明确说明限制，补充搜索：WebSearch `"{API名}" "{Extension类型}" restrictions site:developer.apple.com`
+
+输出格式：
+
+```
+[API 验证结果]
+1. {API/能力} — ✅ 可行 — 文档确认：{关键原文摘录}
+2. {API/能力} — ❌ 不可行 — 文档原文：{限制描述} — 来源：{URL}
+3. {API/能力} — ⚠️ 文档未明确 — 需要 spike 验证
+```
+
+#### 6.6.3 处理验证结果
+
+- **全部 ✅**：进入 CP3
+- **有 ❌**：停止流程，向用户报告硬限制，讨论替代架构方案。调整架构后重新从 6.6.1 验证
+- **有 ⚠️**：告知用户哪些点文档未明确，建议在正式开发前用最小工程 spike 验证。用户决定是否现在验证还是接受风险继续
+
 ### CP3: 功能范围确认
 
-**展示内容**（控制在 50 行内）：
+**展示内容**（控制在 60 行内）：
 
 **产品定位摘要**：
 
@@ -221,9 +271,16 @@ disable-model-invocation: true
 
 **AI Native 级别**：Level {N} — {description}
 
+**平台 API 验证结果**：
+
+| API/能力 | 用途 | 状态 | 说明 |
+|----------|------|------|------|
+| {api1} | {usage} | ✅/❌/⚠️ | {detail} |
+| ... | ... | ... | ... |
+
 **询问用户**（使用 AskUserQuestion）：
 
-> 以上是产品定位、功能范围、技术选型和 AI 集成评估。
+> 以上是产品定位、功能范围、技术选型、AI 集成评估和平台 API 验证结果。
 >
 > - **确认范围** — 按此范围进入设计生成
 > - **调整功能** — 增删功能或调整优先级
