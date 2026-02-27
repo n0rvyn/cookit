@@ -22,7 +22,7 @@ allowed-tools: Bash(*skills/photos/scripts/*)
 ```bash
 BASE="${CLAUDE_PLUGIN_ROOT:-${CODEX_HOME:-$HOME/.codex}}"
 SKILLS_ROOT="$BASE/skills"
-[ -d "$SKILLS_ROOT/photos/scripts" ] || SKILLS_ROOT="$BASE/cookit/mactools/skills"
+[ -d "$SKILLS_ROOT/photos/scripts" ] || SKILLS_ROOT="$BASE/indie-toolkit/mactools/skills"
 ```
 
 ## 工具

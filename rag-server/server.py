@@ -7,10 +7,10 @@ Registration in ~/.claude.json:
 {
   "mcpServers": {
     "rag": {
-      "command": "/Users/norvyn/Code/Skills/cookit/rag-server/.venv/bin/python3",
-      "args": ["/Users/norvyn/Code/Skills/cookit/rag-server/server.py"],
+      "command": "/absolute/path/to/rag-server/.venv/bin/python3",
+      "args": ["/absolute/path/to/rag-server/server.py"],
       "env": {
-        "RAG_DEFAULT_PROJECT": "/Users/norvyn/Code/Skills/cookit"
+        "RAG_DEFAULT_PROJECT": "/absolute/path/to/your-project"
       }
     }
   }

@@ -1,6 +1,6 @@
-# Installing Cookit for Codex
+# Installing Indie Toolkit for Codex
 
-Enable Cookit skills in Codex via native skill discovery.
+Enable Indie Toolkit skills in Codex via native skill discovery.
 
 ## Prerequisites
 
@@ -12,10 +12,10 @@ Enable Cookit skills in Codex via native skill discovery.
 1. Clone or update the repository:
 
 ```bash
-if [ -d ~/.codex/cookit/.git ]; then
-  git -C ~/.codex/cookit pull --ff-only
+if [ -d ~/.codex/indie-toolkit/.git ]; then
+  git -C ~/.codex/indie-toolkit pull --ff-only
 else
-  git clone https://github.com/n0rvyn/cookit.git ~/.codex/cookit
+  git clone https://github.com/n0rvyn/indie-toolkit.git ~/.codex/indie-toolkit
 fi
 ```
 
@@ -23,8 +23,8 @@ fi
 
 ```bash
 mkdir -p ~/.codex/skills
-ln -sfn ~/.codex/cookit/ios-development/skills ~/.codex/skills/cookit-ios-development
-ln -sfn ~/.codex/cookit/mactools/skills ~/.codex/skills/cookit-mactools
+ln -sfn ~/.codex/indie-toolkit/ios-development/skills ~/.codex/skills/indie-toolkit-ios-development
+ln -sfn ~/.codex/indie-toolkit/mactools/skills ~/.codex/skills/indie-toolkit-mactools
 ```
 
 3. Restart Codex.
@@ -32,14 +32,14 @@ ln -sfn ~/.codex/cookit/mactools/skills ~/.codex/skills/cookit-mactools
 ## Verify
 
 ```bash
-ls -la ~/.codex/skills/cookit-ios-development
-ls -la ~/.codex/skills/cookit-mactools
+ls -la ~/.codex/skills/indie-toolkit-ios-development
+ls -la ~/.codex/skills/indie-toolkit-mactools
 ```
 
 ## Updating
 
 ```bash
-git -C ~/.codex/cookit pull --ff-only
+git -C ~/.codex/indie-toolkit pull --ff-only
 ```
 
 If new skills were added in the repo, re-run the symlink commands once.
@@ -47,6 +47,6 @@ If new skills were added in the repo, re-run the symlink commands once.
 ## Uninstall
 
 ```bash
-rm ~/.codex/skills/cookit-ios-development
-rm ~/.codex/skills/cookit-mactools
+rm ~/.codex/skills/indie-toolkit-ios-development
+rm ~/.codex/skills/indie-toolkit-mactools
 ```

@@ -30,7 +30,7 @@ file types for knowledge-base queries.
 ```bash
 BASE="${CLAUDE_PLUGIN_ROOT:-${CODEX_HOME:-$HOME/.codex}}"
 SKILLS_ROOT="$BASE/skills"
-[ -d "$SKILLS_ROOT/spotlight/scripts" ] || SKILLS_ROOT="$BASE/cookit/mactools/skills"
+[ -d "$SKILLS_ROOT/spotlight/scripts" ] || SKILLS_ROOT="$BASE/indie-toolkit/mactools/skills"
 
 # Primary search: markdown and text files
 ${SKILLS_ROOT}/spotlight/scripts/spotlight.sh search -t md -n 10 "<QUERY>"

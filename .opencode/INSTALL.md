@@ -1,6 +1,6 @@
-# Installing Cookit for OpenCode
+# Installing Indie Toolkit for OpenCode
 
-Enable Cookit skills in OpenCode via native skill discovery.
+Enable Indie Toolkit skills in OpenCode via native skill discovery.
 
 ## Prerequisites
 
@@ -12,10 +12,10 @@ Enable Cookit skills in OpenCode via native skill discovery.
 1. Clone or update the repository:
 
 ```bash
-if [ -d ~/.config/opencode/cookit/.git ]; then
-  git -C ~/.config/opencode/cookit pull --ff-only
+if [ -d ~/.config/opencode/indie-toolkit/.git ]; then
+  git -C ~/.config/opencode/indie-toolkit pull --ff-only
 else
-  git clone https://github.com/n0rvyn/cookit.git ~/.config/opencode/cookit
+  git clone https://github.com/n0rvyn/indie-toolkit.git ~/.config/opencode/indie-toolkit
 fi
 ```
 
@@ -23,8 +23,8 @@ fi
 
 ```bash
 mkdir -p ~/.config/opencode/skills
-ln -sfn ~/.config/opencode/cookit/ios-development/skills ~/.config/opencode/skills/cookit-ios-development
-ln -sfn ~/.config/opencode/cookit/mactools/skills ~/.config/opencode/skills/cookit-mactools
+ln -sfn ~/.config/opencode/indie-toolkit/ios-development/skills ~/.config/opencode/skills/indie-toolkit-ios-development
+ln -sfn ~/.config/opencode/indie-toolkit/mactools/skills ~/.config/opencode/skills/indie-toolkit-mactools
 ```
 
 3. Restart OpenCode.
@@ -32,14 +32,14 @@ ln -sfn ~/.config/opencode/cookit/mactools/skills ~/.config/opencode/skills/cook
 ## Verify
 
 ```bash
-ls -la ~/.config/opencode/skills/cookit-ios-development
-ls -la ~/.config/opencode/skills/cookit-mactools
+ls -la ~/.config/opencode/skills/indie-toolkit-ios-development
+ls -la ~/.config/opencode/skills/indie-toolkit-mactools
 ```
 
 ## Updating
 
 ```bash
-git -C ~/.config/opencode/cookit pull --ff-only
+git -C ~/.config/opencode/indie-toolkit pull --ff-only
 ```
 
 If new skills were added in the repo, re-run the symlink commands once.
@@ -47,6 +47,6 @@ If new skills were added in the repo, re-run the symlink commands once.
 ## Uninstall
 
 ```bash
-rm ~/.config/opencode/skills/cookit-ios-development
-rm ~/.config/opencode/skills/cookit-mactools
+rm ~/.config/opencode/skills/indie-toolkit-ios-development
+rm ~/.config/opencode/skills/indie-toolkit-mactools
 ```

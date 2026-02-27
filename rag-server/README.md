@@ -16,7 +16,7 @@ offline after first model download.
 ### Step 1: Compile the Swift embed binary
 
 ```bash
-bash /path/to/cookit/rag-server/embed/build.sh
+bash /path/to/indie-toolkit/rag-server/embed/build.sh
 ```
 
 First run downloads NLContextualEmbedding model assets (~50 MB per language model)

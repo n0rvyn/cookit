@@ -21,7 +21,7 @@ Query Safari browsing history, bookmarks, and reading list. All operations are r
 ```bash
 BASE="${CLAUDE_PLUGIN_ROOT:-${CODEX_HOME:-$HOME/.codex}}"
 SKILLS_ROOT="$BASE/skills"
-[ -d "$SKILLS_ROOT/safari/scripts" ] || SKILLS_ROOT="$BASE/cookit/mactools/skills"
+[ -d "$SKILLS_ROOT/safari/scripts" ] || SKILLS_ROOT="$BASE/indie-toolkit/mactools/skills"
 ```
 
 ## Tool

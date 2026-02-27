@@ -4,10 +4,10 @@ Complete iOS/macOS/iPadOS development workflow plugin.
 
 ## Claude Code
 
-Install from Cookit marketplace:
+Install from indie-toolkit marketplace:
 
 ```bash
-/plugin install ios-development@cookit-marketplace
+/plugin install ios-development@indie-toolkit
 ```
 
 ## Codex / OpenCode
@@ -17,4 +17,4 @@ Use the root install guides:
 - Codex: `.codex/INSTALL.md`
 - OpenCode: `.opencode/INSTALL.md`
 
-After linking Cookit skills, all skills under `ios-development/skills/` are available automatically.
+After linking indie-toolkit skills, all skills under `ios-development/skills/` are available automatically.

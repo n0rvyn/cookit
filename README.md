@@ -1,4 +1,4 @@
-# Cookit
+# Indie Toolkit
 
 Skills and plugins for:
 
@@ -10,14 +10,14 @@ Skills and plugins for:
 Add marketplace:
 
 ```bash
-/plugin marketplace add n0rvyn/cookit
+/plugin marketplace add n0rvyn/indie-toolkit
 ```
 
 Install plugin:
 
 ```bash
-/plugin install ios-development@cookit-marketplace
-/plugin install mactools@cookit-marketplace
+/plugin install ios-development@indie-toolkit
+/plugin install mactools@indie-toolkit
 ```
 
 ## Codex
@@ -25,7 +25,7 @@ Install plugin:
 Tell Codex:
 
 ```text
-Fetch and follow instructions from https://raw.githubusercontent.com/n0rvyn/cookit/main/.codex/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/n0rvyn/indie-toolkit/main/.codex/INSTALL.md
 ```
 
 Detailed docs: `docs/README.codex.md`
@@ -35,7 +35,7 @@ Detailed docs: `docs/README.codex.md`
 Tell OpenCode:
 
 ```text
-Fetch and follow instructions from https://raw.githubusercontent.com/n0rvyn/cookit/main/.opencode/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/n0rvyn/indie-toolkit/main/.opencode/INSTALL.md
 ```
 
 Detailed docs: `docs/README.opencode.md`
