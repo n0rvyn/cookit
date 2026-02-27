@@ -1,6 +1,7 @@
 ---
 name: finish-branch
 description: "Use when implementation is complete and you need to decide how to integrate the work. Verifies tests, presents structured options, handles cleanup."
+allowed-tools: Bash(git:*) Bash(gh:*) Bash(npm:*) Bash(cargo:*) Bash(pytest:*) Bash(go:*) Bash(xcodebuild:*) Bash(ls:*)
 ---
 
 ## Process

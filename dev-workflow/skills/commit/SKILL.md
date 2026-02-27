@@ -3,6 +3,7 @@ name: commit
 description: "Use when the user says 'commit' or wants to save progress after completing a task. Analyzes uncommitted changes, groups them logically, and commits with conventional format messages."
 context: fork
 model: haiku
+allowed-tools: Bash(git:*)
 ---
 
 ## Input

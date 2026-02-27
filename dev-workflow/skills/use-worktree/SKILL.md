@@ -1,6 +1,7 @@
 ---
 name: use-worktree
 description: "Use when starting feature work that needs isolation from current workspace. Optional tool — not required for every development task."
+allowed-tools: Bash(git:*) Bash(ls:*) Bash(grep:*) Bash(npm:*) Bash(cargo:*) Bash(pip:*) Bash(poetry:*) Bash(go:*) Bash(swift:*)
 ---
 
 ## Directory Selection (Priority Order)
