@@ -1,6 +1,7 @@
 ---
 name: calendar
 description: 查询、创建、修改、删除 macOS 日历事件。当用户需要查看日程、创建会议、搜索日历事件时使用。关键词：日历、Calendar、日程、会议、事件、安排。
+compatibility: Requires macOS
 allowed-tools: Bash(*skills/calendar/scripts/*)
 ---
 

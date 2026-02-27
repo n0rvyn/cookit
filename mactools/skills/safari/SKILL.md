@@ -3,6 +3,7 @@ name: safari
 description: 查询 Safari 浏览历史和书签。当用户需要回顾浏览过的网页、查找书签、查看阅读列表时使用。关键词：Safari、浏览历史、书签、阅读列表、网页记录、browsing history、bookmarks、reading list。
 context: fork
 model: haiku
+compatibility: Requires macOS
 allowed-tools: Bash(*skills/safari/scripts/*)
 ---
 

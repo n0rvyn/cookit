@@ -6,6 +6,7 @@ description: >
   summary to the caller. Use when the RAG index returns no results.
 model: haiku
 context: fork
+compatibility: Requires macOS
 allowed-tools: Bash(*skills/spotlight/scripts/*)
 ---
 

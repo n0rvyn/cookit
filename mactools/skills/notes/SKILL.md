@@ -1,6 +1,7 @@
 ---
 name: notes
 description: 读取、搜索、创建、编辑 Apple Notes 备忘录。当用户需要查看备忘录内容、搜索笔记、创建新备忘录、或向已有备忘录追加内容时使用。关键词：备忘录、Notes、笔记、记录、Apple Notes。
+compatibility: Requires macOS
 allowed-tools: Bash(*skills/notes/scripts/*)
 ---
 
