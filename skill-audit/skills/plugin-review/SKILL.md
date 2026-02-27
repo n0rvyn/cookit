@@ -9,7 +9,7 @@ description: "Use when the user says 'review skill', 'review agent', 'review plu
 
 ## Overview
 
-This skill dispatches the `plugin-reviewer` agent to systematically review plugin artifacts. The review covers 6 dimensions: structural validation, reference integrity, workflow logic, execution feasibility, trigger/routing conflicts, and edge case analysis.
+This skill dispatches the `plugin-reviewer` agent to systematically review plugin artifacts. The review covers 7 dimensions: structural validation, reference integrity, workflow logic, execution feasibility, trigger/routing conflicts, edge case analysis, and spec compliance (Agent Skills Spec field conventions).
 
 ## Process
 

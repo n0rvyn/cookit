@@ -45,7 +45,7 @@ Read each file to review in full before analyzing it. Process one artifact at a 
 
 ## Review Dimensions
 
-Apply all 6 dimensions to each artifact. Skip dimensions that don't apply (e.g., "Trigger" doesn't apply to agents that are never auto-routed).
+Apply all 7 dimensions to each artifact. Skip dimensions that don't apply (e.g., "Trigger" doesn't apply to agents that are never auto-routed).
 
 ---
 
@@ -223,6 +223,53 @@ For every check/assertion/verification the agent performs:
 
 ---
 
+### Dimension 7: Spec Compliance
+
+Check that skills and agents follow Agent Skills Spec conventions for runtime optimization and cross-environment portability. Reference: https://agentskills.io/specification
+
+**7.1 `compatibility` field coverage:**
+1. Read the skill/agent instructions for environment-specific requirements: macOS APIs (EventKit, AppleScript, Vision, Spotlight, Photos), Xcode/Swift toolchain, platform-specific scripts (`.scpt`, `.applescript`), platform-specific CLI tools (`mdfind`, `xcodebuild`, `xcrun`)
+2. If the artifact requires a specific OS or toolchain but does NOT declare `compatibility` in frontmatter → flag as Minor
+3. If the artifact declares `compatibility` but no environment-specific dependency is found in its instructions → flag as Minor (unnecessary declaration)
+4. Skip: skills that work on any platform (text generation, planning, analysis, web search)
+
+**7.2 `allowed-tools` scope appropriateness:**
+1. Read the skill instructions and identify every Bash command used (look for code blocks, `Bash(...)` patterns, and command examples)
+2. If the skill has `allowed-tools`:
+   - Verify the glob pattern covers all Bash usages in the instructions. Flag if a required command is not matched by any pattern → Bug
+   - Check if the pattern is overly broad (e.g., `Bash(*)` when only git commands are used) → Minor
+3. If the skill does NOT have `allowed-tools`:
+   - Check whether all Bash usage is constrained to a specific domain (only git commands, only scripts in a specific directory, only a single CLI tool)
+   - If yes → Minor suggestion to add `allowed-tools` for scope narrowing
+   - If Bash usage is diverse (build, test, arbitrary commands) → no finding, scoping would limit function
+
+**7.3 Description quality:**
+
+| Check | How | Severity |
+|-------|-----|----------|
+| Length < 20 characters | Count characters in `description` field | Logic |
+| Length > 500 characters | Count characters in `description` field | Logic |
+| No trigger condition | Description lacks patterns: "Use when", "when the user says", "当...时使用", "after", keyword enumeration | Logic |
+| Pure noun phrase | Description has no verb or action phrase — just a label (e.g., "App Store review helper") | Minor |
+| Trigger overlap with sibling skill | Generate 3 representative user queries from this description; check if another skill in the same plugin would also match | Logic (extends Dimension 5) |
+
+For `disable-model-invocation: true` skills: trigger condition check is relaxed (these are dispatched programmatically, not by user prompt).
+
+**7.4 File size:**
+1. Count total lines in the SKILL.md file
+2. If > 500 lines → flag as Logic. Include the line count and suggest: "Extract reference/template content to a `references/` subdirectory. Keep workflow logic in SKILL.md, move static tables, templates, and checklists to reference files."
+3. If > 500 lines: identify the largest contiguous non-workflow block (tables, templates, code blocks not part of step instructions) and report its line range as the extraction candidate
+
+**7.5 `context` and `model` field consistency:**
+1. If skill has `context: fork`:
+   - Check if the skill is multi-step with agent dispatch that produces results needed by later steps. If yes → flag as Minor: "context: fork isolates this skill from conversation state; multi-step workflows that return results to the user may lose context"
+   - Expected use: lightweight, self-contained operations (commit, search, quick lookup)
+2. If skill has `model: haiku`:
+   - Check if the skill instructions require complex reasoning (multi-step analysis, architectural decisions, nuanced judgment, creative generation). If yes → flag as Minor: "haiku model may not handle the complexity described in these instructions"
+   - Expected use: simple routing, straightforward script execution, template filling
+
+---
+
 ## Output Format
 
 ```
@@ -267,6 +314,7 @@ For every check/assertion/verification the agent performs:
 | 4. Execution Feasibility | {N} checks | {N} issues |
 | 5. Trigger & Routing | {N} checks | {N} issues |
 | 6. Edge Cases | {N} checks | {N} issues |
+| 7. Spec Compliance | {N} checks | {N} issues |
 | **Total** | **{N}** | **{N}** |
 
 ---
