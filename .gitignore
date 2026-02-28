@@ -11,3 +11,6 @@ rag-server/embed/embed
 
 # Dev-workflow transient state
 .claude/dev-workflow-state.yml
+
+# temp files
+.claude/compact-suggested-at
