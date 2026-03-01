@@ -35,7 +35,9 @@ Collect the following before dispatching:
 2. **Scope items** — list of features/components to implement
 3. **Acceptance criteria** — verifiable completion conditions (from dev-guide Phase or user)
 4. **Design doc reference** — path to design doc if one exists (search `docs/06-plans/*-design.md`)
-5. **Project root** — current working directory
+5. **Design analysis reference** — path to design analysis if one exists (search `docs/06-plans/*-design-analysis.md`). If found, include it in the agent dispatch prompt: it contains validated token mappings, platform translations, and UX assertion validation from a visual prototype.
+6. **Crystal file reference** — path to crystallized decisions file if one exists (search `docs/11-crystals/*-crystal.md`). If found, include it in the agent dispatch prompt: it contains settled architectural and UX decisions with machine-readable D-xxx assertions the plan must respect.
+7. **Project root** — current working directory
 
 If any of these are unclear, ask the user before dispatching.
 
@@ -56,6 +58,8 @@ Acceptance criteria:
 - {criterion 2}
 
 Design doc: {path or "none"}
+Design analysis: {path or "none"}
+Crystal file: {path or "none"}
 Project root: {path}
 
 Additional context:
