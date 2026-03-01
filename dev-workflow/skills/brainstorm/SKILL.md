@@ -111,11 +111,30 @@ If the design is primarily architectural (data model, service layer, component b
 
 ### 6. Next Steps
 
-After design is approved, inform the user:
-- Use `dev-workflow:write-plan` to create a structured implementation plan
+After design is approved, inform the user based on the design type:
+
+**If the design has UX Assertions (user-visible UI):**
+
+> Design approved. Before writing the implementation plan, consider creating a visual prototype:
+>
+> 1. Use `/generate-design-prompt` to get a Stitch or Figma prompt based on this design
+> 2. Create the prototype in your design tool
+> 3. Use `/understand-design` to bring the prototype back for AI analysis
+> 4. If issues found: use `/generate-design-prompt refine` to get improvement prompts, iterate
+> 5. Then use `/write-plan` to create the implementation plan
+>
+> Or skip prototyping and go directly to `/write-plan`.
+
+**If the design is infrastructure-only (no UX Assertions):**
+
+> Design approved. Use `/write-plan` to create a structured implementation plan.
+
+**If significant decisions were made during this brainstorm** (rejected alternatives, changed assumptions, architectural constraints):
+
+> Consider running `/crystallize` to lock these decisions before proceeding to `/write-plan`. This ensures the plan-writer agent — which runs in a separate context — knows what was discussed and decided.
 
 ## Completion Criteria
 
 - User has approved a design direction (Step 4 sections all confirmed)
 - Design document saved to `docs/06-plans/` (Step 5 completed)
-- Next step (write-plan) communicated
+- Next step communicated (prototype workflow or write-plan, based on whether design has UX Assertions)

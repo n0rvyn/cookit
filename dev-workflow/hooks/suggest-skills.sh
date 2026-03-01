@@ -36,10 +36,16 @@ elif echo "$lower" | grep -qE 'write.*plan|计划|implementation plan'; then
   echo "[skill-hint] Related: /write-plan — creates implementation plan with bite-size tasks"
 elif echo "$lower" | grep -qE 'brainstorm|创意|explore.*idea|头脑风暴'; then
   echo "[skill-hint] Related: /brainstorm — explores intent, requirements and design before implementation"
+elif echo "$lower" | grep -qE 'design.*prompt|stitch.*prompt|figma.*prompt|generate.*prompt.*design|设计提示词|生成.*prompt'; then
+  echo "[skill-hint] Related: /generate-design-prompt — generates Stitch/Figma prompts from project features"
+elif echo "$lower" | grep -qE 'design.*prototype|prototype.*design|understand.*design|analyze.*design|stitch.*design|figma.*design|design.*analysis|设计原型|分析设计|理解设计'; then
+  echo "[skill-hint] Related: /understand-design — analyzes design prototypes with dual-channel image+code understanding"
 elif echo "$lower" | grep -qE 'phase|阶段|next phase|run.phase'; then
   echo "[skill-hint] Related: /run-phase — orchestrates plan-execute-review cycle"
 elif echo "$lower" | grep -qE 'handoff|交接|continue.*session|session.*transfer'; then
   echo "[skill-hint] Related: /handoff — generates cold-start prompt for session transfer"
+elif echo "$lower" | grep -qE 'crystal|crystallize|固化.*决策|决策.*结晶|结晶|settle.*decision|lock.*decision'; then
+  echo "[skill-hint] Related: /crystallize — locks settled decisions into a crystal file before planning"
 elif echo "$lower" | grep -qE 'design.*decision|设计决策|tradeoff|trade.off'; then
   echo "[skill-hint] Related: /design-decision — analyzes trade-offs between approaches"
 elif echo "$lower" | grep -qE 'lesson|教训|踩坑|pitfall'; then

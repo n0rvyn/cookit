@@ -22,6 +22,7 @@ model: haiku
 ### 执行计划（如有）
 来源：[docs/06-plans/xxx.md | ~/.claude/plans/xxx.md | "用户消息内联提供" | 无]
 状态：[全部完成 | 进行中(N/M) | 中断 | 无计划]
+Crystal file：[docs/11-crystals/xxx-crystal.md | 无]
 
 （dev-workflow:write-plan 计划文件在 docs/06-plans/，内置 /plan 计划文件在 ~/.claude/plans/，新会话可直接 Read）
 
@@ -57,3 +58,4 @@ model: haiku
 4. 关键代码片段直接粘贴，不要说"见某文件"
 5. 输出为 markdown 代码块，方便用户复制
 6. 如果当前会话是按计划执行的，必须包含计划来源（文件路径或 transcript 路径）
+7. 如果项目有 crystal 文件（`docs/11-crystals/*-crystal.md`），在关键文件中列出路径
