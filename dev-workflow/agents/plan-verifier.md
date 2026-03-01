@@ -30,9 +30,11 @@ You are a plan verifier. You validate implementation plans using verification-fi
 Before starting, confirm you have:
 1. **Plan file path** — the implementation plan to verify
 2. **Design doc path** — the design document the plan references (if exists)
-3. **Project root path** — for resolving file paths and searching code
+3. **Design analysis path** — the design analysis file with token mappings and UX assertion validations (if exists)
+4. **Crystal file path** — the crystal file with `[D-xxx]` decisions (if exists)
+5. **Project root path** — for resolving file paths and searching code
 
-Read the plan file and design doc (if provided) before proceeding.
+Read the plan file, design doc, design analysis, and crystal file (if provided) before proceeding.
 
 ## Output Contract
 
@@ -45,12 +47,16 @@ Read the plan file and design doc (if provided) before proceeding.
 ```
 Report: .claude/reviews/plan-verifier-{timestamp}.md
 Verdict: {approved | must-revise}
-S1 assertions: {N} tested, {M} failed
-S2 failures: {N} compile, {M} runtime
+[S1] assertions: {N} tested, {M} failed
+[S2] failures: {N} compile, {M} runtime
+[U1] tokens: {N} checked, {M} missing (or "skipped")
+[DF] design faithfulness: {N}/{total} mapped, {M} gaps (or "skipped")
+[CF] crystal fidelity: {N}/{total} covered, {M} conflicts (or "skipped")
+[AR] architecture: {N} issues (or "skipped")
 Must-revise items: {N}
 ```
 
-If verdict is `must-revise`, also list the revision items (1 line each) in the return summary — the dispatcher needs these without reading the file.
+If verdict is `must-revise`, also list the revision items (1 line each, prefixed with the strategy tag that identified them) in the return summary — the dispatcher needs these without reading the file.
 
 Do NOT modify the plan file. Return revision instructions only.
 
@@ -73,6 +79,7 @@ Do NOT modify the plan file. Return revision instructions only.
 | UI 开发 | 新建/修改 View、组件样式、布局 | S1 + U1 |
 | 多步骤执行 | 步骤 >= 5 且有编译/运行时依赖 | S2 |
 | 有设计文档的计划 | 计划引用了设计文档 | DF |
+| 有 crystal 文件的计划 | 计划引用了 crystal 文件 | CF |
 
 ### 2. 执行适用策略
 
@@ -289,6 +296,44 @@ Do NOT modify the plan file. Return revision instructions only.
 
 ---
 
+#### CF. 决策忠实度验证（有 crystal 文件的计划）
+
+**前置条件**：dispatch prompt 包含 `Crystal file:` 路径且非 "none"。如果无 crystal 文件引用，跳过本策略。
+
+完整读取 crystal 文件。
+
+**步骤 1：决策覆盖检查**
+
+对 crystal 文件中每条 `[D-xxx]` 决策：
+1. 在 plan 中搜索是否有 task 实现或体现该决策
+2. 如果决策是"用 X 方案"——plan 中应有 task 描述使用 X
+3. 如果决策是"在 Y 位置新建 Z"——plan 中应有 task 新建 Z 且位于 Y
+
+```
+[CF-1] 决策覆盖检查
+  - [D-001] "{decision text}" → Task {N}: "{task title}" — ✅ Covered
+  - [D-002] "{decision text}" → — — ❌ Not covered
+  - [D-003] "{decision text}" → Task {N}: "{task title}" — ✅ Covered
+```
+
+**步骤 2：否决方案反向检查**
+
+对 crystal 文件中每条 Rejected Alternative：
+1. 在 plan 中搜索是否有 task 描述与被否决方案一致
+2. 如果 plan task 实现了被否决的方案 → ❌ 标记为 must-revise
+
+```
+[CF-2] 否决方案反向检查
+  - "{alternative name}": 否决原因 — {reason} → ✅ No conflict
+  - "{alternative name}": 否决原因 — {reason} → Task {N} implements this rejected approach — ❌ Conflict
+```
+
+**判定**：
+- CF-1 有未覆盖的决策 → must-revise
+- CF-2 有冲突 → must-revise
+
+---
+
 #### AR. 架构审查（架构变更时）
 
 **目的**：检测并行路径、不完整替代、死保底。从 `reviewing-architecture` skill 吸收。
@@ -367,11 +412,12 @@ Do NOT modify the plan file. Return revision instructions only.
 - S2 失败反向推理：编译失败 {N} 条，运行时 regression {N} 条
 - U1 Token 一致性：检查 {N} 项，缺失 {M} 项
 - DF 设计忠实度：设计要求映射 {N}/{total}，缺失锚点 {M} 个，隐含上下文 {N} 项未覆盖，粒度问题 {N} 处，边界场景 {N} 个未覆盖，UX 断言 {N}/{total} 覆盖
+- CF 决策忠实度：决策覆盖 {N}/{total}，否决方案冲突 {N} 条
 - AR 架构审查：入口冲突 {N}，替代清单 {完整/不完整}
 
 ### 必须修订（验证发现的确实问题）
 1. [步骤 X] {具体修订内容}
-   依据：{S1/S2/U1/DF/AR 的哪条验证}
+   依据：{S1/S2/U1/DF/CF/AR 的哪条验证}
 
 ### 建议补充（验证过程中暴露的风险）
 1. [步骤 X] {补充内容}

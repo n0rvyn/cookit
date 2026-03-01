@@ -83,6 +83,8 @@ If the user specifies a different Phase number, use that instead.
    - Scope: Phase N's scope items
    - Acceptance criteria: Phase N's acceptance criteria
    - Design doc reference: from dev-guide header (if exists)
+   - Design analysis reference: search `docs/06-plans/*-design-analysis.md`; if exactly 1 file, use it; if multiple, use the one whose filename matches the Phase's feature topic; if still ambiguous, ask the user; if none, set to "none"
+   - Crystal file reference: search `docs/11-crystals/*-crystal.md`; if exactly 1 file, use it; if multiple, ask the user which one applies; if none, set to "none"
 3. If a design doc path exists: read the design doc and check for a `## UX Assertions` section. Note the result — it controls the dispatch prompt below and Step 2.5.
 4. Use the Task tool to dispatch the `dev-workflow:plan-writer` agent:
 
@@ -97,6 +99,8 @@ Acceptance criteria:
 {Phase acceptance criteria}
 
 Design doc: {path or "none"}
+Design analysis: {path or "none"}
+Crystal file: {path or "none"}
 Project root: {project root}
 
 Context: This is Phase {N} of the dev-guide at {dev-guide path}.

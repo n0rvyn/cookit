@@ -23,7 +23,13 @@ Collect the following before dispatching:
    - User-specified path
    - Search `docs/06-plans/*.md` for recent plan files
 2. **Design doc path** — check the plan header for a `Design doc:` reference; if none, set to "none"
-3. **Project root** — current working directory
+3. **Design analysis path** — check the plan header for a `Design analysis:` reference; if none, search `docs/06-plans/*-design-analysis.md`; if none found, set to "none"
+4. **Crystal file path** — resolve in this order:
+   - If the plan header has a `Crystal file:` reference → use that path
+   - Else search `docs/11-crystals/*-crystal.md`: if exactly 1 file → use it automatically
+   - If multiple files → ask the user which one applies
+   - If no files → set to "none"
+5. **Project root** — current working directory
 
 If the plan file path is unclear, ask the user.
 
@@ -50,6 +56,8 @@ Verify this implementation plan:
 
 Plan file: {path}
 Design doc: {path or "none"}
+Design analysis: {path or "none"}
+Crystal file: {path or "none"}
 Project root: {path}
 
 Retrieved error patterns and lessons (from knowledge base):

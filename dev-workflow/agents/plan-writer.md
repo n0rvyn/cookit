@@ -36,9 +36,15 @@ Before starting, confirm you have:
 2. **Scope items** — list of features/components to implement
 3. **Acceptance criteria** — verifiable conditions for completion
 4. **Design doc reference** — path to design doc (if exists)
-5. **Project root path** — for resolving file paths
+5. **Design analysis reference** — path to design analysis file (if exists)
+6. **Crystal file reference** — path to crystal file with `[D-xxx]` decisions (if exists)
+7. **Project root path** — for resolving file paths
 
 If any input is missing from the task prompt, search for it in the codebase (dev-guide, design docs, CLAUDE.md) before asking.
+
+**When design analysis is provided:** read it and incorporate token mappings, platform translations, and UX assertion validations into the relevant plan tasks.
+
+**When crystal file is provided:** read it and ensure every `[D-xxx]` decision is reflected in at least one plan task. Rejected alternatives in the crystal must not appear as plan tasks. Add `Crystal ref: [D-xxx]` to task headers that implement specific decisions.
 
 ## Output
 
@@ -64,6 +70,10 @@ Save to: `docs/06-plans/YYYY-MM-DD-<feature-name>.md`
 **Tech Stack:** [Key technologies and frameworks]
 
 **Design doc:** [path to design doc, if one exists — links to verify-plan DF strategy]
+
+**Design analysis:** [path to design analysis, if one exists]
+
+**Crystal file:** [path to crystal file, if one exists — links to verify-plan CF strategy]
 
 ---
 ```
