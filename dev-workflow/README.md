@@ -8,21 +8,25 @@ Heavy document-generation and analysis tasks run as **agents** (separate context
 
 ```
 run-phase (orchestrator, main context)
-  → plan-writer agent (sonnet)        → plan file on disk
-  → plan-verifier agent (opus)        → verification report
-  → execute-plan skill                → code changes (main context)
+  → design-analyzer agent (opus)       → design analysis file
+  → plan-writer agent (sonnet)         → plan file on disk
+  → plan-verifier agent (opus)         → verification report
+  → execute-plan skill                 → code changes (main context)
   → feature-spec-writer agent (sonnet) → spec file
-  → review agents (parallel)          → consolidated findings
-  → fix gaps                          → Phase done
+  → review agents (parallel)           → consolidated findings
+  → fix gaps                           → Phase done
 ```
 
 ## Agents
 
 | Agent | Model | Tools | Purpose |
 |-------|-------|-------|---------|
-| implementation-reviewer | opus | Glob, Grep, Read, Bash | Plan-vs-code verification and design fidelity audit |
+| design-analyzer | opus | Glob, Grep, Read, Write | Multi-modal design prototype analysis (dual-channel image+code) |
+| design-drift-auditor | opus | Glob, Grep, Read, Bash | Design document vs codebase drift detection |
+| flow-tracer | opus | Glob, Grep, Read, Bash | End-to-end call chain tracing with break detection |
+| implementation-reviewer | opus | Glob, Grep, Read, Bash, Write | Plan-vs-code verification and design fidelity audit |
+| plan-verifier | opus | Glob, Grep, Read, Bash, Write | Verification-first plan validation (S1/S2/U1/DF/AR) |
 | plan-writer | sonnet | Glob, Grep, Read, Write | Structured implementation plan generation |
-| plan-verifier | opus | Glob, Grep, Read, Bash | Verification-first plan validation (S1/S2/U1/DF/AR) |
 | dev-guide-writer | sonnet | Glob, Grep, Read, Write | Phased project development guide creation |
 | feature-spec-writer | sonnet | Glob, Grep, Read, Write | Design-vs-implementation feature spec generation |
 | rules-auditor | sonnet | Glob, Grep, Read | CLAUDE.md rules audit for conflicts and loopholes |
@@ -41,19 +45,27 @@ run-phase (orchestrator, main context)
 | use-worktree | guide | Git worktree setup and safety |
 | commit | fork (haiku) | Conventional commit analysis and execution |
 | handoff | fork (haiku) | Cold-start prompt generation for session transfer |
+| generate-design-prompt | interactive | Generate Stitch/Figma prompts from project features; supports initial and refinement modes |
+| understand-design | dispatcher | Dual-channel design prototype analysis, token extraction, platform translation |
 | write-plan | dispatcher | Gathers context, dispatches plan-writer agent |
 | verify-plan | dispatcher | Gathers context, dispatches plan-verifier agent |
 | write-dev-guide | dispatcher | Gathers context, dispatches dev-guide-writer agent |
 | write-feature-spec | dispatcher | Gathers context, dispatches feature-spec-writer agent |
 | reviewing-rules | dispatcher | Gathers context, dispatches rules-auditor agent |
+| design-drift | dispatcher | Design document vs codebase drift audit |
+| crystallize | interactive | Lock settled decisions from current session into a persistent crystal file |
 | collect-lesson | interactive | Capture development lessons learned |
 | docs-rag | interactive | Documentation search and retrieval |
+| generate-vf-prompt | interactive | Generate Verification-First prompts with falsifiable assertions |
 
 ## Hooks
 
 | Event | Script | Purpose |
 |-------|--------|---------|
 | SessionStart | check-workflow-state.sh | Detects in-progress phase, prompts resume |
+| PreToolUse (Bash) | scan-secrets.sh | Intercepts git commit, blocks if secrets detected in staged content |
+| Stop | suggest-compact.sh | Suggests /compact at phase transitions when tool call count is high |
+| UserPromptSubmit | suggest-skills.sh | Pattern-matches user prompt and suggests relevant skills |
 
 ## Workflow State
 

@@ -11,14 +11,17 @@
     {
       "name": "dev-workflow",
       "source": "./dev-workflow",
-      "description": "Cross-stack development workflow plugin for commits, session handoff, and rules auditing",
-      "version": "2.1.1",
+      "description": "Cross-stack development workflow: brainstorm, planning, phase orchestration, execution, review, debugging, design analysis, commits, and session management",
+      "version": "2.2.0",
       "category": "development",
       "tags": [
-        "git",
         "workflow",
-        "session-management",
-        "rules"
+        "planning",
+        "review",
+        "debugging",
+        "design",
+        "git",
+        "session-management"
       ],
       "strict": true
     },
@@ -84,7 +87,7 @@
       "name": "skill-audit",
       "source": "./skill-audit",
       "description": "Review Claude Code plugins, skills, agents, hooks, and commands from the AI executor perspective",
-      "version": "1.0.1",
+      "version": "1.1.0",
       "category": "development",
       "tags": [
         "review",
