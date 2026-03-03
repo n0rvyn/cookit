@@ -84,6 +84,12 @@ When the plan says "A calls B" or "A uses B":
 - Open A's code, search for B's invocation
 - No call found = **Gap**
 
+When the plan involves identifier replacement/migration on a component B:
+- Identify B's init parameters with visual/behavioral types (Color, Font, CGFloat)
+- If such parameters exist: Grep for all call sites of B
+- Check whether caller-passed values align with the migration's target standard
+- Caller passes raw value that should have been migrated = **Gap**
+
 ### 6. Never Trust Existing Code
 
 Even if a file existed before the plan:

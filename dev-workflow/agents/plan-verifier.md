@@ -103,6 +103,7 @@ Do NOT modify the plan file. Return revision instructions only.
   - 旧代码影响：计划修改的文件中，未被计划提及的其他函数是否会受影响？
   - 状态可达性：计划引入的新状态值，现有的 switch/if 是否全部覆盖？
   - 删除遗漏：计划说"替代 X"但未列出 X 的所有引用位置？
+  - 参数传播：计划修改的组件暴露了可配置参数（Color、Font、CGFloat 等）时，计划的搜索策略是否覆盖了 caller 传入的参数值？grep 旧标识符只捕获定义侧引用，发现不了从未被标识符化的裸值
 
 **输出格式**：
 
