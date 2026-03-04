@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Indie toolkit with iOS development, macOS tooling, and more",
-    "version": "1.9.0"
+    "version": "1.9.1"
   },
   "plugins": [
     {
@@ -87,7 +87,7 @@
       "name": "skill-audit",
       "source": "./skill-audit",
       "description": "Review Claude Code plugins, skills, agents, hooks, and commands from the AI executor perspective",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "category": "development",
       "tags": [
         "review",
