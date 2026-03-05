@@ -1,6 +1,6 @@
 {
   "name": "ios-development",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Complete iOS/macOS/iPadOS development workflow plugin for Claude Code",
   "author": {
     "name": "Norvyn"
