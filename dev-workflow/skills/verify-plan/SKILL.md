@@ -49,6 +49,11 @@ Use the Task tool to launch the `dev-workflow:plan-verifier` agent:
 
 Note: must explicitly set model; the parent session runs Sonnet and inheritance gives Sonnet, not Opus.
 
+Before dispatching, extract any **previously resolved decisions** from the plan file:
+- Search the plan's `## Decisions` section for entries with `**Chosen:**` (not just `**Recommendation:**`)
+- Build a summary list: `DP-xxx: Title → User chose Option {A|B|C}`
+- If no resolved decisions exist, set to "none"
+
 Structure the task prompt as:
 
 ```
@@ -59,6 +64,9 @@ Design doc: {path or "none"}
 Design analysis: {path or "none"}
 Crystal file: {path or "none"}
 Project root: {path}
+
+Previously resolved decisions (do not re-ask these):
+{List of "DP-xxx: Title → Chosen Option X" or "none"}
 
 Retrieved error patterns and lessons (from knowledge base):
 {retrieved_context — one entry per line, or "none" if empty}

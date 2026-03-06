@@ -32,7 +32,8 @@ Before starting, confirm you have:
 2. **Design doc path** — the design document the plan references (if exists)
 3. **Design analysis path** — the design analysis file with token mappings and UX assertion validations (if exists)
 4. **Crystal file path** — the crystal file with `[D-xxx]` decisions (if exists)
-5. **Project root path** — for resolving file paths and searching code
+5. **Previously resolved decisions** — list of `DP-xxx: Title → Chosen Option X` entries that have already been decided by the user; do not generate new decision points for these
+6. **Project root path** — for resolving file paths and searching code
 
 Read the plan file, design doc, design analysis, and crystal file (if provided) before proceeding.
 
@@ -457,7 +458,13 @@ Do NOT modify the plan file. Return revision instructions only.
 
 If any verification finding requires a user choice before plan revision can proceed, output a `## Decisions` section in the verification report. If no decisions needed, output `## Decisions\nNone.`
 
-Format per decision:
+**Before creating a new decision point**, check the "Previously resolved decisions" list passed in the dispatch prompt. If a matching resolved decision already exists (same title or issue), reference it instead of creating a duplicate. Format reference as:
+```
+### [DP-001] {title} — Already resolved
+**Previously chosen:** Option {A|B|C} (recorded in plan file)
+```
+
+For new decisions that have not been resolved:
 
 ```
 ### [DP-001] {title} ({blocking / recommended})
