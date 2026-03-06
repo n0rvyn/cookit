@@ -14,3 +14,4 @@ rag-server/embed/embed
 
 # temp files
 .claude/compact-suggested-at
+/*.txt
