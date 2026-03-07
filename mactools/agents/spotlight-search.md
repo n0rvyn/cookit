@@ -1,9 +1,23 @@
 ---
 name: spotlight-search
-description: >
+description: |
   Sub-agent that accepts a search query, runs a Spotlight content search with
   relevant type filters, reads the top 3 results, and returns a compact
   summary to the caller. Use when the RAG index returns no results.
+
+  Examples:
+
+  <example>
+  Context: RAG search returned zero results for a query.
+  user: "Search my local files for SwiftData migration notes"
+  assistant: "I'll use the spotlight-search agent to find local documents."
+  </example>
+
+  <example>
+  Context: User needs to find a document on their Mac.
+  user: "Find my meeting notes from last week"
+  assistant: "I'll use the spotlight-search agent to search local files."
+  </example>
 model: haiku
 context: fork
 compatibility: Requires macOS
