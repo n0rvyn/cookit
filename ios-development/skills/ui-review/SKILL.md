@@ -1,6 +1,6 @@
 ---
 name: ui-review
-description: iOS/SwiftUI 的 UI 与交互规范审查，用于模块完成后的质量检查。
+description: "Use after completing a module, or when the user says 'ui review', 'check UI compliance'. Performs iOS/SwiftUI UI and interaction compliance review for quality checks. Validates accessibility, state completeness, interaction guards, and platform conventions."
 ---
 
 # UI Review

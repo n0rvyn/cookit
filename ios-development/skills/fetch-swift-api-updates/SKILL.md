@@ -1,7 +1,6 @@
 ---
 name: fetch-swift-api-updates
-description: "Fetch latest Swift/SwiftUI API changes from WWDC session notes and update
-  references/swift-api-changes-*.md. Run after each WWDC or when working with unfamiliar APIs."
+description: "Use when the user wants to check for latest Swift/SwiftUI API changes, or says 'fetch API updates', 'check WWDC changes'. Fetches latest Swift/SwiftUI API changes from WWDC session notes and updates project references."
 user-invocable: true
 ---
 

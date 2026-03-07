@@ -1,6 +1,6 @@
 ---
 name: design-review
-description: 设计质量审查，聚焦视觉层级、色彩、间距与整体一致性。
+description: "Use after completing a page/module UI, before visual optimization, or when the user says 'review design' or 'check visual quality'. Reviews visual hierarchy, color strategy, spacing rhythm, and overall polish. Complements /ui-review (code compliance) and /feature-review (user journey)."
 ---
 
 # Design Review

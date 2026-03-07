@@ -1,6 +1,6 @@
 ---
 name: project-kickoff
-description: 新项目启动开题流程，完成需求澄清、范围收敛和执行建议。
+description: "Use when starting a new iOS project, or the user says 'kickoff', 'new project setup'. Runs the project kickoff flow to clarify requirements, converge scope, and produce execution recommendations."
 disable-model-invocation: true
 ---
 

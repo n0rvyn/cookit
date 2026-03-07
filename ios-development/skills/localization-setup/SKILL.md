@@ -1,6 +1,6 @@
 ---
 name: localization-setup
-description: Provide localization workflow and setup guidance
+description: "Use when setting up localization for a new project, adding new language support, or answering questions about String Catalogs, pluralization, or variable handling. Provides interactive guidance on iOS localization based on the reference guide."
 compatibility: Requires macOS and Xcode
 ---
 

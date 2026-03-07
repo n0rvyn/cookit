@@ -1,6 +1,6 @@
 ---
 name: feature-review
-description: 产品+UX 综合审查，从用户旅程角度验证功能完整性。与 /ui-review（代码合规）和 /design-review（视觉质量）互补。
+description: "Use after completing a feature implementation, or when the user says 'feature review', 'review user journey'. Performs product+UX comprehensive review validating feature completeness from user journey perspective. Complements /ui-review (code compliance) and /design-review (visual quality)."
 ---
 
 # Feature Review

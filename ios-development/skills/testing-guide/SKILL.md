@@ -1,6 +1,6 @@
 ---
 name: testing-guide
-description: Provide testing workflow and best practices guidance
+description: "Use when the user asks about testing approaches, setting up unit tests or UI tests, mocking strategies, TDD workflow, or test coverage strategies. Provides interactive guidance on iOS testing best practices based on the reference guide."
 compatibility: Requires macOS and Xcode
 ---
 

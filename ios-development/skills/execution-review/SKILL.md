@@ -1,6 +1,6 @@
 ---
 name: execution-review
-description: 对照计划与代码执行结果，做实现完成度与偏差审查。
+description: "Use after executing a plan, or when the user says 'execution review', 'review implementation', 'check implementation completeness'. Compares plan vs code execution results, verifies implementation completeness and identifies deviations. Performs iOS-specific code scan (localization, concurrency, abstraction, error handling) and doc update checks."
 compatibility: Requires macOS and Xcode
 ---
 

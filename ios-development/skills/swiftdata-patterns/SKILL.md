@@ -1,6 +1,6 @@
 ---
 name: swiftdata-patterns
-description: Provide SwiftData best practices and patterns guidance
+description: "Use when the user asks about SwiftData usage, designing data models, or has questions about relationships, queries, migrations, or concurrency issues with SwiftData. Provides interactive guidance on SwiftData best practices based on the reference guide."
 compatibility: Requires macOS and Xcode
 ---
 

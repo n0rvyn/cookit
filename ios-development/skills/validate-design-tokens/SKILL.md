@@ -1,6 +1,6 @@
 ---
 name: validate-design-tokens
-description: Validate SwiftUI code compliance with Design Token standards
+description: "Use when the user says 'validate tokens', 'check design tokens', or after modifying design-related code. Validates SwiftUI code compliance with Design Token standards for spacing, colors, fonts, and corner radius."
 compatibility: Requires macOS and Xcode
 ---
 

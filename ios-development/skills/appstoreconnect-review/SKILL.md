@@ -1,6 +1,6 @@
 ---
 name: appstoreconnect-review
-description: App Store Connect 上架材料逐项检查与填写指导。当用户准备提交 App 到 App Store、需要填写 ASC 信息、或进行提交前审计时使用。关键词：ASC、App Store Connect、上架、提交审核、隐私标签、截图、审核。
+description: "Use when preparing for App Store submission, or the user says 'ASC review', 'prepare submission'. Performs item-by-item App Store Connect submission material check and guidance. Keywords: ASC, App Store Connect, submission, privacy labels, screenshots, review."
 ---
 
 # App Store Connect 上架审查
