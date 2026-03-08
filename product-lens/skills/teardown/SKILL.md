@@ -59,11 +59,11 @@ Merge universal + platform-specific into a single numbered list.
 
 ### Step 5: Gather Market Context (if applicable)
 
-For dimensions that benefit from market data (**Market Space**, **Business Viability**, **Moat**):
+For dimensions that benefit from market data (**Demand Authenticity**, **Market Space**, **Business Viability**, **Moat**):
 - Dispatch `market-scanner` agent with product info
 - Wait for completion
 
-For other dimensions (**Demand Authenticity**, **Journey Completeness**, **Execution Quality**):
+For other dimensions (**Journey Completeness**, **Execution Quality**):
 - Skip market-scanner; these are primarily code/product analysis
 
 ### Step 6: Deep Evaluation

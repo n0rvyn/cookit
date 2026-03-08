@@ -20,7 +20,7 @@ description: |
   </example>
 
 model: opus
-tools: Glob, Grep, Read, Bash
+tools: Glob, Grep, Read
 color: yellow
 ---
 

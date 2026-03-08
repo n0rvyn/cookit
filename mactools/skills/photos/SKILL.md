@@ -118,7 +118,7 @@ python3 ${SKILLS_ROOT}/photos/scripts/photos.py export "UUID" "/tmp/"
 
 ## 与 OCR 集成
 
-找到的照片可以导出后交给 `mactools:ocr` 进行文字识别，适用于：
+找到的照片可以导出后进行文字识别，适用于：
 - 白板照片的文字提取
 - 文档扫描件的内容识别
 - 截图中的文字提取
@@ -126,7 +126,7 @@ python3 ${SKILLS_ROOT}/photos/scripts/photos.py export "UUID" "/tmp/"
 流程：
 1. 用 `search` 或 `recent` 找到目标照片
 2. 用 `export` 导出到临时路径（如 `/tmp/photo.heic`）
-3. 用 `mactools:ocr` 对导出的文件进行文字识别
+3. 提示用户运行 `/ocr` 对导出的文件进行文字识别
 
 ## 注意事项
 

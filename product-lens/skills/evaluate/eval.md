@@ -12,7 +12,7 @@
 ## Output Assertions
 - [ ] Output covers 6 dimensions: demand, journey, market, moat, business, execution
 - [ ] Output distinguishes local project (code read) vs external app (web search)
-- [ ] Output includes GO/DEFER/KILL verdict
+- [ ] Output includes weighted total score across 6 dimensions
 - [ ] Dimension scores computed and weighted total calculated
 - [ ] Report saved to docs/08-product-evaluation/
 

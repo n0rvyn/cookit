@@ -3,7 +3,7 @@
 ## Trigger Tests
 - "Quick demand check on this idea"
 - "Is there demand for this product?"
-- "Run elevator pitch test"
+- "Quick demand check before I start building"
 
 ## Negative Trigger Tests
 - "Full product evaluation"

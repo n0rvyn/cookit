@@ -264,3 +264,7 @@ For each UI file provided, check the following dimensions:
 | 🔴 必须修复 | Blocks task or causes confusion | No loading state, no error feedback, repeatable button |
 | 🟡 建议修复 | Affects experience but doesn't block | Hardcoded spacing, missing empty state |
 | ⚪ 通过 | Compliant | - |
+
+## Constraint
+
+You write only to `.claude/reviews/` directory. Do NOT modify any source code files. Do NOT use Edit or NotebookEdit tools.

@@ -1,6 +1,6 @@
 ---
 name: reminders
-description: "查询、创建、完成、删除 macOS 提醒事项。当用户需要查看待办提醒、创建提醒、标记完成、搜索提醒事项时使用。Use when the user needs to view reminders, create new ones, mark complete, or search reminders. Keywords: 提醒事项, Reminders, 提醒, 待办, remind, reminder."
+description: "查询、创建、完成、删除 Apple Reminders.app 提醒事项。当用户需要查看待办提醒、创建提醒、标记完成、搜索提醒事项时使用。Use for Apple Reminders.app operations. Keywords: 提醒事项, Reminders, 提醒, 待办, remind, reminder."
 context: fork
 model: haiku
 compatibility: Requires macOS

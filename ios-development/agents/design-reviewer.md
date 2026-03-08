@@ -290,3 +290,7 @@ For each file provided, check the following dimensions:
 | 🔴 必须修复 | Clearly breaks visual hierarchy or consistency | No hierarchy (all text same size/color), inconsistent card corner radius, two competing accent colors |
 | 🟡 建议优化 | Doesn't break but can be improved | Slightly inconsistent spacing, heavy shadows, icon style mixing |
 | ⚪ 通过 | Meets design quality standard | - |
+
+## Constraint
+
+You write only to `.claude/reviews/` directory. Do NOT modify any source code files. Do NOT use Edit or NotebookEdit tools.

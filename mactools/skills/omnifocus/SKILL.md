@@ -1,6 +1,6 @@
 ---
 name: omnifocus
-description: "查询、创建、完成 OmniFocus 任务和项目。Use when the user needs to list, create, complete tasks, or check inbox, flagged, and due items. Keywords: OmniFocus, 任务, 项目, 待办, inbox, flagged."
+description: "查询、创建、完成 OmniFocus 4 任务和项目。仅当用户明确提及 OmniFocus 或 OmniFocus 特有概念（项目、透视、上下文）时使用。Use only when the user explicitly mentions OmniFocus or OmniFocus-specific concepts (projects, perspectives, contexts). Keywords: OmniFocus, 项目, inbox, flagged, perspectives."
 context: fork
 model: haiku
 compatibility: Requires macOS
@@ -264,14 +264,12 @@ python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py activate-perspective "
 ### Absolute Formats 绝对格式
 - `2025-02-01` - ISO format
 - `02/01/2025` - MM/DD/YYYY
-- `01/02/2025` - DD/MM/YYYY
-- `02-01-2025` - MM-DD-YYYY
-- `01-02-2025` - DD-MM-YYYY
+
+> ⚠️ 仅支持 MM/DD/YYYY 格式，避免 DD/MM 歧义。遇到模糊日期（如 `01/02`）时，向用户确认。
 
 ### Short Formats 短格式
-- `02-01` - February 1st (current year)
-- `02/01` - February 1st (current year)
-- `01-02` - January 2nd or February 1st (depends on format)
+- `02-01` - February 1st (current year, MM-DD)
+- `02/01` - February 1st (current year, MM/DD)
 
 ## Common Workflows
 

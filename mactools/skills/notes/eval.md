@@ -17,7 +17,7 @@
 ## Output Assertions
 <!-- What must be true in the skill's output -->
 - [ ] Output uses notes.sh script from skills/notes/scripts/
-- [ ] Output supports folders, list, show, create, append, search commands
+- [ ] Output supports folders, list, read, create, append, search commands
 - [ ] Output handles folder filtering and result limits (-n flag)
 - [ ] Output presents notes with title, folder, creation/modification date
 - [ ] Create command creates note in default folder if not specified

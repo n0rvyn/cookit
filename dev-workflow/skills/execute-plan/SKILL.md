@@ -10,7 +10,7 @@ description: "Use when you have a written implementation plan to execute. Batch 
 1. Read the plan file
 2. **Verification pre-check**: Look for a `## Verification` section with `Verdict: Approved` in the plan file
    - If found: verification is done, continue
-   - If not found: invoke `dev-workflow:verify-plan` before proceeding
+   - If not found: invoke `dev-workflow:verify-plan` before proceeding. If verify-plan returns "must-revise", apply revisions and re-verify before continuing
 3. Review critically — identify gaps, ambiguities, or concerns
 4. If concerns: raise them before starting. Do not proceed with a plan you disagree with
 5. If no concerns: proceed to execution

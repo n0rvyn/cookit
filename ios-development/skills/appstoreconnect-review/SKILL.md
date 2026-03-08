@@ -7,7 +7,7 @@ description: "Use when preparing for App Store submission, or the user says 'ASC
 
 逐项指导 App Store Connect 中 iOS App 上架需要填写的内容，或执行提交前审计。
 
-参考资料在 `references/` 目录中，按需加载。
+参考资料在 `appstoreconnect-review/references/` 目录中（相对于 skills 目录），按需加载。
 
 ## Process
 

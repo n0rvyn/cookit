@@ -81,7 +81,7 @@ Report back: `Saved as {id} at {path}`
 
 ### Graceful Degradation
 
-If `add_entry` tool is unavailable: print the draft entry and tell the user to copy it manually to `docs/09-lessons-learned/E{NNN}-{slug}.md` with the front-matter format shown in the entry.
+If `add_entry` tool is unavailable or the call fails: print the draft entry and tell the user to copy it manually to `docs/09-lessons-learned/E{NNN}-{slug}.md` with the front-matter format shown in the entry.
 
 ## Completion Criteria
 

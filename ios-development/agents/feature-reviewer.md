@@ -210,3 +210,7 @@ Based on code analysis, generate targeted verification items (not generic templa
 2. **代码可验证的先验证**：Part A/B 的结论基于代码证据（file:line）
 3. **与其他 review 不重复**：不检查 UI 合规（ui-reviewer）、视觉质量（design-reviewer）
 4. **针对性检查清单**：Part C 根据代码分析定制，不照搬模板
+
+## Constraint
+
+You write only to `.claude/reviews/` directory. Do NOT modify any source code files. Do NOT use Edit or NotebookEdit tools.

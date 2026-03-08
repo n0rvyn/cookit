@@ -21,6 +21,11 @@ Before invoking the implementation reviewer, search for known issues related to 
 
 Use the `dev-workflow:implementation-reviewer` agent to perform the full plan-vs-code verification and design fidelity audit (if design doc exists).
 
+Dispatch with:
+- **Plan file path**: the implementation plan file (from recent plans in `docs/06-plans/` or user-specified)
+- **Modified file list**: from `git diff --name-only` or plan task file references
+- **Project root**: current working directory
+
 The agent returns a compact summary (verdict, gap counts, report file path) and writes the full report to `.claude/reviews/`. Wait for the agent to complete before proceeding to Step 2.
 
 ## Step 2: iOS-Specific Code Scan
