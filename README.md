@@ -1,23 +1,50 @@
 # Indie Toolkit
 
-Skills and plugins for:
+Indie Toolkit is a mono-repo of AI-facing plugins, skills, agents, and local tooling for indie app development workflows.
 
-- iOS/macOS development (`ios-development`)
-- macOS automation (`mactools`)
-- Cross-stack dev workflow orchestration (`dev-workflow`)
-- Product evaluation for indie devs (`product-lens`)
-- Local docs RAG MCP server (`rag-server`)
-- Plugin/skill audit tooling (`skill-audit`)
+The current codebase contains:
+
+- 6 top-level modules
+- 57 skill folders with `SKILL.md`
+- 22 agent files
+- 1 local MCP server (`rag-server`)
+
+## Modules
+
+| Module | Type | What is in the repo |
+|---|---|---|
+| `dev-workflow` | Claude Code plugin | Cross-stack workflow system with 24 skills, 10 agents, hooks, and a persisted phase state flow |
+| `ios-development` | Claude Code plugin + Codex/OpenCode skills | iOS/macOS/iPadOS development workflows, reviews, design-token checks, CI/CD, localization, App Store review prep |
+| `mactools` | Claude Code plugin + Codex/OpenCode skills | macOS automation for Notes, Calendar, Mail, Safari, Spotlight, Reminders, OCR, Photos, Contacts, OmniFocus |
+| `product-lens` | Claude Code plugin | Product evaluation workflows such as `/evaluate`, `/compare`, `/demand-check`, `/teardown`, `/feature-assess` |
+| `rag-server` | Local MCP server | Offline-first hybrid search server using SQLite FTS5 + `sqlite-vec` + Apple `NLContextualEmbedding` |
+| `skill-audit` | Claude Code plugin | Auditor for plugins, skills, agents, hooks, commands, and trigger quality |
+
+## Repository Layout
+
+```text
+.
+├── dev-workflow/
+├── ios-development/
+├── mactools/
+├── product-lens/
+├── rag-server/
+├── skill-audit/
+├── docs/
+├── .claude-plugin/   # marketplace manifest
+├── .codex/           # Codex install docs
+└── .opencode/        # OpenCode install docs
+```
 
 ## Claude Code
 
-Add marketplace:
+Add the marketplace:
 
 ```bash
 /plugin marketplace add n0rvyn/indie-toolkit
 ```
 
-Install plugin(s):
+Install any plugin you want:
 
 ```bash
 /plugin install dev-workflow@indie-toolkit
@@ -28,38 +55,74 @@ Install plugin(s):
 /plugin install skill-audit@indie-toolkit
 ```
 
-Available plugins:
+Current marketplace entries from `.claude-plugin/marketplace.json`:
 
-| Plugin | What it does | Docs |
-|---|---|---|
-| `dev-workflow` | Plan → execute → review workflow with agent dispatching and hooks | `dev-workflow/README.md` |
-| `ios-development` | iOS/macOS/iPadOS development workflows | `ios-development/README.md` |
-| `mactools` | macOS automation (Notes/Calendar/Mail/Safari/Spotlight/…) | `mactools/README.md` |
-| `product-lens` | Indie product evaluation (`/evaluate`, `/compare`, …) | `product-lens/README.md` |
-| `rag-server` | Local hybrid search MCP server (BM25 + vectors) | `rag-server/README.md` |
-| `skill-audit` | Review other plugins/skills from executor perspective | `skill-audit/README.md` |
+| Plugin | Version | Description | Docs |
+|---|---|---|---|
+| `dev-workflow` | `2.9.0` | Planning, execution, review, debugging, design analysis, commits, session management | `dev-workflow/README.md` |
+| `ios-development` | `1.5.0` | iOS/macOS/iPadOS development workflow plugin | `ios-development/README.md` |
+| `mactools` | `1.0.1` | macOS automation toolkit for Apple apps and local workflows | `mactools/README.md` |
+| `product-lens` | `1.0.0` | Product evaluation, market analysis, moat assessment, feature assessment, comparison | `product-lens/README.md` |
+| `rag-server` | `1.1.1` | Local hybrid search MCP server for project documentation | `rag-server/README.md` |
+| `skill-audit` | `1.1.1` | Audit plugins, skills, agents, hooks, commands, and trigger quality | `skill-audit/README.md` |
 
-Notes:
-- `rag-server` needs extra setup (Python venv + compiling embed binary); follow `rag-server/README.md` after installing.
+Note:
+
+- `rag-server` is not just a prompt-only plugin; it requires extra setup in `rag-server/README.md`, including compiling the Swift embed binary and creating a Python virtual environment.
 
 ## Codex
 
-Run install/update commands from `.codex/INSTALL.md` (source of truth).
+Codex installation is file-based, not marketplace-based. The source of truth is:
 
-If you prefer in-chat bootstrap, tell Codex:
+```text
+.codex/INSTALL.md
+```
+
+If you want Codex to bootstrap itself in-chat:
 
 ```text
 Fetch and follow instructions from https://raw.githubusercontent.com/n0rvyn/indie-toolkit/main/.codex/INSTALL.md
 ```
 
-Role explanation and structure notes: `docs/README.codex.md`
+What the current install guide actually links:
+
+- `dev-workflow/skills`
+- `ios-development/skills`
+- `mactools/skills`
+- `product-lens/skills`
+- `skill-audit/skills`
+
+Additional Codex notes:
+
+- `rag-server` is separate MCP infrastructure, not a Codex skill folder.
+- Role and structure notes live in `docs/README.codex.md`.
 
 ## OpenCode
 
-Tell OpenCode:
+OpenCode installation is also file-based. The source of truth is:
+
+```text
+.opencode/INSTALL.md
+```
+
+If you want OpenCode to bootstrap itself in-chat:
 
 ```text
 Fetch and follow instructions from https://raw.githubusercontent.com/n0rvyn/indie-toolkit/main/.opencode/INSTALL.md
 ```
 
-Detailed docs: `docs/README.opencode.md`
+The current OpenCode installer links only:
+
+- `ios-development/skills`
+- `mactools/skills`
+
+Detailed notes live in `docs/README.opencode.md`.
+
+## Module Docs
+
+- `dev-workflow/README.md`
+- `ios-development/README.md`
+- `mactools/README.md`
+- `product-lens/README.md`
+- `rag-server/README.md`
+- `skill-audit/README.md`
