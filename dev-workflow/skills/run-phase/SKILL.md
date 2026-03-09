@@ -396,10 +396,18 @@ If any review found issues:
 2. Update the dev-guide:
    - Check off this Phase's acceptance criteria
    - Add status line: `**Status:** ✅ Completed — YYYY-MM-DD` after the Phase heading
-3. Remind the user to update project docs:
+3. **Issue archival** (conditional): If Step 7 has items marked as "known issues" or skipped gaps:
+   - Ask: "Create GitHub Issues for {N} deferred items?"
+   - If yes:
+     - Check label existence: `gh label list --json name -q '.[].name'`
+     - If `deferred` label doesn't exist, create it: `gh label create "deferred" --color "FBCA04" --description "Deferred from phase review"`
+     - If `phase-{N}` label doesn't exist, create it: `gh label create "phase-{N}" --color "0E8A16" --description "Phase {N}"`
+     - For each deferred item, run `gh issue create` with labels `deferred` and `phase-{current phase number}`. Use the item description as issue body under `### Symptom`.
+   - Display all created issue URLs.
+4. Remind the user to update project docs:
    - `docs/07-changelog/` — record changes
    - `docs/03-decisions/` — if architectural decisions were made
-4. Report:
+5. Report:
 
 > Phase N complete.
 > Next: Phase N+1 — [name]: [goal].

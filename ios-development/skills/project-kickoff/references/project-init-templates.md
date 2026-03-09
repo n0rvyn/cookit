@@ -147,3 +147,84 @@ mkdir -p docs/{01-discovery,02-architecture,03-decisions,04-implementation,05-fe
 - 匹配到的行 → 将「项目规则」写入 CLAUDE.md「项目特定约束」
 - 未匹配的功能 → 搜索 Apple Developer Documentation 确认是否有声明式 API，有则补充
 - 此表随项目经验持续扩充
+
+## GitHub Issue Templates
+
+项目初始化时在 `.github/ISSUE_TEMPLATE/` 下创建 issue 模板，规范 issue 格式。
+
+### .github/ISSUE_TEMPLATE/bug.md
+
+```markdown
+---
+name: Bug
+about: 已定位的 bug 报告
+labels: ["bug"]
+---
+
+### 现象
+
+<!-- 用户可见的异常行为 -->
+
+### 根因
+
+<!-- 代码层面的原因，附文件:行号 -->
+
+### 相关文件
+
+<!-- 涉及的文件列表 -->
+
+### 修复策略
+
+<!-- 推荐的修复方式，或"Phase N 迁移后自然消失" -->
+
+### 备注
+
+<!-- 其他上下文，如截图、日志 -->
+```
+
+### .github/ISSUE_TEMPLATE/feature.md
+
+```markdown
+---
+name: Feature
+about: 功能需求或改进
+labels: ["enhancement"]
+---
+
+### 需求描述
+
+<!-- 要解决什么问题 -->
+
+### 预期行为
+
+<!-- 完成后用户看到什么 -->
+
+### 相关文件
+
+<!-- 可能涉及的文件，如果已知 -->
+
+### 备注
+
+```
+
+### 自定义 Labels
+
+除 GitHub 默认 labels 外，创建以下 labels：
+
+```bash
+gh label create "deferred" --color "FBCA04" --description "已定位，推迟处理"
+gh label create "blocked"  --color "D93F0B" --description "被其他事项阻塞"
+# phase labels 根据 dev-guide phase 数量动态生成：
+# gh label create "phase-1" --color "0E8A16" --description "Phase 1"
+# gh label create "phase-2" --color "1D76DB" --description "Phase 2"
+# ...
+```
+
+### Milestones
+
+如果 dev-guide 已存在，为每个 phase 创建 milestone：
+
+```bash
+# 从 dev-guide 提取 phase 名称，逐个创建：
+# gh api repos/{owner}/{repo}/milestones -f title="Phase 1: {name}" -f description="{scope}"
+```

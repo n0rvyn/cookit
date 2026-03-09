@@ -17,7 +17,21 @@ If input is incomplete, ask for:
 
 ## Process
 
-0. **Retrieve historical context**
+0. **Parse input and read GitHub Issue (if reference provided)**
+
+   If input contains `#N` or `issue N` (e.g., `/fix-bug #5`, `/fix-bug issue 5`):
+
+   1. Extract issue number N
+   2. Run: `gh issue view N --json title,body,labels,milestone`
+   3. If `gh issue view` returns an error (issue not found, `gh` not installed, no network): inform the user of the error and fall through to Step 0.5 without prior hypotheses
+   4. Parse the issue body — extract content under `### Prior Hypotheses` section
+   5. Present: "Prior hypotheses from issue #N:" followed by the extracted assertions
+   6. Show the full issue body for context
+   7. Store these hypotheses for use in Step 3
+
+   If input does not contain an issue reference, skip to Step 0.5.
+
+0.5. **Retrieve historical context**
    - Extract 3-5 keywords from the bug description (error type, component name, API name, symptom)
    - Call `search(query="<keywords from bug description>", source_type=["error","lesson"], project_root="<current working directory>")`
    - If results are returned: present them as "Related historical records:" before proceeding
@@ -61,6 +75,8 @@ If input is incomplete, ask for:
 
    Based on error symptoms and code context, generate 3-5 specific, falsifiable assertions.
    Each assertion must include: hypothesis + file location + verification method + expected outcome for both cases.
+
+   **If Step 0 extracted prior hypotheses from a GitHub Issue:** prepend them to the assertion list as highest-priority items, marked with source: "Prior hypothesis from issue #N". Verify these first before generating additional assertions.
 
    ```
    [Bug Assertion 1] {specific hypothesis}
@@ -157,6 +173,7 @@ If input is incomplete, ask for:
    - Build the project
    - Reproduce the original bug scenario - confirm it's fixed
    - Test related scenarios to catch regressions
+   - **If this fix originated from a GitHub Issue (Step 0):** ask the user: "Close issue #N?" If yes, run: `gh issue close N`. Display the closed issue URL.
 
 10. **Tradeoff Report**
 
