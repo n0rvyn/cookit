@@ -65,6 +65,7 @@ Design analysis: {path or "none"}
 Crystal file: {path or "none"}
 Project root: {path}
 
+Plugin agents dir: !`echo "${CLAUDE_PLUGIN_ROOT}/agents"`
 Previously resolved decisions (do not re-ask these):
 {List of "DP-xxx: Title → Chosen Option X" or "none"}
 

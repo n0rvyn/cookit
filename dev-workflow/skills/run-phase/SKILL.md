@@ -38,7 +38,6 @@ verification_report: null
 batch_progress: null
 review_reports: []
 gaps_remaining: 0
-design_fix_applied: false
 last_updated: "YYYY-MM-DDTHH:MM:SS"
 ```
 
@@ -324,16 +323,16 @@ Wait for user choice. If A: stop. If B: mark state `verification_report: "partia
 2. **Determine agents to dispatch:**
 
    **Feature spec agents (conditional):**
-   - Check the Phase scope for completed user journeys
+   - Check the Phase scope for completed user journeys (a user journey is "completed" when all its acceptance criteria in the dev-guide are checked off)
    - If this is NOT an infrastructure-only Phase: confirm feature name and scope with the user, then prepare `dev-workflow:feature-spec-writer` dispatch for each completed feature
    - If infrastructure-only (no user journeys): no feature-spec-writer dispatch
 
    **Review agents (always at least one):**
    - **Always:** `dev-workflow:implementation-reviewer` agent
-   - **If Phase modified UI files:** `/ui-review`
-   - **If Phase created new pages/components:** `/design-review`
-   - **If Phase completed a full user journey:** `/feature-review`
-   - **If this is the submission prep Phase:** `/submission-preview`
+   - **If Phase modified UI files:** `ios-development:ui-reviewer` — pass list of modified `*View.swift` files
+   - **If Phase created new pages/components:** `ios-development:design-reviewer` — pass list of new View files
+   - **If Phase completed a full user journey:** `ios-development:feature-reviewer` — pass feature scope + key files
+   - **If this is the submission prep Phase:** invoke `/submission-preview` skill after agents complete
 
 3. **Dispatch ALL agents in parallel** using the Task tool in a single message:
 

@@ -39,6 +39,7 @@ Before starting, confirm you have:
 4. **Crystal file path** — the crystal file with `[D-xxx]` decisions (if exists)
 5. **Previously resolved decisions** — list of `DP-xxx: Title → Chosen Option X` entries that have already been decided by the user; do not generate new decision points for these
 6. **Project root path** — for resolving file paths and searching code
+7. **Plugin agents dir** (optional) — absolute path to this plugin's `agents/` directory, for resolving supporting file references below
 
 Read the plan file, design doc, design analysis, and crystal file (if provided) before proceeding.
 
@@ -183,7 +184,7 @@ Do NOT modify the plan file. Return revision instructions only.
 
 **前置条件**：计划头部引用了设计文档路径。如果无设计文档引用，跳过本策略。
 
-Load the full verification procedure from [design-faithfulness.md](design-faithfulness.md) and execute all steps.
+Read `{Plugin agents dir}/design-faithfulness.md` and execute all verification steps described there.
 
 ---
 
@@ -191,13 +192,13 @@ Load the full verification procedure from [design-faithfulness.md](design-faithf
 
 **前置条件**：dispatch prompt 包含 `Crystal file:` 路径且非 "none"。如果无 crystal 文件引用，跳过本策略。
 
-Load the full verification procedure from [crystal-fidelity.md](crystal-fidelity.md) and execute all steps.
+Read `{Plugin agents dir}/crystal-fidelity.md` and execute all verification steps described there.
 
 ---
 
 #### AR. 架构审查（架构变更时）
 
-Load the full verification procedure from [architecture-review.md](architecture-review.md) and execute all steps.
+Read `{Plugin agents dir}/architecture-review.md` and execute all verification steps described there.
 
 ---
 
@@ -264,5 +265,5 @@ Common decision triggers for plan verification:
 1. **具体 > 抽象**：每条断言必须具体到可以通过读代码证实/证伪。"可能有问题"= 无效断言
 2. **代码锚定**：所有验证结果必须引用 file:line，不凭推测
 3. **错了也有用**：断言被证伪不是失败；验证过程本身产出的推理路径是价值所在
-4. **不替代其他 review**：本命令只验证计划完整性和正确性，不做代码质量、UI 合规、架构审查（那些是 `/code-review`、`/ui-review`、`implementation-reviewer` agent 的职责）
+4. **不替代其他 review**：本命令只验证计划完整性和正确性，不做代码质量、UI 合规审查（那些是 `/code-review`、`/ui-review`、`implementation-reviewer` agent 的职责）。AR 策略聚焦于计划中的架构变更是否完整，不审查代码实现质量
 5. **修订不执行**：本命令只输出修订建议，不直接修改计划。用户确认后再更新

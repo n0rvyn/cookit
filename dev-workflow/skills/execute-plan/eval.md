@@ -2,7 +2,7 @@
 
 ## Trigger Tests
 - "Execute the plan we just verified"
-- "Start implementing phase 1"
+- "Execute the verified plan"
 - "Run the implementation plan"
 
 ## Negative Trigger Tests

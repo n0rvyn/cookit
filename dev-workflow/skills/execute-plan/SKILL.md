@@ -25,9 +25,9 @@ description: "Use when you have a written implementation plan to execute. Batch 
   - 13-15 tasks: batch of 5
   - 16+ tasks: batch of 6
 
-**Before starting each batch (if search tool available):**
+**Before starting each batch (if rag-server MCP `search` tool available):**
 1. Collect task titles and key technical terms from the batch (file names, API names, component names mentioned in task steps)
-2. Call `search(query="<batch task titles and keywords>", source_type=["error", "lesson"], project_root="<cwd>")`
+2. Call rag-server MCP tool: `search(query="<batch task titles and keywords>", source_type=["error", "lesson"], project_root="<cwd>")`
 3. If results are returned: present them as "Relevant lessons for this batch:" before executing any task in the batch
 4. If the search tool is unavailable or returns no results: skip silently and begin task execution
 

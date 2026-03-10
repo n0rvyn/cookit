@@ -25,12 +25,20 @@ run-phase (orchestrator, main context)
 | design-drift-auditor | opus | Glob, Grep, Read, Bash | Design document vs codebase drift detection |
 | flow-tracer | opus | Glob, Grep, Read, Bash | End-to-end call chain tracing with break detection |
 | implementation-reviewer | opus | Glob, Grep, Read, Bash, Write | Plan-vs-code verification and design fidelity audit |
-| plan-verifier | opus | Glob, Grep, Read, Bash, Write | Verification-first plan validation (S1/S2/U1/DF/AR) |
+| plan-verifier | opus | Glob, Grep, Read, Bash, Write | Verification-first plan validation (S1/S2/U1/DF/CF/AR) |
 | plan-writer | sonnet | Glob, Grep, Read, Write | Structured implementation plan generation |
 | dev-guide-writer | sonnet | Glob, Grep, Read, Write | Phased project development guide creation |
 | feature-spec-writer | sonnet | Glob, Grep, Read, Write | Design-vs-implementation feature spec generation |
 | rules-auditor | sonnet | Glob, Grep, Read | CLAUDE.md rules audit for conflicts and loopholes |
 | distill-discussion-reader | sonnet | Read, Glob, Grep | Discussion file classification and structured extraction |
+
+### Supporting Files (not agents)
+
+| File | Loaded by | Content |
+|------|-----------|---------|
+| design-faithfulness.md | plan-verifier | DF strategy: design document faithfulness verification procedure |
+| crystal-fidelity.md | plan-verifier | CF strategy: crystal file decision fidelity verification procedure |
+| architecture-review.md | plan-verifier | AR strategy: architecture change completeness review procedure |
 
 ## Skills
 

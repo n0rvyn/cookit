@@ -24,7 +24,7 @@ Check the YAML frontmatter and file organization.
 | `tools` lists only valid tools | Check against: Glob, Grep, Read, Bash, Write, Edit, WebSearch, WebFetch, NotebookEdit, Task | Bug |
 | Read-only agent has `## Constraint` section | Scan headings + check for "Do NOT modify" language | Logic |
 | Read-only agent does NOT list Write/Edit/NotebookEdit in `tools` | Cross-check tools list with constraint | Bug |
-| `color` is valid if present | Check against: yellow, blue, cyan, green, purple | Minor |
+| `color` is valid if present | Check against: yellow, blue, cyan, green, purple, red, magenta | Minor |
 
 ---
 

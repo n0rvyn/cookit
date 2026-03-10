@@ -42,6 +42,7 @@ Before starting, confirm you have:
 3. **Plugin manifest path** — `.claude-plugin/plugin.json`
 4. **Eval files** (optional) — comma-separated paths to eval.md files for trigger plausibility checking
 5. **Supporting files to load** (optional) — list of supporting file names to Read before starting (e.g., `structural-validation.md, trigger-baseline.md`). If "none" or absent, skip the dimensions covered by those files.
+6. **Plugin agents dir** (optional) — absolute path to this plugin's `agents/` directory, for resolving supporting file paths. If absent, use Glob to locate the files.
 
 Read each file to review in full before analyzing it. Process one artifact at a time.
 
@@ -56,7 +57,7 @@ Skip dimensions that don't apply (e.g., "Trigger" doesn't apply to agents that a
 ### Dimension 1 + 2: Structural Validation & Reference Integrity
 
 **Conditional:** If dispatch prompt includes `Supporting files to load:` with `structural-validation.md`:
-Load [structural-validation.md](structural-validation.md) and execute all checks described there.
+Read `{Plugin agents dir}/structural-validation.md` and execute all checks described there.
 Otherwise: skip D1 and D2 (handled by external `plugin-dev:plugin-validator` agent). Mark these rows as "Handled externally" in the Dimension Summary.
 
 ---
@@ -134,7 +135,7 @@ Check for routing conflicts and unintended auto-invocation.
 
 **D5.1-5.2 Baseline overlap checks:**
 **Conditional:** If dispatch prompt includes `Supporting files to load:` with `trigger-baseline.md`:
-Load [trigger-baseline.md](trigger-baseline.md) and execute D5.1 and D5.2 checks described there.
+Read `{Plugin agents dir}/trigger-baseline.md` and execute D5.1 and D5.2 checks described there.
 Otherwise: skip D5.1-5.2 (handled by external `plugin-dev:skill-reviewer` agent).
 
 **Dispatch loop detection (always run):**
@@ -198,7 +199,7 @@ Check that skills and agents follow Agent Skills Spec conventions for runtime op
 
 **7.3 Description quality:**
 **Conditional:** If dispatch prompt includes `Supporting files to load:` with `trigger-baseline.md`:
-Execute D7.3 checks from [trigger-baseline.md](trigger-baseline.md).
+Execute D7.3 checks from `{Plugin agents dir}/trigger-baseline.md`.
 Otherwise: skip (handled by external `plugin-dev:skill-reviewer` agent).
 
 **7.4 File size:**
@@ -281,7 +282,7 @@ Check that skill descriptions have clear trigger scenarios, eval.md triggers (if
 
 **9.1 Description trigger quality:**
 **Conditional:** If dispatch prompt includes `Supporting files to load:` with `trigger-baseline.md`:
-Execute D9.1 checks from [trigger-baseline.md](trigger-baseline.md).
+Execute D9.1 checks from `{Plugin agents dir}/trigger-baseline.md`.
 Otherwise: skip (handled by external `plugin-dev:skill-reviewer` agent).
 
 **9.2 Eval.md consumption (if eval files provided):**
@@ -289,7 +290,7 @@ Otherwise: skip (handled by external `plugin-dev:skill-reviewer` agent).
 For each skill that has a corresponding eval.md file:
 
 1. Read the eval.md file
-2. Extract trigger tests (lines matching `- ".*"`)
+2. Extract trigger tests (lines in the `## Trigger Tests` section starting with `- `)
 3. For each trigger test:
    - Check: does the trigger test keywords/intent align with the skill's description?
    - Flag: trigger test that seems unrelated to description → Logic (include specific test and why it mismatches)
