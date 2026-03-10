@@ -22,7 +22,7 @@ Command source of truth is `.codex/INSTALL.md`.
 ## Notes
 
 - Codex directly loads `skills/`; `agents/` and `hooks/` are plugin internals and are not linked directly.
-- Current Codex-loadable plugin skill folders: `dev-workflow`, `ios-development`, `mactools`, `product-lens`, `skill-audit`.
+- Current Codex-loadable plugin skill folders: `dev-workflow`, `apple-dev`, `mactools`, `product-lens`, `skill-audit`.
 - `rag-server` is not a Codex skill folder. It is a separate MCP server component; see `rag-server/README.md`.
 
 ## How To Install

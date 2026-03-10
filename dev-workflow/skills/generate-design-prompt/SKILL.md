@@ -4,13 +4,13 @@ description: "Use when the user needs a design tool prompt (for Stitch, Figma, o
 disable-model-invocation: true
 ---
 
-> **Note on `disable-model-invocation`:** This skill generates text for the user to paste into external design tools (Stitch/Figma). It does not invoke AI models itself; the AI reads project code/docs and assembles a prompt. Shared pattern with `ios-development:generate-stitch-prompts`.
+> **Note on `disable-model-invocation`:** This skill generates text for the user to paste into external design tools (Stitch/Figma). It does not invoke AI models itself; the AI reads project code/docs and assembles a prompt. Shared pattern with `apple-dev:generate-stitch-prompts`.
 
 ## 定位
 
 从代码/文档中提取功能需求，翻译为设计工具能理解的 UI 描述语言。支持两种输出目标（Stitch / Figma）和两种模式（初始生成 / 迭代改进）。
 
-基于 `ios-development:generate-stitch-prompts` 的核心提取逻辑演进，增加 Figma 支持和 pipeline 集成。
+基于 `apple-dev:generate-stitch-prompts` 的核心提取逻辑演进，增加 Figma 支持和 pipeline 集成。
 
 ## 参数
 

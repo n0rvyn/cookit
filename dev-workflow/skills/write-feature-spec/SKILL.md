@@ -75,5 +75,5 @@ When the agent completes:
    - "Document the feature for changelog or release notes"
    - "Feed to an external reviewer for independent review:
       Dispatch via Task tool with:
-        subagent_type: 'ios-development:feature-reviewer'
+        subagent_type: 'apple-dev:feature-reviewer'
         prompt: 'Review feature: {name}. Spec: {path}. Key files: {files list}. Project root: {root}'"

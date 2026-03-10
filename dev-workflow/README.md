@@ -85,5 +85,5 @@ run-phase (orchestrator, main context)
 ## Design Principles
 
 - Bug fix, plan verification, and design decision skills use universal methodology (value domain tracing, reverse reasoning, entry point uniqueness, complexity analysis) that works across tech stacks.
-- iOS-specific checks (Design Token consistency, Swift concurrency) are provided by the `ios-development` plugin's references.
+- iOS-specific checks (Design Token consistency, Swift concurrency) are provided by the `apple-dev` plugin's references.
 - Document-generation tasks (plans, specs, guides, audits) run in separate agent contexts to preserve main context for code execution.

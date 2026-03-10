@@ -329,9 +329,9 @@ Wait for user choice. If A: stop. If B: mark state `verification_report: "partia
 
    **Review agents (always at least one):**
    - **Always:** `dev-workflow:implementation-reviewer` agent
-   - **If Phase modified UI files:** `ios-development:ui-reviewer` — pass list of modified `*View.swift` files
-   - **If Phase created new pages/components:** `ios-development:design-reviewer` — pass list of new View files
-   - **If Phase completed a full user journey:** `ios-development:feature-reviewer` — pass feature scope + key files
+   - **If Phase modified UI files:** `apple-dev:ui-reviewer` — pass list of modified `*View.swift` files
+   - **If Phase created new pages/components:** `apple-dev:design-reviewer` — pass list of new View files
+   - **If Phase completed a full user journey:** `apple-dev:feature-reviewer` — pass feature scope + key files
    - **If this is the submission prep Phase:** invoke `/submission-preview` skill after agents complete
 
 3. **Dispatch ALL agents in parallel** using the Task tool in a single message:
@@ -351,10 +351,10 @@ Wait for user choice. If A: stop. If B: mark state `verification_report: "partia
    ```
 
    For implementation-reviewer (always): pass plan file path + project root
-   For ios-development agents (conditional):
-   - `ios-development:ui-reviewer` (if UI files modified): pass list of modified `*View.swift` files
-   - `ios-development:design-reviewer` (if new pages/components): pass list of new View files
-   - `ios-development:feature-reviewer` (if full user journey completed): pass feature scope + key files
+   For apple-dev agents (conditional):
+   - `apple-dev:ui-reviewer` (if UI files modified): pass list of modified `*View.swift` files
+   - `apple-dev:design-reviewer` (if new pages/components): pass list of new View files
+   - `apple-dev:feature-reviewer` (if full user journey completed): pass feature scope + key files
 
    Each agent receives a fresh context — they have no memory of how the code was written.
    This removes confirmation bias from self-review.
