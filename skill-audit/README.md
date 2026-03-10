@@ -12,42 +12,55 @@ Install from indie-toolkit marketplace:
 
 ## Usage
 
-- `/plugin-review` — dispatches the `plugin-reviewer` agent to audit a plugin or specific artifacts.
+- `/plugin-review` — orchestrates plugin review across 9 dimensions with intelligent routing
+
+## Architecture
+
+The plugin-review skill detects whether the optional `plugin-dev` plugin is installed and routes accordingly:
+
+**Strategy A** (plugin-dev available): dispatches `plugin-dev:plugin-validator` + `plugin-dev:skill-reviewer` + own `plugin-reviewer` in parallel, then merges into a unified report. Avoids redundant structural and trigger checks.
+
+**Strategy B** (plugin-dev not installed): dispatches own `plugin-reviewer` with supporting files (`structural-validation.md`, `trigger-baseline.md`) to cover all 9 dimensions independently.
+
+Both strategies produce identical report format.
 
 ## Agents
 
 | Agent | Model | Description |
 |-------|-------|-------------|
-| plugin-reviewer | opus | Reviews plugin artifacts from AI executor perspective. Covers 9 dimensions: structural validation, reference integrity, workflow logic, execution feasibility, trigger & routing, edge cases, spec compliance, metadata & docs, and **Trigger Quality Review** (new in Phase 3). |
+| plugin-reviewer | opus | Deep review from AI executor perspective: workflow logic, execution feasibility, edge cases, dispatch loops, spec compliance, metadata sync, eval.md validation, Trigger Health Score. Conditionally loads D1/D2 and baseline trigger checks from supporting files when plugin-dev is unavailable. |
+
+### Supporting Files (not agents)
+
+| File | Loaded when | Content |
+|------|------------|---------|
+| structural-validation.md | plugin-dev unavailable | D1 Structural Validation + D2 Reference Integrity |
+| trigger-baseline.md | plugin-dev unavailable | D5.1-5.2 description overlap + D7.3 description quality + D9.1 trigger quality |
 
 ## Skills
 
 | Skill | Description |
 |-------|-------------|
-| plugin-review | Dispatches plugin-reviewer agent to review plugin artifacts. Now supports eval.md files for trigger plausibility checking. |
+| plugin-review | Orchestrates plugin review with Strategy A/B routing. Supports eval.md files for trigger plausibility checking. |
 
-## Trigger Quality Review (Phase 3)
+## Review Dimensions
 
-The plugin-reviewer now includes a **Trigger Quality Review** dimension (Dimension 9) that:
+| # | Dimension | Strategy A Owner | Strategy B Owner |
+|---|-----------|-----------------|-----------------|
+| D1 | Structural Validation | plugin-dev:plugin-validator | plugin-reviewer + structural-validation.md |
+| D2 | Reference Integrity | plugin-dev:plugin-validator | plugin-reviewer + structural-validation.md |
+| D3 | Workflow Logic | plugin-reviewer (core) | plugin-reviewer (core) |
+| D4 | Execution Feasibility | plugin-reviewer (core) | plugin-reviewer (core) |
+| D5 | Trigger & Routing | split: baseline → skill-reviewer; deep → plugin-reviewer | plugin-reviewer (full) |
+| D6 | Edge Cases & False Results | plugin-reviewer (core) | plugin-reviewer (core) |
+| D7 | Spec Compliance | split: D7.3 → skill-reviewer; rest → plugin-reviewer | plugin-reviewer (full) |
+| D8 | Metadata & Docs | plugin-reviewer (core) | plugin-reviewer (core) |
+| D9 | Trigger Quality | split: D9.1 → skill-reviewer; rest → plugin-reviewer | plugin-reviewer (full) |
 
-- Checks skill descriptions have clear trigger scenarios ("Use when/for/after/before", "当...时使用")
-- Validates eval.md trigger tests (if present) against skill descriptions for plausibility
-- Detects cross-skill trigger conflicts (e.g., `design-review` vs `ui-review` both matching "review UI")
-- Produces a **Trigger Health Score** per skill: `pass` / `warn` / `fail`
+## Trigger Health Score
 
-### Trigger Health Score Output
-
-After running `/plugin-review`, the report includes:
-
-```
-### Trigger Health Score
+After running `/plugin-review`, the report includes a per-skill trigger health assessment:
 
 | Skill | Description Quality | Eval Coverage | Conflict Check | Verdict |
 |-------|--------------------|---------------|----------------|---------|
-| skill-name | pass | pass | pass | pass |
-```
-
-- **Description Quality**: pass/warn/fail based on trigger clarity
-- **Eval Coverage**: pass/fail/N/A (N/A if no eval.md exists)
-- **Conflict Check**: pass/warn/fail based on cross-skill trigger overlap
-- **Verdict**: overall trigger health for the skill
+| skill-name | pass/warn/fail | pass/fail/N/A | pass/warn/fail | overall |

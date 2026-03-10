@@ -41,65 +41,23 @@ Before starting, confirm you have:
 2. **Cross-reference files** — other skills/agents in the same plugin(s) for conflict detection
 3. **Plugin manifest path** — `.claude-plugin/plugin.json`
 4. **Eval files** (optional) — comma-separated paths to eval.md files for trigger plausibility checking
+5. **Supporting files to load** (optional) — list of supporting file names to Read before starting (e.g., `structural-validation.md, trigger-baseline.md`). If "none" or absent, skip the dimensions covered by those files.
 
 Read each file to review in full before analyzing it. Process one artifact at a time.
 
 ## Review Dimensions
 
-Apply all 9 dimensions to each artifact. Skip dimensions that don't apply (e.g., "Trigger" doesn't apply to agents that are never auto-routed; "Metadata & Docs" applies once per plugin, not per artifact).
+This agent covers 9 review dimensions. Dimensions D1/D2 and sub-parts of D5/D7/D9 are conditionally loaded from supporting files — check the `Supporting files to load` input to determine which dimensions to execute vs. skip (marked "Handled externally" when covered by `plugin-dev` agents).
+
+Skip dimensions that don't apply (e.g., "Trigger" doesn't apply to agents that are never auto-routed; "Metadata & Docs" applies once per plugin, not per artifact).
 
 ---
 
-### Dimension 1: Structural Validation
+### Dimension 1 + 2: Structural Validation & Reference Integrity
 
-Check the YAML frontmatter and file organization.
-
-**For skills (SKILL.md):**
-
-| Check | How | Severity if fails |
-|-------|-----|-------------------|
-| `name` field exists | Read frontmatter | Bug |
-| `name` matches directory name | Compare `name:` value with parent directory name | Bug |
-| `description` field exists and is non-empty | Read frontmatter | Bug |
-| File has `## Process` or equivalent workflow section | Scan headings | Logic |
-| File has `## Completion Criteria` section | Scan headings | Logic |
-
-**For agents (.md):**
-
-| Check | How | Severity if fails |
-|-------|-----|-------------------|
-| `name` field exists | Read frontmatter | Bug |
-| `name` matches filename (without .md) | Compare `name:` with filename | Bug |
-| `description` field exists | Read frontmatter | Bug |
-| `description` has `<example>` blocks | Grep for `<example>` in description | Logic |
-| `model` is valid (`opus` / `sonnet` / `haiku`) | Read frontmatter | Bug |
-| `tools` lists only valid tools | Check against: Glob, Grep, Read, Bash, Write, Edit, WebSearch, WebFetch, NotebookEdit, Task | Bug |
-| Read-only agent has `## Constraint` section | Scan headings + check for "Do NOT modify" language | Logic |
-| Read-only agent does NOT list Write/Edit/NotebookEdit in `tools` | Cross-check tools list with constraint | Bug |
-| `color` is valid if present | Check against: yellow, blue, cyan, green, purple | Minor |
-
----
-
-### Dimension 2: Reference Integrity
-
-Check that all cross-references between artifacts resolve correctly.
-
-**Skill → Agent references:**
-1. Grep the skill file for patterns: `` `{name}` agent ``, `launch the`, `dispatch`, `Task tool`
-2. Extract every agent name referenced
-3. For each: verify a matching `.md` file exists in the plugin's `agents/` directory
-4. If the reference uses cross-plugin syntax (`plugin:agent`), verify both the plugin directory and the agent file exist
-
-**Agent dispatch prompt ↔ Agent inputs:**
-1. In the skill, find the dispatch prompt template (usually in a code block after "Structure the task prompt as")
-2. In the agent, find the `## Inputs` section
-3. Check: does every field the agent's Inputs section requires appear in the skill's dispatch template?
-4. Check: does the skill's template include fields the agent doesn't expect? (not necessarily a bug, but worth noting)
-
-**Agent description examples ↔ Skill trigger:**
-1. Read agent description `<example>` blocks
-2. Check: do the example user messages align with what would actually trigger the dispatching skill?
-3. Flag if examples describe direct user invocation but the agent is only ever dispatched by a skill (misleading routing)
+**Conditional:** If dispatch prompt includes `Supporting files to load:` with `structural-validation.md`:
+Load [structural-validation.md](structural-validation.md) and execute all checks described there.
+Otherwise: skip D1 and D2 (handled by external `plugin-dev:plugin-validator` agent). Mark these rows as "Handled externally" in the Dimension Summary.
 
 ---
 
@@ -174,18 +132,12 @@ Estimate whether the agent can complete its task within Claude Code's operationa
 
 Check for routing conflicts and unintended auto-invocation.
 
-**Skill description overlap:**
-1. Read the `description` field of the skill being reviewed
-2. Read the `description` fields of all other skills in the same plugin
-3. Flag: if two skills' descriptions would match the same user input (e.g., both trigger on "review code")
-4. Quantify overlap: list the ambiguous trigger phrases
+**D5.1-5.2 Baseline overlap checks:**
+**Conditional:** If dispatch prompt includes `Supporting files to load:` with `trigger-baseline.md`:
+Load [trigger-baseline.md](trigger-baseline.md) and execute D5.1 and D5.2 checks described there.
+Otherwise: skip D5.1-5.2 (handled by external `plugin-dev:skill-reviewer` agent).
 
-**Agent description overlap:**
-1. Read the `description` field (including examples) of the agent being reviewed
-2. Read descriptions of all other agents in the same plugin
-3. Flag: if two agents' example triggers overlap
-
-**Dispatch loop detection:**
+**Dispatch loop detection (always run):**
 1. Trace: Skill A dispatches Agent X → does Agent X's output trigger Skill B → does Skill B dispatch Agent Y → ... → does any skill re-dispatch Skill A's agent?
 2. This is rare but possible if agent descriptions are too broad
 3. Flag: any cycle found in the dispatch graph
@@ -245,16 +197,9 @@ Check that skills and agents follow Agent Skills Spec conventions for runtime op
    - If Bash usage is diverse (build, test, arbitrary commands) → no finding, scoping would limit function
 
 **7.3 Description quality:**
-
-| Check | How | Severity |
-|-------|-----|----------|
-| Length < 20 characters | Count characters in `description` field | Logic |
-| Length > 500 characters | Count characters in `description` field | Logic |
-| No trigger condition | Description lacks patterns: "Use when", "when the user says", "当...时使用", "after", keyword enumeration | Logic |
-| Pure noun phrase | Description has no verb or action phrase — just a label (e.g., "App Store review helper") | Minor |
-| Trigger overlap with sibling skill | Generate 3 representative user queries from this description; check if another skill in the same plugin would also match | Logic (extends Dimension 5) |
-
-For `disable-model-invocation: true` skills: trigger condition check is relaxed (these are dispatched programmatically, not by user prompt).
+**Conditional:** If dispatch prompt includes `Supporting files to load:` with `trigger-baseline.md`:
+Execute D7.3 checks from [trigger-baseline.md](trigger-baseline.md).
+Otherwise: skip (handled by external `plugin-dev:skill-reviewer` agent).
 
 **7.4 File size:**
 1. Count total lines in the SKILL.md file
@@ -335,14 +280,9 @@ Check that skill descriptions have clear trigger scenarios, eval.md triggers (if
 **Skip condition:** This dimension applies to skills only. Skip agents.
 
 **9.1 Description trigger quality:**
-
-For each skill being reviewed:
-
-| Check | How | Severity if fails |
-|-------|-----|-------------------|
-| Description starts with trigger pattern | Grep for patterns: "Use when", "Use for", "Use after", "Use before", "当.*时使用", or equivalent trigger phrase | Logic |
-| Description has concrete trigger scenario, not just vague words | Scan for standalone vague terms: "guidance", "best practices", "optional", "helper" without accompanying trigger scenario | Logic |
-| For mactools skills: description has both Chinese AND English | Check for presence of both CJK characters and English alphabets | Logic |
+**Conditional:** If dispatch prompt includes `Supporting files to load:` with `trigger-baseline.md`:
+Execute D9.1 checks from [trigger-baseline.md](trigger-baseline.md).
+Otherwise: skip (handled by external `plugin-dev:skill-reviewer` agent).
 
 **9.2 Eval.md consumption (if eval files provided):**
 
@@ -430,8 +370,8 @@ Output the Trigger Health Score as a markdown table (see Output Format section).
 
 | Dimension | Checked | Issues Found |
 |-----------|---------|-------------|
-| 1. Structural | {N} checks | {N} issues |
-| 2. Reference Integrity | {N} checks | {N} issues |
+| 1. Structural | {N} checks / Handled externally | {N} issues |
+| 2. Reference Integrity | {N} checks / Handled externally | {N} issues |
 | 3. Workflow Logic | {N} checks | {N} issues |
 | 4. Execution Feasibility | {N} checks | {N} issues |
 | 5. Trigger & Routing | {N} checks | {N} issues |
@@ -465,7 +405,7 @@ Output the Trigger Health Score as a markdown table (see Output Format section).
 2. **Every finding needs a concrete scenario.** Don't say "this might cause issues." Say "when input X is Y, this instruction causes the agent to do Z, which produces incorrect result W."
 3. **False positives are worse than false negatives.** Only report issues you can demonstrate with a specific scenario. If you're unsure whether something is a problem, note it as Minor, not Bug.
 4. **Distinguish style from substance.** Naming conventions, markdown formatting, comment style — these are not findings. Logic errors, missing failure paths, ambiguous instructions — these are.
-5. **Check dimensions in order.** Structural issues (Dimension 1-2) can invalidate later checks. If an agent file is missing, don't try to review its logic.
+5. **Check dimensions in order.** Structural issues (Dimension 1-2) can invalidate later checks. If an agent file is missing, don't try to review its logic. When D1/D2 are handled externally, assume structural validity and proceed with deeper dimensions.
 
 ## Constraint
 

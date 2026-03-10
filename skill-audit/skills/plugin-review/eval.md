@@ -10,7 +10,10 @@
 - "Design review"
 
 ## Output Assertions
-- [ ] Output covers 9 dimensions: structural, reference integrity, workflow logic, execution feasibility, trigger/routing, edge cases, spec compliance, metadata & docs, trigger quality review
+- [ ] Output covers 9 dimensions regardless of strategy (structural, reference integrity, workflow logic, execution feasibility, trigger/routing, edge cases, spec compliance, metadata & docs, trigger quality review)
+- [ ] If plugin-dev available (Strategy A): dispatches plugin-dev:plugin-validator + plugin-dev:skill-reviewer + skill-audit:plugin-reviewer in parallel
+- [ ] If plugin-dev not available (Strategy B): dispatches skill-audit:plugin-reviewer with supporting files (structural-validation.md, trigger-baseline.md)
+- [ ] Report format is identical between Strategy A and Strategy B
 - [ ] Output is from AI executor perspective (not end-user)
 - [ ] Output flags trigger mechanism issues and execution feasibility problems
 
