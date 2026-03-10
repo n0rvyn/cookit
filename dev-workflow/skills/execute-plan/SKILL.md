@@ -31,9 +31,16 @@ description: "Use when you have a written implementation plan to execute. Batch 
 3. If results are returned: present them as "Relevant lessons for this batch:" before executing any task in the batch
 4. If the search tool is unavailable or returns no results: skip silently and begin task execution
 
+**Before starting each batch — pre-read batch files:**
+1. Scan all tasks in this batch — collect every file path from their `**Files:**` sections
+2. Deduplicate the file list
+3. If more than 15 unique files: keep the 15 that appear in the most tasks (tiebreaker: prefer files listed earlier in the plan); the rest will be read per-task as needed
+4. Read the selected files in parallel (single message, multiple Read tool calls)
+5. Track which files you modify via Write/Edit tools during execution: after completing each task, note every file you wrote or edited. Before starting the next task, re-read any pre-read file that you modified
+
 For each task in the batch:
-1. Read the task fully before starting
-2. If the task has design anchor fields (Design ref, Expected values, etc.), read the referenced design section first
+1. Read the task description from the plan fully before starting
+2. If the task has design anchor fields (Design ref, Expected values, etc.), read the referenced design section first (skip if already pre-read in this batch and not modified since)
 3. Follow steps exactly as written
 4. Run all verification commands
 5. If verification fails: stop and report, do not guess at fixes
