@@ -13,8 +13,8 @@ rag-server/embed/embed
 .claude/dev-workflow-state.yml
 
 # temp files
-.claude/compact-suggested-at
 /*.txt
 
 # Claude Code files
-/.claude/reviews/
+/.claude
+/.codex
