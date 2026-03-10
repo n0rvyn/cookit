@@ -1,4 +1,4 @@
-# iOS UI 检查清单
+# Apple Platform UI 检查清单
 <!-- SECTION MARKERS: Each "section" comment line immediately precedes the ##
      heading it labels. Use Grep("<!-- section:", file) to find sections, then
      Read(file, offset, limit) to fetch only the relevant lines. -->
@@ -149,7 +149,7 @@
 
 ---
 
-<!-- section: 6. 导航 keywords: navigation, NavigationStack, TabBar, back button -->
+<!-- section: 6. 导航 keywords: navigation, NavigationStack, TabBar, back button platform: iOS -->
 ## 6. 导航
 
 ### 6.1 返回导航
@@ -378,3 +378,37 @@
 4. **留白与呼吸感**：内容是否有喘息空间？分组是否清晰？
 5. **动效与过渡**：页面切换流畅？元素出现/消失有过渡？时长 200~350ms？
 6. **首屏印象**：第一眼看到内容还是空白？整体感觉精致还是粗糙？
+
+---
+
+<!-- section: 12. macOS UI 检查 keywords: macOS, window, toolbar, menu bar, keyboard navigation, sidebar platform: macOS -->
+## 12. macOS UI 检查
+
+### 12.1 Window 行为
+1. [ ] 窗口是否可自由调整大小？有无合理的最小尺寸（`.frame(minWidth:minHeight:)`）？
+2. [ ] 多窗口场景是否正确？（`WindowGroup` = 多实例，`Window` = 单实例）
+3. [ ] Settings 场景是否使用了 `Settings` 而非自定义 Window？
+4. [ ] 窗口关闭后再打开是否恢复合理状态？
+
+### 12.2 Toolbar & Menu
+5. [ ] 主要操作是否同时在 toolbar 和菜单中可达？
+6. [ ] 自定义菜单是否遵循系统菜单结构？（File/Edit/View/Window/Help）
+7. [ ] 右键菜单（contextMenu）是否提供了桌面用户期望的操作？
+8. [ ] 菜单项是否有合理的键盘快捷键标注？
+
+### 12.3 键盘导航
+9. [ ] 所有主要操作是否有键盘快捷键？
+10. [ ] 标准快捷键是否遵循惯例？（Cmd+N 新建，Cmd+W 关闭，Cmd+, 设置）
+11. [ ] Tab 键是否可在控件间移动焦点？
+12. [ ] Escape 键是否可关闭 modal/popover/sheet？
+
+### 12.4 Sidebar 导航
+13. [ ] 是否使用 `NavigationSplitView` 做一级导航？（macOS 不用 TabBar）
+14. [ ] Sidebar 宽度是否可调？
+15. [ ] 选中状态是否有清晰的视觉反馈？
+16. [ ] Sidebar 是否可折叠/隐藏？
+
+### 12.5 鼠标交互
+17. [ ] 可交互元素是否有 hover 状态（`.onHover`）？
+18. [ ] 是否提供 tooltip（`.help("...")`）标注不明显的操作？
+19. [ ] 拖放操作是否在合理位置支持？

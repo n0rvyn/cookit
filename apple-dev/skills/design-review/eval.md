@@ -16,7 +16,7 @@
 
 ## Output Assertions
 <!-- What must be true in the skill's output -->
-- [ ] Output loads ui-design-principles.md and ios-ui-checklist.md references
+- [ ] Output loads ui-design-principles.md and apple-ui-checklist.md references
 - [ ] Output checks visual hierarchy with 3-level font weight/size gradient
 - [ ] Output verifies color strategy uses semantic colors not hardcoded values
 - [ ] Output checks spacing rhythm follows consistent scale

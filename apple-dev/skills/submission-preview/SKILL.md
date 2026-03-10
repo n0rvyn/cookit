@@ -17,7 +17,7 @@ Run both before submission. They don't overlap.
 
 Search for the reference file:
 ```
-Glob("**/ios-development/references/app-review-guidelines.md")
+Glob("**/apple-dev/references/app-review-guidelines.md")
 ```
 If found: Read it.
 If not found: proceed using the embedded checklist in this skill (sections 1-5 are fully

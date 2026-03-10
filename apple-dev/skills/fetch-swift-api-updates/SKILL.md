@@ -7,7 +7,7 @@ user-invocable: true
 ## Overview
 
 Fetches Swift/SwiftUI API changes for a given year and appends new sections to the appropriate
-`ios-development/references/swift-api-changes-*.md` reference file.
+`apple-dev/references/swift-api-changes-*.md` reference file.
 
 ## Process
 
@@ -66,7 +66,7 @@ For each significant API, extract:
 Before adding a section, check if it already exists in the target file:
 
 ```
-Grep("<keyword>", "ios-development/references/swift-api-changes-{ios-version}.md")
+Grep("<keyword>", "apple-dev/references/swift-api-changes-{ios-version}.md")
 ```
 
 If the keyword already exists in a `<!-- section:` marker → skip (already documented).

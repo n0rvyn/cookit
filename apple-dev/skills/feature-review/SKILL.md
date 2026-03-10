@@ -45,6 +45,7 @@ description: "Use after completing a feature implementation, or when the user sa
 从 spec 提取所有用户操作（"用户可以..."），为每个操作搜索对应代码入口。
 
 **代码检查**：搜索 Button action, NavigationLink, .onTapGesture, .onSubmit, .swipeActions 等交互入口。
+**macOS 补充**：同时搜索 `CommandMenu`, `.commands`, `.keyboardShortcut` 作为功能入口（macOS 用户通过菜单和快捷键触发操作）。
 
 输出格式：
 ```
@@ -59,6 +60,7 @@ description: "Use after completing a feature implementation, or when the user sa
 - NavigationStack/NavigationLink/NavigationDestination 的 push 和 pop
 - .sheet/.fullScreenCover 的呈现和 dismiss
 - 错误状态 View 的操作选项
+- **macOS 补充**：`openWindow`/`dismissWindow` 的窗口打开和关闭路径；NavigationSplitView sidebar 的选中状态覆盖
 
 检查项：
 - [ ] 每个推入的页面是否有返回路径？
@@ -77,6 +79,7 @@ description: "Use after completing a feature implementation, or when the user sa
 
 - 深度 ≤ 3：✅
 - 深度 > 3：⚠️ 标记（不是错误，但需关注信息架构）
+- **macOS 补充**：macOS 不用 TabBar，检查 NavigationSplitView sidebar 是否覆盖所有一级功能入口
 
 ---
 
@@ -181,7 +184,7 @@ description: "Use after completing a feature implementation, or when the user sa
 
 1. **有 spec 才能审**：没有预期行为描述就无法判断"是否完整"，不猜测
 2. **代码可验证的先验证**：Part A/B 的结论基于代码证据（file:line）
-3. **与其他 review 不重复**：不检查 UI 合规（/ui-review）、视觉质量（/design-review）、代码质量（ios-reviewer）
+3. **与其他 review 不重复**：不检查 UI 合规（/ui-review）、视觉质量（/design-review）、代码质量（apple-reviewer）
 4. **针对性检查清单**：Part C 根据代码分析定制，不照搬模板
 
 ## Completion Criteria

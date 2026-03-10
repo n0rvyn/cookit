@@ -1,6 +1,6 @@
 ---
 name: project-kickoff
-description: "Use when starting a new iOS project, or the user says 'kickoff', 'new project setup'. Runs the project kickoff flow to clarify requirements, converge scope, and produce execution recommendations."
+description: "Use when starting a new iOS/macOS project, or the user says 'kickoff', 'new project setup'. Runs the project kickoff flow to clarify requirements, converge scope, and produce execution recommendations."
 disable-model-invocation: true
 ---
 

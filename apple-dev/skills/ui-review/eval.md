@@ -16,7 +16,7 @@
 
 ## Output Assertions
 <!-- What must be true in the skill's output -->
-- [ ] Output loads ios-ui-checklist.md and ui-design-principles.md references
+- [ ] Output loads apple-ui-checklist.md and ui-design-principles.md references
 - [ ] Output checks spacing uses 8pt multiples and Design System tokens
 - [ ] Output validates semantic color usage over hardcoded colors
 - [ ] Output verifies dynamic type support and monospaced digits for numbers

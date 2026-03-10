@@ -24,7 +24,7 @@
 ### References (7/7)
 - ✅ apple-hig-design-tokens.md (1019 lines)
 - ✅ swift-coding-standards.md (migrated)
-- ✅ ios-ui-checklist.md (migrated)
+- ✅ apple-ui-checklist.md (migrated)
 - ✅ ui-design-principles.md (migrated)
 - ✅ swiftdata-guide.md (470 lines)
 - ✅ testing-guide.md (535 lines)

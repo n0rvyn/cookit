@@ -21,7 +21,7 @@ model: sonnet
 tools: Glob, Grep, Read, Bash, Write
 ---
 
-<!-- Source: ios-development/skills/feature-review/SKILL.md -->
+<!-- Source: apple-dev/skills/feature-review/SKILL.md -->
 <!-- Last synced: 2026-02-25 -->
 <!-- When updating the source skill file, manually update this agent file to match. -->
 

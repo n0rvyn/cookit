@@ -1,10 +1,10 @@
 # Swift / SwiftUI API Changes — iOS 18 / Swift 6.0
 
-Seed content for WWDC 2024 APIs. Used by `ios-swift-context` skill for section-targeted loading.
+Seed content for WWDC 2024 APIs. Used by `apple-swift-context` skill for section-targeted loading.
 
 ---
 
-<!-- section: TabView keywords: TabView, Tab, tabItem, tab -->
+<!-- section: TabView keywords: TabView, Tab, tabItem, tab platform: iOS -->
 ## TabView Architecture (iOS 18)
 
 **Minimum OS**: iOS 18.0
@@ -48,7 +48,7 @@ New `Tab` type is only available iOS 18+.
 
 ---
 
-<!-- section: Entry macro keywords: @Entry, Environment, FocusedValues, EnvironmentValues -->
+<!-- section: Entry macro keywords: @Entry, Environment, FocusedValues, EnvironmentValues platform: iOS -->
 ## @Entry Macro (iOS 18)
 
 **Minimum OS**: iOS 18.0
@@ -86,7 +86,7 @@ extension FocusedValues {
 
 ---
 
-<!-- section: Previewable keywords: @Previewable, Preview, @State, previews -->
+<!-- section: Previewable keywords: @Previewable, Preview, @State, previews platform: iOS -->
 ## @Previewable Macro (iOS 18)
 
 **Minimum OS**: iOS 18.0
@@ -116,7 +116,7 @@ struct TogglePreview: View {
 
 ---
 
-<!-- section: MeshGradient keywords: MeshGradient, gradient, mesh -->
+<!-- section: MeshGradient keywords: MeshGradient, gradient, mesh platform: iOS -->
 ## MeshGradient (iOS 18)
 
 **Minimum OS**: iOS 18.0
@@ -148,7 +148,7 @@ MeshGradient(
 
 ---
 
-<!-- section: ScrollPosition keywords: scrollPosition, ScrollView, scrollTo -->
+<!-- section: ScrollPosition keywords: scrollPosition, ScrollView, scrollTo platform: iOS -->
 ## ScrollPosition API (iOS 18)
 
 **Minimum OS**: iOS 18.0 (enhanced; basic `scrollPosition(id:)` available iOS 17)
@@ -190,7 +190,7 @@ ScrollView {
 
 ---
 
-<!-- section: Observable SwiftData keywords: @Observable, @Model, SwiftData, Observation -->
+<!-- section: Observable SwiftData keywords: @Observable, @Model, SwiftData, Observation platform: iOS -->
 ## @Observable + SwiftData Integration (iOS 18)
 
 **Minimum OS**: @Observable — iOS 17.0; SwiftData — iOS 17.0; Integration improvements — iOS 18.0
@@ -233,7 +233,7 @@ class ViewModel: ObservableObject {
 
 ---
 
-<!-- section: ContainerValues keywords: ContainerValues, containerValue, container -->
+<!-- section: ContainerValues keywords: ContainerValues, containerValue, container platform: iOS -->
 ## ContainerValues (iOS 18)
 
 **Minimum OS**: iOS 18.0
@@ -259,7 +259,7 @@ ForEach(subviews) { subview in
 
 ---
 
-<!-- section: Swift6 keywords: Swift 6, concurrency, Sendable, actor, complete concurrency -->
+<!-- section: Swift6 keywords: Swift 6, concurrency, Sendable, actor, complete concurrency platform: iOS -->
 ## Swift 6.0 Complete Concurrency
 
 **Minimum**: Swift 6.0 (Xcode 16+)

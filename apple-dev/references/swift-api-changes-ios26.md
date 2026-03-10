@@ -1,10 +1,10 @@
 # Swift / SwiftUI API Changes — iOS 26 / Swift 6.x
 
-Seed content for WWDC 2025 APIs. Used by `ios-swift-context` skill for section-targeted loading.
+Seed content for WWDC 2025 APIs. Used by `apple-swift-context` skill for section-targeted loading.
 
 ---
 
-<!-- section: LiquidGlass keywords: glassEffect, LiquidGlass, glass, liquid, material -->
+<!-- section: LiquidGlass keywords: glassEffect, LiquidGlass, glass, liquid, material platform: iOS -->
 ## Liquid Glass (iOS 26)
 
 **Minimum OS**: iOS 26.0
@@ -221,7 +221,7 @@ class LegacyManager {
 
 ---
 
-<!-- section: NavigationStack26 keywords: NavigationStack, NavigationSplitView, navigation, iOS 26 -->
+<!-- section: NavigationStack26 keywords: NavigationStack, NavigationSplitView, navigation, iOS 26 platform: iOS -->
 ## Navigation Updates (iOS 26)
 
 **Minimum OS**: iOS 26.0

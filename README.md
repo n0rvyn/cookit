@@ -14,7 +14,7 @@ The current codebase contains:
 | Module | Type | What is in the repo |
 |---|---|---|
 | `dev-workflow` | Claude Code plugin | Cross-stack workflow system with 24 skills, 10 agents, hooks, and a persisted phase state flow |
-| `ios-development` | Claude Code plugin + Codex/OpenCode skills | iOS/macOS/iPadOS development workflows, reviews, design-token checks, CI/CD, localization, App Store review prep |
+| `apple-dev` | Claude Code plugin + Codex/OpenCode skills | iOS/macOS/iPadOS development workflows, reviews, design-token checks, CI/CD, localization, App Store review prep |
 | `mactools` | Claude Code plugin + Codex/OpenCode skills | macOS automation for Notes, Calendar, Mail, Safari, Spotlight, Reminders, OCR, Photos, Contacts, OmniFocus |
 | `product-lens` | Claude Code plugin | Product evaluation workflows such as `/evaluate`, `/compare`, `/demand-check`, `/teardown`, `/feature-assess` |
 | `rag-server` | Local MCP server | Offline-first hybrid search server using SQLite FTS5 + `sqlite-vec` + Apple `NLContextualEmbedding` |
@@ -25,7 +25,7 @@ The current codebase contains:
 ```text
 .
 ├── dev-workflow/
-├── ios-development/
+├── apple-dev/
 ├── mactools/
 ├── product-lens/
 ├── rag-server/
@@ -48,7 +48,7 @@ Install any plugin you want:
 
 ```bash
 /plugin install dev-workflow@indie-toolkit
-/plugin install ios-development@indie-toolkit
+/plugin install apple-dev@indie-toolkit
 /plugin install mactools@indie-toolkit
 /plugin install product-lens@indie-toolkit
 /plugin install rag-server@indie-toolkit
@@ -60,7 +60,7 @@ Current marketplace entries from `.claude-plugin/marketplace.json`:
 | Plugin | Version | Description | Docs |
 |---|---|---|---|
 | `dev-workflow` | `2.9.0` | Planning, execution, review, debugging, design analysis, commits, session management | `dev-workflow/README.md` |
-| `ios-development` | `1.5.0` | iOS/macOS/iPadOS development workflow plugin | `ios-development/README.md` |
+| `apple-dev` | `1.5.0` | iOS/macOS/iPadOS development workflow plugin | `apple-dev/README.md` |
 | `mactools` | `1.0.1` | macOS automation toolkit for Apple apps and local workflows | `mactools/README.md` |
 | `product-lens` | `1.0.0` | Product evaluation, market analysis, moat assessment, feature assessment, comparison | `product-lens/README.md` |
 | `rag-server` | `1.1.1` | Local hybrid search MCP server for project documentation | `rag-server/README.md` |
@@ -87,7 +87,7 @@ Fetch and follow instructions from https://raw.githubusercontent.com/n0rvyn/indi
 What the current install guide actually links:
 
 - `dev-workflow/skills`
-- `ios-development/skills`
+- `apple-dev/skills`
 - `mactools/skills`
 - `product-lens/skills`
 - `skill-audit/skills`
@@ -113,7 +113,7 @@ Fetch and follow instructions from https://raw.githubusercontent.com/n0rvyn/indi
 
 The current OpenCode installer links only:
 
-- `ios-development/skills`
+- `apple-dev/skills`
 - `mactools/skills`
 
 Detailed notes live in `docs/README.opencode.md`.
@@ -121,7 +121,7 @@ Detailed notes live in `docs/README.opencode.md`.
 ## Module Docs
 
 - `dev-workflow/README.md`
-- `ios-development/README.md`
+- `apple-dev/README.md`
 - `mactools/README.md`
 - `product-lens/README.md`
 - `rag-server/README.md`

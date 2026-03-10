@@ -1,9 +1,9 @@
-# iOS/Swift Development Rules
+# Apple Platform Swift Development Rules
 <!-- SECTION MARKERS: Each "section" comment line immediately precedes the ##
      heading it labels. Use Grep("<!-- section:", file) to find sections, then
      Read(file, offset, limit) to fetch only the relevant lines. -->
 
-> Extracted from global CLAUDE.md for plugin-based delivery. These rules are automatically loaded in iOS projects via the ios-development plugin.
+> Extracted from global CLAUDE.md for plugin-based delivery. These rules are automatically loaded in iOS projects via the apple-dev plugin.
 
 <!-- section: Build-Check-Fix Cycle keywords: build, xcodebuild, check, fix, compile cycle, timing -->
 ## Build-Check-Fix Cycle
@@ -270,3 +270,82 @@ Write Code -> xcodebuild build -> Check errors -> Fix -> Repeat
 - "问题是否存在"列填写"可能"/"不确定" — 不确定就去验证
 - 以"死代码"为由跳过问题分析，直接执行删除
 - 以"先保留以后可能用到"为由跳过问题分析，直接保留
+
+<!-- section: macOS Window Management keywords: WindowGroup, Window, Settings, MenuBarExtra, window, macOS, openWindow platform: macOS -->
+## macOS Window Management
+
+- `WindowGroup`：多实例文档窗口（每次打开创建新窗口）
+- `Window`：单实例工具窗口（如 About 面板），重复打开仅聚焦已有窗口
+- `Settings`：偏好设置窗口，自动获得 Cmd+, 快捷键，不要用自定义 Window 替代
+- `MenuBarExtra`：菜单栏常驻图标 + 弹出面板
+
+窗口尺寸：
+- `.defaultSize(width: 800, height: 600)` 设置默认尺寸
+- `.frame(minWidth: 400, minHeight: 300)` 设置最小尺寸（在内容 View 上）
+- 不要锁死固定尺寸，macOS 用户期望窗口可自由调整
+
+编程式窗口操作：
+- `@Environment(\.openWindow) var openWindow` → `openWindow(id: "detail")`
+- `@Environment(\.dismissWindow) var dismissWindow` → `dismissWindow(id: "detail")`
+- Window ID 必须与 `WindowGroup(id:)` 或 `Window(id:)` 声明的 ID 匹配
+
+<!-- section: macOS Menu & Toolbar keywords: commands, CommandMenu, CommandGroup, toolbar, macOS menu platform: macOS -->
+## macOS Menu & Toolbar
+
+菜单栏：
+- `CommandMenu("MyMenu") { ... }` 添加自定义菜单
+- `CommandGroup(before: .newItem) { ... }` 在系统菜单中插入条目
+- `CommandGroup(replacing: .appInfo) { ... }` 替换系统菜单条目
+- 菜单内的 Button 自动显示 `.keyboardShortcut()` 绑定
+
+Toolbar：
+- `.toolbar { ToolbarItem(placement: .automatic) { ... } }` 添加工具栏按钮
+- macOS 的 toolbar 位于窗口标题栏区域
+- 高频操作同时放在 toolbar 和菜单中（toolbar 是快捷入口，菜单是可发现性保障）
+
+导航结构：
+- macOS 不使用 TabBar，用 `NavigationSplitView` 的 Sidebar 做一级导航
+- Sidebar 使用 `List(selection:)` 实现选中状态
+- `.listStyle(.sidebar)` 获得系统 sidebar 外观
+
+<!-- section: macOS Keyboard Shortcuts keywords: keyboardShortcut, keyboard, shortcut, macOS, focusedSceneValue platform: macOS -->
+## macOS Keyboard Shortcuts
+
+标准快捷键惯例（必须遵循）：
+- Cmd+N：新建
+- Cmd+W：关闭窗口
+- Cmd+,：偏好设置（Settings scene 自动处理）
+- Cmd+Q：退出（系统自动处理）
+- Cmd+Z/Shift+Cmd+Z：撤销/重做
+
+自定义快捷键：
+- `.keyboardShortcut("n", modifiers: .command)` 绑定到 Button
+- 所有主要操作都应有键盘快捷键
+- 菜单中的快捷键自动显示在右侧
+
+跨窗口路由：
+- `@FocusedValue` / `.focusedSceneValue()` 在多窗口间路由键盘事件
+- 当前活跃窗口的 focused value 优先响应 Command 中的 action
+
+<!-- section: macOS SwiftUI Patterns keywords: NSViewRepresentable, pasteboard, drag drop, macOS SwiftUI, onHover platform: macOS -->
+## macOS-specific SwiftUI Patterns
+
+平台桥接：
+- `NSViewRepresentable`（不是 `UIViewRepresentable`）包裹 AppKit 视图
+- 实现 `makeNSView(context:)` / `updateNSView(_:context:)` / `dismantleNSView(_:coordinator:)`
+- `NSPasteboard`（不是 `UIPasteboard`）操作剪贴板
+
+条件编译：
+```swift
+#if os(macOS)
+// macOS-only code
+#elseif os(iOS)
+// iOS-only code
+#endif
+```
+
+macOS 特有交互：
+- `.onHover { isHovered in ... }` 鼠标悬停（iOS 上无意义）
+- `.contextMenu { ... }` 右键菜单在 macOS 上比 iOS 更常用
+- 拖放：`.draggable()` / `.dropDestination()` 修饰符通用，但 macOS 支持文件 promise
+- `.help("tooltip text")` 添加鼠标悬停提示（macOS only）

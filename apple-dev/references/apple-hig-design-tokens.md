@@ -286,7 +286,7 @@ Symbols scale with the paired text style — a body-sized symbol renders at **17
 
 ---
 
-<!-- section: Part 3: iOS 26 Liquid Glass keywords: Liquid Glass, iOS 26, materials, blur, specular -->
+<!-- section: Part 3: iOS 26 Liquid Glass keywords: Liquid Glass, iOS 26, materials, blur, specular platform: iOS -->
 ## Part 3: iOS 26 — Liquid Glass and the new design language
 
 iOS 26 shipped September 2025 with **Liquid Glass**, Apple's largest visual overhaul since iOS 7. This translucent material uses real-time refraction, specular highlights that respond to device motion, and adaptive shadows — creating UI elements that behave like real glass. The design unifies across all Apple platforms simultaneously.

@@ -1,10 +1,10 @@
 ---
 name: execution-review
-description: "Use after executing a plan, or when the user says 'execution review', 'review implementation', 'check implementation completeness'. Compares plan vs code execution results, verifies implementation completeness and identifies deviations. Performs iOS-specific code scan (localization, concurrency, abstraction, error handling) and doc update checks."
+description: "Use after executing a plan, or when the user says 'execution review', 'review implementation', 'check implementation completeness'. Compares plan vs code execution results, verifies implementation completeness and identifies deviations. Performs Apple platform Swift code scan (localization, concurrency, abstraction, error handling) and doc update checks."
 compatibility: Requires macOS and Xcode
 ---
 
-# Execution Review (iOS)
+# Execution Review
 
 Verify implementation matches plan. Use **after execution**.
 
@@ -28,9 +28,9 @@ Dispatch with:
 
 The agent returns a compact summary (verdict, gap counts, report file path) and writes the full report to `.claude/reviews/`. Wait for the agent to complete before proceeding to Step 2.
 
-## Step 2: iOS-Specific Code Scan
+## Step 2: Swift Code Scan
 
-After the agent completes, perform these iOS/Swift-specific checks on all new or modified files:
+After the agent completes, perform these Swift-specific checks on all new or modified files:
 
 ### Localization
 - UI text uses `String(localized:)` — no hardcoded user-facing strings
@@ -58,16 +58,16 @@ Verify documentation was updated:
 
 ## Output
 
-Combine the implementation-reviewer agent's compact summary with iOS-specific findings. Read the full report file for gap details when needed.
+Combine the implementation-reviewer agent's compact summary with Swift scan findings. Read the full report file for gap details when needed.
 
 ```
-## Execution Review Summary (iOS)
+## Execution Review Summary
 
 ### Implementation Review
 {agent compact summary — verdict, gap counts}
 Full report: {report file path}
 
-### iOS Code Scan
+### Swift Code Scan
 - Localization: {N} issues
 - Concurrency: {N} issues
 - Abstraction: {N} issues

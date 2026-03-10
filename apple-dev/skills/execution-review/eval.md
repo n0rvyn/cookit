@@ -18,13 +18,13 @@
 <!-- What must be true in the skill's output -->
 - [ ] Output searches for known issues from knowledge base before invoking agent
 - [ ] Output dispatches dev-workflow:implementation-reviewer agent
-- [ ] Output performs iOS-specific code scan: localization (String(localized:)), concurrency (@MainActor), abstraction (protocols), error handling
+- [ ] Output performs Swift-specific code scan: localization (String(localized:)), concurrency (@MainActor), abstraction (protocols), error handling
 - [ ] Output verifies doc updates: file-structure.md, changelog, ADRs
-- [ ] Output combines agent summary with iOS-specific findings
+- [ ] Output combines agent summary with Swift-specific findings
 - [ ] Output presents plan vs code gaps with file:line references
 
 ## Redundancy Risk
-Baseline comparison: Base model can compare plan vs code manually but lacks systematic iOS-specific checks and known issue integration
+Baseline comparison: Base model can compare plan vs code manually but lacks systematic Swift-specific checks and known issue integration
 Last tested model: Opus 4.6
 Last tested date: 2026-03-08
 Verdict: essential

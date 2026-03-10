@@ -1,4 +1,4 @@
-# ios-swift-context Eval
+# apple-swift-context Eval
 
 ## Trigger Tests
 - "I'm working on a SwiftUI view"
@@ -10,12 +10,12 @@
 - "Review this Android code"
 
 ## Output Assertions
-- [ ] Output reads only relevant sections from ios-swift-rules.md (not full file)
+- [ ] Output reads only relevant sections from apple-swift-rules.md (not full file)
 - [ ] Output applies build cycle constraints correctly
 - [ ] Output references concurrency rules when applicable
 
 ## Redundancy Risk
-Baseline comparison: Base model knows Swift but lacks project-specific rules and constraints from ios-swift-rules.md
+Baseline comparison: Base model knows Swift but lacks project-specific rules and constraints from apple-swift-rules.md
 Last tested model: Opus 4.6
 Last tested date: 2026-03-08
 Verdict: essential
