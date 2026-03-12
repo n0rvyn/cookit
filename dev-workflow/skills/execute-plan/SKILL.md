@@ -41,9 +41,14 @@ description: "Use when you have a written implementation plan to execute. Batch 
 For each task in the batch:
 1. Read the task description from the plan fully before starting
 2. If the task has design anchor fields (Design ref, Expected values, etc.), read the referenced design section first (skip if already pre-read in this batch and not modified since)
-3. Follow steps exactly as written
-4. Run all verification commands
-5. If verification fails: stop and report, do not guess at fixes
+3. **Batch Strategy Gate** — if this task involves cross-file rename, term replacement, or reference cleanup:
+   - Output strategy before any edits (must be visible in chat): target list (from Grep, not memory), scan scope, allowed exceptions with reasons
+   - Execute changes
+   - Run verification (Grep), output command and results
+   - Verify results match strategy before claiming task completion
+4. Follow steps exactly as written
+5. Run all verification commands
+6. If verification fails: stop and report, do not guess at fixes
 
 ### Step 3: Checkpoint Report
 
