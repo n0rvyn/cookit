@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Indie toolkit with iOS development, macOS tooling, and more",
-    "version": "1.18.0"
+    "version": "1.19.0"
   },
   "plugins": [
     {
@@ -103,7 +103,7 @@
       "name": "domain-intel",
       "source": "./domain-intel",
       "description": "Domain intelligence engine: automated collection, AI analysis, and trend synthesis from GitHub, RSS, official changelogs, notable figures, and companies. LENS-personalized with evolving profiles.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "intelligence",
       "tags": [
         "intelligence",
