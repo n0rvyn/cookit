@@ -4,7 +4,7 @@ Indie Toolkit is a mono-repo of AI-facing plugins, skills, agents, and local too
 
 The current codebase contains:
 
-- 6 top-level modules
+- 7 top-level modules
 - 57 skill folders with `SKILL.md`
 - 22 agent files
 - 1 local MCP server (`rag-server`)
@@ -19,6 +19,7 @@ The current codebase contains:
 | `product-lens` | Claude Code plugin | Product evaluation workflows such as `/evaluate`, `/compare`, `/demand-check`, `/teardown`, `/feature-assess` |
 | `rag-server` | Local MCP server | Offline-first hybrid search server using SQLite FTS5 + `sqlite-vec` + Apple `NLContextualEmbedding` |
 | `skill-audit` | Claude Code plugin | Auditor for plugins, skills, agents, hooks, commands, and trigger quality |
+| `domain-intel` | Claude Code plugin | Domain intelligence engine with automated collection, AI analysis, trend synthesis, and evolving LENS profiles |
 
 ## Repository Layout
 
@@ -30,6 +31,7 @@ The current codebase contains:
 ├── product-lens/
 ├── rag-server/
 ├── skill-audit/
+├── domain-intel/
 ├── docs/
 ├── .claude-plugin/   # marketplace manifest
 ├── .codex/           # Codex install docs
@@ -53,6 +55,7 @@ Install any plugin you want:
 /plugin install product-lens@indie-toolkit
 /plugin install rag-server@indie-toolkit
 /plugin install skill-audit@indie-toolkit
+/plugin install domain-intel@indie-toolkit
 ```
 
 Current marketplace entries from `.claude-plugin/marketplace.json`:
@@ -65,6 +68,7 @@ Current marketplace entries from `.claude-plugin/marketplace.json`:
 | `product-lens` | `1.0.0` | Product evaluation, market analysis, moat assessment, feature assessment, comparison | `product-lens/README.md` |
 | `rag-server` | `1.1.1` | Local hybrid search MCP server for project documentation | `rag-server/README.md` |
 | `skill-audit` | `1.1.1` | Audit plugins, skills, agents, hooks, commands, and trigger quality | `skill-audit/README.md` |
+| `domain-intel` | `1.1.0` | Domain intelligence: collection, analysis, trends, evolving LENS profiles | `domain-intel/README.md` |
 
 Note:
 
@@ -126,3 +130,4 @@ Detailed notes live in `docs/README.opencode.md`.
 - `product-lens/README.md`
 - `rag-server/README.md`
 - `skill-audit/README.md`
+- `domain-intel/README.md`

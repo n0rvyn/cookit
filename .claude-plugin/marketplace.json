@@ -102,7 +102,7 @@
     {
       "name": "domain-intel",
       "source": "./domain-intel",
-      "description": "Domain intelligence engine: automated collection, AI analysis, and trend synthesis from GitHub, RSS, and official changelogs",
+      "description": "Domain intelligence engine: automated collection, AI analysis, and trend synthesis from GitHub, RSS, official changelogs, notable figures, and companies. LENS-personalized with evolving profiles.",
       "version": "1.1.0",
       "category": "intelligence",
       "tags": [
@@ -112,7 +112,10 @@
         "analysis",
         "rss",
         "github",
-        "synthesis"
+        "synthesis",
+        "figures",
+        "lens",
+        "evolution"
       ],
       "strict": true
     }
