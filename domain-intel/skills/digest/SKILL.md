@@ -1,7 +1,7 @@
 ---
 name: digest
 description: "Use when the user says 'digest', 'generate report', 'weekly summary', or when invoked by cron. Generates a daily or weekly digest from accumulated insights by dispatching trend-synthesizer for pattern detection and synthesis."
-model: haiku
+model: sonnet
 user-invocable: true
 ---
 
@@ -13,11 +13,10 @@ Designed for **cron execution** — produces a complete report without interacti
 
 ## Process
 
-### Step 1: Load Config and Resolve data_dir
+### Step 1: Load Config
 
-1. Read `~/.claude/domain-intel.local.md` frontmatter
-   - If missing or no `data_dir` → output `[domain-intel] Not configured. Run /intel setup.` → **stop**
-2. Expand and verify `data_dir` exists
+1. Read `./config.yaml`
+   - If missing → output `[domain-intel] Not initialized. Run /intel setup in this directory.` → **stop**
 
 ### Step 2: Determine Time Range
 
@@ -39,7 +38,7 @@ Set `start_date` and `end_date`.
 1. For each date in the range, find matching insight files individually:
    ```
    For each date (YYYY-MM-DD) from start_date to end_date:
-     Glob(pattern="{data_dir}/insights/{YYYY-MM}/{YYYY-MM-DD}-*.md")
+     Glob(pattern="./insights/{YYYY-MM}/{YYYY-MM-DD}-*.md")
    ```
    Glob does not support numeric date ranges, so iterate day by day. For efficiency, batch by month: compute which `YYYY-MM` directories are relevant, then within each directory, glob each date.
 
@@ -47,9 +46,9 @@ Set `start_date` and `end_date`.
 
 3. Also find convergence signal files:
    ```
-   Grep(pattern="type: signal", path="{data_dir}/insights/", output_mode="files_with_matches")
+   Grep(pattern="type: signal", path="./insights/", output_mode="files_with_matches")
    ```
-   Filter to those within the date range.
+   Filter to those within the date range: for each matched file, check that the filename date prefix (`YYYY-MM-DD` in the filename) falls within [start_date, end_date]. Discard files outside the range.
 
 4. If zero insights found → output `[domain-intel] No insights found for {start_date} to {end_date}. Run /scan first.` → **stop**
 
@@ -57,10 +56,16 @@ Set `start_date` and `end_date`.
 
 Find the most recent trend snapshot:
 ```
-Glob(pattern="{data_dir}/trends/*-trends.md")
+Glob(pattern="./trends/*-trends.md")
 ```
 
 Read the most recent one (by filename date). If none exists, this is the first digest — no previous trends available.
+
+### Step 4.5: Load LENS.md
+
+Read `./LENS.md` if it exists:
+- Extract the markdown body (everything after frontmatter) → store as `lens_context`
+- If LENS.md does not exist → proceed without it
 
 ### Step 5: Dispatch trend-synthesizer
 
@@ -70,6 +75,7 @@ Dispatch `trend-synthesizer` agent with:
 - **domains**: domain definitions from config
 - **time_range**: start_date to end_date
 - **previous_trends**: previous trend snapshot content (or note that none exists)
+- **lens_context**: LENS.md body content (or omit if no LENS.md)
 - **query**: (not provided — Mode A: general synthesis)
 
 Wait for completion. The agent returns:
@@ -83,7 +89,7 @@ domain_summaries: [...]
 
 ### Step 6: Save Trend Snapshot
 
-Write to `{data_dir}/trends/{end_date}-trends.md`:
+Write to `./trends/{end_date}-trends.md`:
 
 ```markdown
 ---
@@ -108,11 +114,39 @@ Evidence: {insight IDs}
 - **{title}** ({insight_id}): {why}
 ```
 
-### Step 7: Format and Save Digest
+### Step 7: Check Evolution Signals
 
-Ensure directory: `mkdir -p {data_dir}/digests`
+Skip this step if `./.lens-signals.yaml` does not exist.
 
-Write to `{data_dir}/digests/{end_date}-digest.md`:
+1. Read `./.lens-signals.yaml`
+2. If signals have accumulated since last digest:
+   - Group signals by type
+   - Prepare an "Evolution" section (to be included in the digest file in Step 8):
+
+```markdown
+## Evolution
+
+The following patterns were detected that aren't reflected in your current profile:
+
+| Type | Value | Evidence | Suggestion |
+|------|-------|----------|------------|
+| New interest | {value} | {N} insights | Consider adding to "What I Care About" |
+| New figure | {value} | {N} mentions | Consider adding to figures[] |
+| New company | {value} | {N} mentions | Consider adding to companies[] |
+| New RSS | {url} | {N} insights | Consider adding to RSS feeds |
+| New path | {company}: {path} | scanner discovery | Consider adding to company paths |
+| New domain | {name} | {N} insights | Consider adding as tracking domain |
+
+Run `/intel evolve` to review and apply these suggestions.
+```
+
+3. Do NOT auto-modify LENS.md or config.yaml. All changes require user approval via `/intel evolve`.
+
+### Step 8: Format and Save Digest
+
+Ensure directory: `mkdir -p ./digests`
+
+Write to `./digests/{end_date}-digest.md` (include the Evolution section from Step 7 if signals were found):
 
 ```markdown
 ---
@@ -165,21 +199,24 @@ Top insight: {top_insight_id}
 {If none:}
 No cross-source convergence detected in this period.
 
+{If evolution section prepared in Step 7:}
+{Include the Evolution section here}
+
 ---
 
 *Generated: {timestamp} | Insights analyzed: {N} | Range: {start_date} to {end_date}*
 ```
 
-### Step 8: Mark Insights as Read
+### Step 9: Mark Insights as Read
 
 Batch-update all included insight files in one command instead of editing each individually:
 ```
-Bash: sed -i '' 's/^read: false$/read: true/' {space-separated list of file paths}
+Bash: sed -i.bak 's/^read: false$/read: true/' {space-separated list of file paths} && rm -f {same paths with .bak suffix}
 ```
 
 This handles all files in a single call regardless of count.
 
-### Step 9: Output
+### Step 10: Output
 
 Display the full digest content to the terminal.
 

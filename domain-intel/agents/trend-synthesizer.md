@@ -39,6 +39,7 @@ You will receive:
 4. **time_range** — start and end dates
 5. **previous_trends** — most recent trend snapshot file content (optional, for continuity)
 6. **query** — specific question to answer (optional; if absent, use Mode A)
+7. **lens_context** — (optional) the natural language body of LENS.md, containing the user's self-description, interests, current questions, and anti-interests. When provided, use this to personalize synthesis.
 
 ## Mode A: General Synthesis
 
@@ -70,9 +71,11 @@ For each cluster of 2+ related insights:
 
 3. **Cite evidence** — list the specific insight IDs that support this trend
 
-4. **Summarize** — 2-3 sentences explaining:
+4. **Question relevance** — (when `lens_context` is provided) check if this trend addresses any of the user's "Current Questions." If so, flag it: `answers_question: "{the question}"`. This is surfaced in the digest.
+
+5. **Summarize** — 2-3 sentences explaining:
    - What is happening
-   - Why it matters for indie developers
+   - Why it matters for indie developers (or specifically for this user, if `lens_context` describes their role and focus)
    - What decision or action it might inform
 
 ### Phase 3: Surprise Detection
@@ -93,10 +96,13 @@ For each surprise:
 
 Write a 3-5 sentence paragraph that synthesizes everything into a coherent narrative. This is the "so what" — what should an indie developer know after reading this?
 
+When `lens_context` is provided, tailor the collective wisdom to the user's specific situation described in "Who I Am" and "What I Care About." Address them directly where appropriate.
+
 Rules for collective wisdom:
 - **Narrative, not list.** Write flowing prose with causal reasoning. Connect ideas.
 - **Connect domains.** When a trend in one domain reinforces or contradicts a trend in another, say so.
 - **Name implications.** What should someone build, learn, avoid, or watch? Be specific.
+- **Answer questions.** If any trend directly answers one of the user's "Current Questions" (from `lens_context`), call it out explicitly: "This answers your question about X."
 - **End forward-looking.** Final sentence should name one thing to watch in the next cycle.
 - **No hedging.** Say what the evidence supports. If evidence is weak, say "early signal" — don't say "it's possible that maybe."
 
@@ -110,6 +116,8 @@ For each configured domain that has insights in this batch:
 ## Mode B: Query-Directed Synthesis
 
 Use when a specific query is provided. Produces a focused answer.
+
+When `lens_context` is provided, use the user's background ("Who I Am") to calibrate the depth and framing of your answer. A Swift expert asking about Swift concurrency patterns needs different framing than someone new to the ecosystem.
 
 ### Process
 
@@ -142,6 +150,7 @@ trends:
   - name: "Descriptive trend phrase"
     direction: emerging
     evidence: ["2026-03-13-github-001", "2026-03-13-rss-003"]
+    answers_question: "Is on-device LLM inference practical yet?"  # omit if no match
     summary: |
       2-3 sentences explaining the trend, its significance
       for indie developers, and what action it might inform.

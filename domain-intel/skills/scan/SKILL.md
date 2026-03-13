@@ -17,27 +17,22 @@ Designed for **automated cron execution** — minimal output, no interactive pro
 
 ### Step 1: Load Config
 
-1. Read `~/.claude/domain-intel.local.md`
-   - If file does not exist → output `[domain-intel] Not configured. Run /intel setup first.` → **stop**
-   - Parse YAML frontmatter. Extract `data_dir`.
-   - If `data_dir` is missing or empty → output `[domain-intel] data_dir not set in config. Run /intel setup.` → **stop**
+1. Read `./config.yaml`
+   - If file does not exist → output `[domain-intel] Not initialized. Run /intel setup in this directory.` → **stop**
 
-2. Expand `data_dir` (resolve `~` to home directory). Check directory exists:
-   ```
-   ls {data_dir}
-   ```
-   - If directory does not exist → create it:
-     ```
-     mkdir -p {data_dir}/{insights,digests,trends}
-     ```
-
-3. Extract from config frontmatter:
-   - `domains[]` — each with name, keywords, boost_terms, blacklist_terms
+2. Extract from config:
+   - `domains[]` — each with name
    - `sources.github` — enabled flag, languages, min_stars
    - `sources.rss[]` — list of {name, url}
-   - `sources.official[]` — list of {name, url, changelog_path}
+   - `sources.official[]` — list of {name, url, paths[]}
    - `scan.max_items_per_source` (default: 20)
    - `scan.significance_threshold` (default: 2)
+
+3. Read `./LENS.md` if it exists:
+   - Parse YAML frontmatter → extract `figures[]` and `companies[]`
+   - Extract the markdown body (everything after frontmatter) → store as `lens_context`
+   - Extract "What I Don't Care About" items from body → use as additional blacklist terms in Tier 3
+   - If LENS.md does not exist → proceed without it (scan works without LENS)
 
 4. Get today's date and month:
    ```
@@ -47,18 +42,21 @@ Designed for **automated cron execution** — minimal output, no interactive pro
 
 5. Ensure month directory exists:
    ```
-   mkdir -p {data_dir}/insights/{YYYY-MM}
+   mkdir -p ./insights/{YYYY-MM}
    ```
 
-6. Read `{data_dir}/state.yaml` if it exists (for stats tracking).
+6. Read `./state.yaml` if it exists (for stats tracking).
 
 ### Step 2: Dispatch source-scanner
 
 Dispatch the `source-scanner` agent with:
 - **sources**: the full sources block from config
-- **domains**: all domain entries (name + keywords only — scanner uses these for search queries)
+- **domains**: all domain entries (name only — scanner uses these for search queries)
+- **figures**: from LENS.md frontmatter (or empty list if no LENS.md)
+- **companies**: from LENS.md frontmatter (or empty list if no LENS.md)
 - **date**: today's date
 - **max_items_per_source**: from config
+- **rss_feeds**: list of URLs from `sources.rss[].url` (for source signal detection)
 
 Wait for completion. The agent returns:
 ```yaml
@@ -66,9 +64,13 @@ items:
   - url, title, source, snippet, metadata, collected_at
 failed_sources:
   - url, source_type, error
+source_signals:
+  - type, value, reason
 stats:
-  github: N, rss: N, official: N, failed: N, total: N
+  github: N, rss: N, official: N, figure: N, company: N, failed: N, total: N
 ```
+
+Save `source_signals` for merging in Step 6.5.
 
 If total items == 0 → output `[domain-intel] Scan complete — no items collected. Check source configuration.` → update state → **stop**
 
@@ -88,22 +90,26 @@ For each item, normalize the URL:
 
 Check if the normalized URL exists in **recent** insight files only (current month + previous month):
 ```
-Grep(pattern="{escaped_url}", path="{data_dir}/insights/{YYYY-MM}/", output_mode="files_with_matches", head_limit=1)
+Grep(pattern="{escaped_url}", path="./insights/{YYYY-MM}/", output_mode="files_with_matches", head_limit=1)
 ```
-If current day is within the first 7 days of the month, also check previous month:
+If current day is within the first 7 days of the month, also check previous month (only if it exists):
 ```
-Grep(pattern="{escaped_url}", path="{data_dir}/insights/{PREV-YYYY-MM}/", output_mode="files_with_matches", head_limit=1)
+Glob(pattern="./insights/{PREV-YYYY-MM}/*.md", head_limit=1)
+```
+If glob returns results:
+```
+Grep(pattern="{escaped_url}", path="./insights/{PREV-YYYY-MM}/", output_mode="files_with_matches", head_limit=1)
 ```
 
 Remove items whose URL already exists. Track: `after_url_dedup = N`
 
 #### Tier 2: Title Deduplication
 
-Get titles from recent insight files (past 7 days):
+Get titles from recent insight files (current month + previous month if applicable):
 ```
-Grep(pattern="^title:", path="{data_dir}/insights/{YYYY-MM}/", output_mode="content")
+Grep(pattern="^title:", path="./insights/{YYYY-MM}/", output_mode="content")
 ```
-Also check previous month if within first 7 days.
+If within first 7 days and `./insights/{PREV-YYYY-MM}/` exists (checked via Glob in Tier 1), also check previous month.
 
 For each remaining item, compare its title against existing titles:
 - Lowercase both titles
@@ -113,22 +119,27 @@ For each remaining item, compare its title against existing titles:
 
 Remove duplicates. Track: `after_title_dedup = N`
 
-#### Tier 3: Keyword Scoring
+#### Tier 3: Relevance Scoring
 
-For each remaining item, compute relevance score across ALL configured domains:
+For each remaining item, compute relevance score using domain names and LENS context:
 
 ```
 score = 0
+
+# Domain name matching — item title/snippet matches a configured domain name
 For each domain in domains:
-  For each boost_term in domain.boost_terms:
-    if boost_term appears in item.title OR item.snippet (case-insensitive):
-      score += 2
-  For each keyword in domain.keywords:
-    if keyword appears in item.title OR item.snippet (case-insensitive):
-      score += 1
-  For each blacklist_term in domain.blacklist_terms:
-    if blacklist_term appears in item.title OR item.snippet (case-insensitive):
-      score -= 3
+  if domain.name appears in item.title OR item.snippet (case-insensitive):
+    score += 1
+
+# LENS "What I Don't Care About" blacklist (if LENS.md exists)
+For each anti_interest extracted from LENS.md body:
+  if anti_interest appears in item.title OR item.snippet (case-insensitive):
+    score -= 3
+
+# Source-type baseline — figure and company items were explicitly requested via LENS.md,
+# so they get a baseline relevance score
+if item.source == "figure" OR item.source == "company":
+  score += 1
 ```
 
 Drop items with score <= 0. Sort remaining by score descending.
@@ -141,20 +152,19 @@ Track: `after_keyword = N`
 
 ### Step 4: Dispatch insight-analyzer
 
-Group filtered items by source type (github, rss, official).
+Group filtered items by source type (github, rss, official, figure, company).
 
 For each non-empty group, dispatch one `insight-analyzer` agent with:
 - **items**: the filtered items for that source type
-- **source_type**: github | rss | official
+- **source_type**: github | rss | official | figure | company
 - **domains**: domain definitions from config
 - **significance_threshold**: from config
 - **date**: today's date
+- **lens_context**: the LENS.md body content (or omit if no LENS.md)
 
-**Dispatch strategy:**
-- If total filtered items <= 30: dispatch all groups **in parallel** (multiple Agent tool calls in one message)
-- If total filtered items > 30: dispatch groups **sequentially** to avoid turn limit exhaustion
+Dispatch all groups **in parallel** (multiple Agent tool calls in one message).
 
-Wait for all to complete. Each returns:
+Wait for all to complete. If a single analyzer fails, log the failure and continue with the results from the others. Each successful analyzer returns:
 ```yaml
 insights:
   - id, source, url, title, significance, tags, category, domain,
@@ -169,7 +179,7 @@ Merge results from all analyzers. For each insight with `significance >= signifi
 
 1. Verify the ID doesn't collide with existing files. If it does, increment the sequence number.
 
-2. Write insight file to `{data_dir}/insights/{YYYY-MM}/{id}.md`:
+2. Write insight file to `./insights/{YYYY-MM}/{id}.md`:
 
 ```markdown
 ---
@@ -208,11 +218,11 @@ Read all insights stored today (from Step 5 results).
 
 Group by normalized topic:
 - Extract the primary tag (first tag) + category as topic key
-- Also group by similar problem descriptions (shared key terms)
+- Also group by similar problem descriptions: two insights are similar if their `problem` fields share 2+ non-stop-words (using the same stop word list as Tier 2)
 
 For each topic that appears across 2+ different source types (e.g., github + rss):
 
-Write a convergence signal file to `{data_dir}/insights/{YYYY-MM}/{YYYY-MM-DD}-convergence.md`:
+Write a convergence signal file to `./insights/{YYYY-MM}/{YYYY-MM-DD}-convergence.md`:
 
 ```markdown
 ---
@@ -230,9 +240,39 @@ date: {YYYY-MM-DD}
 
 If no convergence detected, skip this file. Track: `convergence_signals = N`
 
+### Step 6.5: Lens Signal Collection
+
+Skip this step if LENS.md does not exist.
+
+Check today's stored insights for evolution signals — topics or entities that appear frequently but aren't reflected in LENS.md.
+
+1. **New interest detection**: Extract all tags from today's insights with significance >= 4. If any tag appears 3+ times but is NOT mentioned in LENS.md "What I Care About" section → record as `new-interest` signal.
+
+2. **New figure detection**: Scan `problem`, `technology`, `insight`, and `difference` fields across today's insights. Look for capitalized multi-word names that appear to reference a person (e.g., "Andrej Karpathy", "Tim Cook"). Exclude known technical terms (framework names, language names, domain names). If a person name appears in 2+ insights and is NOT in LENS.md `figures[]` frontmatter → record as `new-figure` signal. This is best-effort detection; false negatives are acceptable.
+
+3. **New company detection**: Same field scan as above. Look for capitalized names that appear to reference an organization or company (e.g., "Mistral AI", "Hugging Face"). If an organization name appears in 2+ insights and is NOT in LENS.md `companies[]` frontmatter → record as `new-company` signal. Best-effort; false negatives acceptable.
+
+4. **New RSS detection**: Group today's stored insights by URL domain (extract hostname from `url` field). If 3+ insights with significance >= 4 share the same URL domain, and that domain is NOT in `sources.rss[].url` or `sources.official[].url` → record as `suggest-rss` signal with value = the domain URL.
+
+5. **New domain detection**: Group today's insights by primary tag (first tag). If a tag appears on 3+ insights but does NOT match any `domains[].name` (case-insensitive) → record as `suggest-domain` signal.
+
+6. **Merge source-scanner signals**: Append any `source_signals` returned by the source-scanner in Step 2 (suggest-rss, suggest-official-path).
+
+7. Append all signals to `./.lens-signals.yaml`:
+   ```yaml
+   - date: YYYY-MM-DD
+     type: new-interest  # or new-figure, new-company, suggest-rss, suggest-official-path, suggest-domain
+     value: "{tag, name, or URL}"
+     evidence: [insight IDs or source description]
+   ```
+
+   If `.lens-signals.yaml` doesn't exist, create it. If it does, append to the existing list.
+
+Track: `lens_signals = N`
+
 ### Step 7: Update State
 
-Write `{data_dir}/state.yaml`:
+Write `./state.yaml`:
 
 ```yaml
 last_scan: "{YYYY-MM-DD}T{HH:MM:SS}"
@@ -246,6 +286,7 @@ last_scan_stats:
   analyzed: {sent to analyzers}
   stored: {above threshold}
   convergence_signals: {N}
+  lens_signals: {N}
   failed_sources: {N}
 ```
 
@@ -262,6 +303,11 @@ Output a concise summary:
 ```
 
 If failed_sources > 0, list them.
+
+If lens_signals > 0, append:
+```
+  LENS evolution signals: {N} (run /intel evolve to review)
+```
 
 ## Error Handling
 
