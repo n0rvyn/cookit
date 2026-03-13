@@ -115,7 +115,25 @@ If input is incomplete, ask for:
    - If all falsified: the verification traces usually reveal the actual cause; form a new assertion based on what you learned
    - Do not test multiple assertions at once
 
-5. **Trace value domain** (trigger: bug symptom is an incorrect value in display/log/data transfer)
+4.5. **Hypothesis reset** (trigger: user negates a core assumption underlying the confirmed assertion)
+
+   **Active self-check:** After each user response during Step 4 verification, ask yourself: "Does the user's response contradict any premise of the current assertions?" If yes, invoke this step.
+
+   When the user provides information that invalidates the foundation of the current diagnosis (e.g., "the data is user-provided, not AI-generated"):
+
+   1. Stop current investigation path
+   2. Record what was invalidated and the user's correction
+   3. Return to Step 3: regenerate assertions incorporating the user's new information
+   4. Present new assertions to user before proceeding
+
+   Do NOT patch the old hypothesis. A negated foundation requires new assertions.
+
+5. **Trace value domain — MANDATORY GATE for value-related bugs**
+
+   ⛔ **If bug symptom is value-related, this step is MANDATORY. Do not proceed to Step 7 without producing the `[值域检查]` table below.**
+
+   A bug is value-related if: a wrong number/string/enum appears where a different one was expected, OR a field displays data from the wrong source, OR a computed result is incorrect. When in doubt, treat as value-related.
+
    - Reverse-trace from bug location to data source (record each variable rename)
    - Forward-Grep all consumers from source (using source field name + every intermediate variable name)
    - Verify unit/domain/format assumptions at each consumer
@@ -141,6 +159,17 @@ If input is incomplete, ask for:
 7. **Plan the fix — MANDATORY GATE**
 
    ⛔ **DO NOT write any fix code until this step is completed and the user has approved the plan.**
+
+   **Pre-check:** If bug symptom involves value display/transfer, verify Step 5 `[值域检查]` table was produced. If not → return to Step 5 before proceeding.
+
+   **Consumer impact (mandatory for any fix that changes a field's value or source):**
+
+   Before presenting the plan, list all consumers of the modified field:
+   ```
+   [Consumer Impact]
+   - {consumer file:line} — 当前读取: {X} — 修复后读取: {Y} — 行为变化: {description}
+   ```
+   Cannot produce this list = have not traced the data flow = return to Step 5.
 
    Classify fix complexity:
 
@@ -222,6 +251,22 @@ Signals of an architectural problem:
 - Each fix creates new symptoms elsewhere
 
 Action: Discuss with the user before attempting more fixes. This is not a failed hypothesis; this is likely a wrong architecture.
+
+### Proposal Rejection Circuit Breaker
+
+If the user rejects 2 consecutive fix proposals:
+
+**Stop proposing. Return to diagnosis.**
+
+A rejection is any user response that does not approve proceeding with the proposed fix. Partial approvals ("direction is right but...") count as rejections; they indicate the proposal was insufficient.
+
+1. The rejections indicate incomplete understanding, not a communication problem
+2. Return to Step 5 (value domain trace) or Step 6 (parallel paths); whichever was skipped or incomplete
+3. Produce the full `[值域检查]` or `[路径检查]` output before making another proposal
+4. Do NOT ask "is this direction correct?"; show the trace results and let the data speak
+5. If both Step 5 and Step 6 were already completed, escalate to the 3-Strike Rule or ask the user what dimension was missed
+
+Continuing to propose without deeper investigation = repeating the same mistake with different words.
 
 ### Diagnostic Layering (multi-component systems)
 
