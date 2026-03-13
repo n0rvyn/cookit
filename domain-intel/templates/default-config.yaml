@@ -54,6 +54,9 @@ sources:
 scan:
   max_items_per_source: 20
   significance_threshold: 2
+  # Use Playwright headless browser for JS-rendered pages (SPA sites).
+  # Requires: pip install playwright && playwright install chromium
+  browser_fallback: false
   # Schedule hint: use CronCreate for automated scans
   # Example: every morning at 8:47am → cron: "47 8 * * *"
   # Cron jobs auto-expire after 3 days — recreate in new sessions

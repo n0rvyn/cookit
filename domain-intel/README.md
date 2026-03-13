@@ -51,7 +51,7 @@ Switch profiles by switching directories. No global config needed.
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
-| source-scanner | sonnet | Web collection from GitHub, RSS, official changelogs, figures, companies |
+| source-scanner | sonnet | Web collection from GitHub, RSS, official changelogs, figures, companies (optional Playwright fallback for JS-rendered pages) |
 | insight-analyzer | sonnet | Deep analysis with source-specific prompts, LENS-aware |
 | trend-synthesizer | sonnet | Cross-insight pattern detection and synthesis |
 
@@ -93,6 +93,23 @@ CronCreate(cron="3 17 * * 5", prompt="cd ~/Knowledge/ai-ml && /digest week")
 ```
 
 Note: Cron jobs auto-expire after 3 days. Recreate in new sessions.
+
+## Optional: Browser Fallback
+
+Some company pages and official changelogs use JavaScript rendering (SPA). WebFetch returns empty content for these. Enable browser fallback for better collection:
+
+```bash
+pip install playwright && playwright install chromium
+```
+
+Then in your `config.yaml`:
+
+```yaml
+scan:
+  browser_fallback: true
+```
+
+When enabled, the source-scanner retries failed WebFetch calls using a headless Chromium browser (up to 5 pages per scan). Pages that work with WebFetch are not affected.
 
 ## Hooks
 

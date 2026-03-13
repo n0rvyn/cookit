@@ -57,6 +57,8 @@ Dispatch the `source-scanner` agent with:
 - **date**: today's date
 - **max_items_per_source**: from config
 - **rss_feeds**: list of URLs from `sources.rss[].url` (for source signal detection)
+- **browser_fallback**: from config `scan.browser_fallback` (default: false)
+- **fallback_script_path**: (only if browser_fallback is true) resolve via `Bash(command="echo ${CLAUDE_PLUGIN_ROOT}/scripts/fetch_rendered.py")` and pass the absolute path. If `CLAUDE_PLUGIN_ROOT` is empty, set `browser_fallback` to false and log a warning.
 
 Wait for completion. The agent returns:
 ```yaml

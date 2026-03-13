@@ -15,7 +15,7 @@ description: |
   </example>
 
 model: sonnet
-tools: WebSearch, WebFetch
+tools: WebSearch, WebFetch, Bash
 color: cyan
 ---
 
@@ -31,6 +31,8 @@ You will receive:
 5. **date** — today's date (for search recency)
 6. **max_items_per_source** — collection cap per source type
 7. **rss_feeds** — list of currently configured RSS feed URLs (from config sources.rss), used to detect missing feeds
+8. **browser_fallback** — whether to use Playwright headless browser for JS-rendered pages (boolean, from config)
+9. **fallback_script_path** — absolute path to `fetch_rendered.py` (resolved by scan skill; only present when browser_fallback is true)
 
 ## Collection Process
 
@@ -195,3 +197,13 @@ stats:
    - Companies: maximum 2 WebSearch + 1 WebFetch per company path
 7. **No invented data.** If a field is unavailable (e.g., no date on an RSS item), omit it. Do not guess or fabricate.
 8. **Metadata field.** Use this for source-specific context. For `figure` items, always include `figure: {name}`. For `company` items, always include `company: {name}`.
+9. **Browser fallback.** Only if `browser_fallback` input is true:
+   - **Detection**: After a WebFetch call, treat the result as a failed fetch if:
+     - Content is shorter than 100 characters, OR
+     - Content is primarily navigation/boilerplate with no substantive information (e.g., only menu items, "Loading", "Please enable JavaScript", or generic site descriptions without specific articles/entries)
+   - **Execution**: Retry using the `fallback_script_path` input:
+     `Bash(command="python3 \"<fallback_script_path>\" \"<url>\"")`
+     The URL must be passed in double quotes. If the URL contains double-quote characters, skip fallback for that URL and record it in `failed_sources`.
+   - **Processing fallback output**: The script returns cleaned page text (not pre-extracted data). Apply the same extraction criteria described in the WebFetch prompt to this raw text yourself — read it and extract the same fields (titles, dates, summaries) that the WebFetch prompt would have requested.
+   - If Bash returns non-zero exit code, record in `failed_sources` as usual.
+   - **Budget**: Maximum **5** browser fallback calls per scan. Track a `fallback_remaining` counter starting at 5. To enforce priority: do not spend more than 2 fallback calls on RSS or figure sources; reserve the rest for official + company pages.
