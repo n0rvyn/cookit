@@ -1,0 +1,107 @@
+# domain-intel configuration template
+# Copy to ~/.claude/domain-intel.local.md and customize
+# Wrap in YAML frontmatter (--- delimiters) when placed in .local.md
+
+# Where to store collected insights, digests, and trends
+# Choose a directory you own — can be git-tracked, opened in Obsidian, synced via iCloud
+data_dir: ~/Knowledge/domain-intel
+
+# Domains to track — each domain has its own keyword profile
+domains:
+  - name: ai-ml
+    keywords:
+      - llm
+      - local-inference
+      - on-device-ai
+      - mlx
+      - core-ml
+      - agent-framework
+      - rag
+      - fine-tuning
+      - embedding
+      - multimodal
+    boost_terms:
+      - indie
+      - open-source
+      - privacy
+      - edge-computing
+      - apple-silicon
+    blacklist_terms:
+      - enterprise-pricing
+      - saas-only
+      - clickbait
+      - sponsored
+
+  - name: ios-development
+    keywords:
+      - swift
+      - swiftui
+      - xcode
+      - ios
+      - swiftdata
+      - swift-concurrency
+      - app-store
+      - apple-developer
+      - visionos
+      - core-ml
+    boost_terms:
+      - indie
+      - open-source
+      - performance
+      - architecture
+      - design-system
+    blacklist_terms:
+      - tutorial-beginner
+      - react-native
+      - flutter
+      - sponsored
+
+# Add more domains as needed:
+# - name: indie-business
+#   keywords: [bootstrapping, revenue, pricing, distribution, app-store-optimization]
+#   boost_terms: [solo-founder, profitable, organic-growth]
+#   blacklist_terms: [vc-funded, enterprise, series-a]
+
+# Data sources
+sources:
+  github:
+    enabled: true
+    languages:
+      - swift
+      - python
+      - typescript
+    min_stars: 50
+
+  rss:
+    - name: Hacker News AI
+      url: https://hnrss.org/newest?q=AI+LLM
+    - name: Swift.org Blog
+      url: https://www.swift.org/atom.xml
+    - name: Apple Developer News
+      url: https://developer.apple.com/news/rss/news.rss
+    # Add more feeds:
+    # - name: Feed Name
+    #   url: https://example.com/feed.xml
+
+  official:
+    - name: OpenAI
+      url: https://openai.com
+      changelog_path: /blog
+    - name: Anthropic
+      url: https://www.anthropic.com
+      changelog_path: /news
+    - name: Apple Developer
+      url: https://developer.apple.com
+      changelog_path: /news/releases/
+    # Add more:
+    # - name: Source Name
+    #   url: https://example.com
+    #   changelog_path: /changelog
+
+# Scan parameters
+scan:
+  max_items_per_source: 20
+  significance_threshold: 2
+  # Schedule hint: use CronCreate for automated scans
+  # Example: every morning at 8:47am → cron: "47 8 * * *"
+  # Cron jobs auto-expire after 3 days — recreate in new sessions

@@ -98,6 +98,23 @@
         "plugins"
       ],
       "strict": true
+    },
+    {
+      "name": "domain-intel",
+      "source": "./domain-intel",
+      "description": "Domain intelligence engine: automated collection, AI analysis, and trend synthesis from GitHub, RSS, and official changelogs",
+      "version": "1.0.0",
+      "category": "intelligence",
+      "tags": [
+        "intelligence",
+        "trends",
+        "collection",
+        "analysis",
+        "rss",
+        "github",
+        "synthesis"
+      ],
+      "strict": true
     }
   ]
 }

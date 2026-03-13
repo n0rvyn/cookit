@@ -1,0 +1,8 @@
+{
+  "name": "domain-intel",
+  "version": "1.0.0",
+  "description": "Domain intelligence engine — automated collection, AI analysis, and trend synthesis from GitHub, RSS, and official changelogs. Designed for cron-driven operation with minimal manual interaction.",
+  "author": {
+    "name": "Norvyn"
+  }
+}
