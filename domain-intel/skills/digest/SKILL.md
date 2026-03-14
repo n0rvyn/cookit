@@ -13,9 +13,17 @@ Designed for **cron execution** — produces a complete report without interacti
 
 ## Process
 
+### Step 0: Resolve Working Directory
+
+```
+Bash(command="pwd")
+```
+
+Store the result as `WD`. **All file paths in this skill are relative to `WD`** — prefix every `./` path with `{WD}/` when calling Read, Write, Glob, or Grep. Bash commands can use relative paths as-is.
+
 ### Step 1: Load Config
 
-1. Read `./config.yaml`
+1. Read `{WD}/config.yaml`
    - If missing → output `[domain-intel] Not initialized. Run /intel setup in this directory.` → **stop**
 
 ### Step 2: Determine Time Range
@@ -38,7 +46,7 @@ Set `start_date` and `end_date`.
 1. For each date in the range, find matching insight files individually:
    ```
    For each date (YYYY-MM-DD) from start_date to end_date:
-     Glob(pattern="./insights/{YYYY-MM}/{YYYY-MM-DD}-*.md")
+     Glob(pattern="{WD}/insights/{YYYY-MM}/{YYYY-MM-DD}-*.md")
    ```
    Glob does not support numeric date ranges, so iterate day by day. For efficiency, batch by month: compute which `YYYY-MM` directories are relevant, then within each directory, glob each date.
 
@@ -46,7 +54,7 @@ Set `start_date` and `end_date`.
 
 3. Also find convergence signal files:
    ```
-   Grep(pattern="type: signal", path="./insights/", output_mode="files_with_matches")
+   Grep(pattern="type: signal", path="{WD}/insights/", output_mode="files_with_matches")
    ```
    Filter to those within the date range: for each matched file, check that the filename date prefix (`YYYY-MM-DD` in the filename) falls within [start_date, end_date]. Discard files outside the range.
 
@@ -56,14 +64,14 @@ Set `start_date` and `end_date`.
 
 Find the most recent trend snapshot:
 ```
-Glob(pattern="./trends/*-trends.md")
+Glob(pattern="{WD}/trends/*-trends.md")
 ```
 
 Read the most recent one (by filename date). If none exists, this is the first digest — no previous trends available.
 
 ### Step 4.5: Load LENS.md
 
-Read `./LENS.md` if it exists:
+Read `{WD}/LENS.md` if it exists:
 - Extract the markdown body (everything after frontmatter) → store as `lens_context`
 - If LENS.md does not exist → proceed without it
 
@@ -89,7 +97,7 @@ domain_summaries: [...]
 
 ### Step 6: Save Trend Snapshot
 
-Write to `./trends/{end_date}-trends.md`:
+Write to `{WD}/trends/{end_date}-trends.md`:
 
 ```markdown
 ---
@@ -116,9 +124,9 @@ Evidence: {insight IDs}
 
 ### Step 7: Check Evolution Signals
 
-Skip this step if `./.lens-signals.yaml` does not exist.
+Skip this step if `{WD}/.lens-signals.yaml` does not exist.
 
-1. Read `./.lens-signals.yaml`
+1. Read `{WD}/.lens-signals.yaml`
 2. If signals have accumulated since last digest:
    - Group signals by type
    - Prepare an "Evolution" section (to be included in the digest file in Step 8):
@@ -146,7 +154,7 @@ Run `/intel evolve` to review and apply these suggestions.
 
 Ensure directory: `mkdir -p ./digests`
 
-Write to `./digests/{end_date}-digest.md` (include the Evolution section from Step 7 if signals were found):
+Write to `{WD}/digests/{end_date}-digest.md` (include the Evolution section from Step 7 if signals were found):
 
 ```markdown
 ---

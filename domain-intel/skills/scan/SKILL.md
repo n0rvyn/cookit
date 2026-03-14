@@ -15,9 +15,17 @@ Designed for **automated cron execution** — minimal output, no interactive pro
 
 ## Process
 
+### Step 0: Resolve Working Directory
+
+```
+Bash(command="pwd")
+```
+
+Store the result as `WD`. **All file paths in this skill are relative to `WD`** — prefix every `./` path with `{WD}/` when calling Read, Write, Glob, or Grep. Bash commands can use relative paths as-is.
+
 ### Step 1: Load Config
 
-1. Read `./config.yaml`
+1. Read `{WD}/config.yaml`
    - If file does not exist → output `[domain-intel] Not initialized. Run /intel setup in this directory.` → **stop**
 
 2. Extract from config:
@@ -29,7 +37,7 @@ Designed for **automated cron execution** — minimal output, no interactive pro
    - `scan.max_items_per_source` (default: 20)
    - `scan.significance_threshold` (default: 2)
 
-3. Read `./LENS.md` if it exists:
+3. Read `{WD}/LENS.md` if it exists:
    - Parse YAML frontmatter → extract `figures[]` and `companies[]`
    - Extract the markdown body (everything after frontmatter) → store as `lens_context`
    - Extract "What I Don't Care About" items from body → use as additional blacklist terms in Tier 3
@@ -46,7 +54,7 @@ Designed for **automated cron execution** — minimal output, no interactive pro
    mkdir -p ./insights/{YYYY-MM}
    ```
 
-6. Read `./state.yaml` if it exists (for stats tracking).
+6. Read `{WD}/state.yaml` if it exists (for stats tracking).
 
 ### Step 2: Dispatch source-scanner
 
@@ -96,15 +104,15 @@ For each item, normalize the URL:
 
 Check if the normalized URL exists in **recent** insight files only (current month + previous month):
 ```
-Grep(pattern="{escaped_url}", path="./insights/{YYYY-MM}/", output_mode="files_with_matches", head_limit=1)
+Grep(pattern="{escaped_url}", path="{WD}/insights/{YYYY-MM}/", output_mode="files_with_matches", head_limit=1)
 ```
 If current day is within the first 7 days of the month, also check previous month (only if it exists):
 ```
-Glob(pattern="./insights/{PREV-YYYY-MM}/*.md", head_limit=1)
+Glob(pattern="{WD}/insights/{PREV-YYYY-MM}/*.md", head_limit=1)
 ```
 If glob returns results:
 ```
-Grep(pattern="{escaped_url}", path="./insights/{PREV-YYYY-MM}/", output_mode="files_with_matches", head_limit=1)
+Grep(pattern="{escaped_url}", path="{WD}/insights/{PREV-YYYY-MM}/", output_mode="files_with_matches", head_limit=1)
 ```
 
 Remove items whose URL already exists. Track: `after_url_dedup = N`
@@ -113,9 +121,9 @@ Remove items whose URL already exists. Track: `after_url_dedup = N`
 
 Get titles from recent insight files (current month + previous month if applicable):
 ```
-Grep(pattern="^title:", path="./insights/{YYYY-MM}/", output_mode="content")
+Grep(pattern="^title:", path="{WD}/insights/{YYYY-MM}/", output_mode="content")
 ```
-If within first 7 days and `./insights/{PREV-YYYY-MM}/` exists (checked via Glob in Tier 1), also check previous month.
+If within first 7 days and `{WD}/insights/{PREV-YYYY-MM}/` exists (checked via Glob in Tier 1), also check previous month.
 
 For each remaining item, compare its title against existing titles:
 - Lowercase both titles
@@ -186,7 +194,7 @@ Merge results from all analyzers. For each insight with `significance >= signifi
 
 1. Verify the ID doesn't collide with existing files. If it does, increment the sequence number.
 
-2. Write insight file to `./insights/{YYYY-MM}/{id}.md`:
+2. Write insight file to `{WD}/insights/{YYYY-MM}/{id}.md`:
 
 ```markdown
 ---
@@ -229,7 +237,7 @@ Group by normalized topic:
 
 For each topic that appears across 2+ different source types (e.g., github + rss):
 
-Write a convergence signal file to `./insights/{YYYY-MM}/{YYYY-MM-DD}-convergence.md`:
+Write a convergence signal file to `{WD}/insights/{YYYY-MM}/{YYYY-MM-DD}-convergence.md`:
 
 ```markdown
 ---
@@ -265,7 +273,7 @@ Check today's stored insights for evolution signals — topics or entities that 
 
 6. **Merge source-scanner signals**: Append any `source_signals` returned by the source-scanner in Step 2 (suggest-rss, suggest-official-path).
 
-7. Append all signals to `./.lens-signals.yaml`:
+7. Append all signals to `{WD}/.lens-signals.yaml`:
    ```yaml
    - date: YYYY-MM-DD
      type: new-interest  # or new-figure, new-company, suggest-rss, suggest-official-path, suggest-domain
@@ -273,13 +281,13 @@ Check today's stored insights for evolution signals — topics or entities that 
      evidence: [insight IDs or source description]
    ```
 
-   If `.lens-signals.yaml` doesn't exist, create it. If it does, append to the existing list.
+   If `{WD}/.lens-signals.yaml` doesn't exist, create it. If it does, append to the existing list.
 
 Track: `lens_signals = N`
 
 ### Step 7: Update State
 
-Write `./state.yaml`:
+Write `{WD}/state.yaml`:
 
 ```yaml
 last_scan: "{YYYY-MM-DD}T{HH:MM:SS}"

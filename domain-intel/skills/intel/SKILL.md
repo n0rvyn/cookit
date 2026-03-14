@@ -11,9 +11,15 @@ The interactive entry point for domain-intel. Routes user requests to the approp
 
 ## Process
 
-### Step 0: Check Config
+### Step 0: Resolve Working Directory and Check Config
 
-Read `./config.yaml`.
+```
+Bash(command="pwd")
+```
+
+Store the result as `WD`. **All file paths in this skill are relative to `WD`** — prefix every `./` path with `{WD}/` when calling Read, Write, Glob, or Grep. Bash commands can use relative paths as-is.
+
+Read `{WD}/config.yaml`.
 - If file does not exist AND user intent is NOT "setup" or "help" → output `[domain-intel] Not initialized. Run /intel setup in this directory.` → **stop**
 
 ### Step 1: Parse Intent
@@ -31,7 +37,7 @@ Classify the user's input:
 | **explore** | an insight ID pattern (YYYY-MM-DD-source-NNN), "show me", "more about" | Yes |
 | **evolve** | "evolve", "update lens", "evolve preferences", "update preferences" | Yes |
 
-If config is required but `./config.yaml` does not exist → redirect to setup.
+If config is required but `{WD}/config.yaml` does not exist → redirect to setup.
 
 ### Step 2: Execute by Intent
 
@@ -80,7 +86,7 @@ Concepts:
 
 Guided first-time configuration.
 
-1. Check if `./config.yaml` already exists:
+1. Check if `{WD}/config.yaml` already exists:
    - If yes: "Config exists in this directory. Use `/intel config` to modify."
    - If yes but user explicitly asked for setup: proceed (reconfigure)
 
@@ -118,7 +124,7 @@ Guided first-time configuration.
         - If exit code 1: `Product Hunt API: ✗ authentication failed — check credentials. You can update them later in config.yaml under sources.producthunt.`  Set enabled to true but keep the user's credentials (they may fix them later).
       - Link for getting credentials: `https://www.producthunt.com/v2/oauth/applications`
 
-6. Generate `./config.yaml` from template with user selections (domains, sources, Product Hunt config from step 5b).
+6. Generate `{WD}/config.yaml` from template with user selections (domains, sources, Product Hunt config from step 5b).
 
 7. Create subdirectories:
    ```
@@ -126,7 +132,7 @@ Guided first-time configuration.
    ```
 
 8. Initialize state:
-   Write `./state.yaml`:
+   Write `{WD}/state.yaml`:
    ```yaml
    last_scan: "never"
    total_insights: 0
@@ -146,7 +152,7 @@ Guided first-time configuration.
       - "What questions are you trying to answer right now?" (2-3 questions)
       - "Any topics to explicitly filter out?"
 
-   c. Generate `./LENS.md` using the template structure:
+   c. Generate `{WD}/LENS.md` using the template structure:
       - Frontmatter: populate `figures[]` and `companies[]` from user selections (uncomment chosen entries, leave others commented)
       - Body: fill in "Who I Am", "What I Care About", "Current Questions", "What I Don't Care About" from user answers
 
@@ -175,14 +181,14 @@ Next steps:
 
 Quick overview of current state.
 
-1. Read `./state.yaml`
+1. Read `{WD}/state.yaml`
 2. Count unread insights:
    ```
-   Grep(pattern="read: false", path="./insights/", output_mode="count")
+   Grep(pattern="read: false", path="{WD}/insights/", output_mode="count")
    ```
 3. Count total insight files this month:
    ```
-   Glob(pattern="./insights/{current_YYYY-MM}/*.md")
+   Glob(pattern="{WD}/insights/{current_YYYY-MM}/*.md")
    ```
 
 4. Output:
@@ -205,7 +211,7 @@ Synthesize unread insights into a briefing.
 
 1. Find all unread insight files:
    ```
-   Grep(pattern="read: false", path="./insights/", output_mode="files_with_matches")
+   Grep(pattern="read: false", path="{WD}/insights/", output_mode="files_with_matches")
    ```
 
 2. If count == 0:
@@ -218,12 +224,12 @@ Synthesize unread insights into a briefing.
 
 5. Find any convergence signal files from the same dates:
    ```
-   Grep(pattern="type: signal", path="./insights/", output_mode="files_with_matches")
+   Grep(pattern="type: signal", path="{WD}/insights/", output_mode="files_with_matches")
    ```
 
-6. Load previous trends (most recent file in `./trends/`).
+6. Load previous trends (most recent file in `{WD}/trends/`).
 
-7. Load LENS.md if it exists: read `./LENS.md`, extract body as `lens_context`.
+7. Load LENS.md if it exists: read `{WD}/LENS.md`, extract body as `lens_context`.
 
 8. Dispatch `trend-synthesizer` agent with:
    - **insights**: unread insight contents
@@ -236,13 +242,13 @@ Synthesize unread insights into a briefing.
 
 9. **Save trend snapshot** for continuity (so future digests/briefings can track trend lifecycle):
    ```
-   Write trend snapshot to ./trends/{today}-briefing-trends.md
+   Write trend snapshot to {WD}/trends/{today}-briefing-trends.md
    ```
    Use the same format as digest Step 6 (date, range, trends, surprises).
 
 10. Present the synthesis as a briefing (format like digest but labeled "Briefing").
 
-11. **Save briefing** to `./briefings/{YYYY-MM-DD}-briefing.md`:
+11. **Save briefing** to `{WD}/briefings/{YYYY-MM-DD}-briefing.md`:
 
 ```markdown
 ---
@@ -294,11 +300,11 @@ Answer a specific question from accumulated intelligence.
 
 2. Search insights for relevant content using each term:
    ```
-   Grep(pattern="{term}", path="./insights/", output_mode="files_with_matches", head_limit=20)
+   Grep(pattern="{term}", path="{WD}/insights/", output_mode="files_with_matches", head_limit=20)
    ```
    Also search trends:
    ```
-   Grep(pattern="{term}", path="./trends/", output_mode="files_with_matches", head_limit=5)
+   Grep(pattern="{term}", path="{WD}/trends/", output_mode="files_with_matches", head_limit=5)
    ```
    Merge and deduplicate file lists from all term searches.
 
@@ -308,7 +314,7 @@ Answer a specific question from accumulated intelligence.
 
 4. Read matching files.
 
-4.5. Load LENS.md if it exists: read `./LENS.md`, extract body as `lens_context`.
+4.5. Load LENS.md if it exists: read `{WD}/LENS.md`, extract body as `lens_context`.
 
 5. Dispatch `trend-synthesizer` agent with:
    - **insights**: matching insight contents
@@ -322,7 +328,7 @@ Answer a specific question from accumulated intelligence.
    - Supporting insight IDs (as references)
    - Related queries to explore
 
-7. **Query signal**: If the query topic is not reflected in LENS.md "Current Questions" and LENS.md exists, append a signal to `./.lens-signals.yaml`:
+7. **Query signal**: If the query topic is not reflected in LENS.md "Current Questions" and LENS.md exists, append a signal to `{WD}/.lens-signals.yaml`:
    ```yaml
    - date: YYYY-MM-DD
      type: new-interest
@@ -337,7 +343,7 @@ Answer a specific question from accumulated intelligence.
 
 View or modify configuration.
 
-1. Read and display current config from `./config.yaml`:
+1. Read and display current config from `{WD}/config.yaml`:
    - Active domains (names)
    - Source counts (RSS feeds, official sites, GitHub API status, Product Hunt status)
    - Scan parameters
@@ -355,7 +361,7 @@ View or modify configuration.
    - **configure product hunt** / **add PH token**: prompt for client_id and client_secret, validate with fetch_producthunt.py, update sources.producthunt in config
    - **check github**: run `gh auth status` and report result
 
-3. After modification: write updated config back to `./config.yaml`.
+3. After modification: write updated config back to `{WD}/config.yaml`.
 
 4. Confirm the change: "Updated: {description of change}"
 
@@ -369,7 +375,7 @@ Deep dive into a specific insight.
 
 2. Find the file:
    ```
-   Grep(pattern="id: {id}", path="./insights/", output_mode="files_with_matches")
+   Grep(pattern="id: {id}", path="{WD}/insights/", output_mode="files_with_matches")
    ```
 
 3. If not found: "Insight {id} not found." → **stop**
@@ -380,7 +386,7 @@ Deep dive into a specific insight.
    - Extract tags from the insight
    - For each tag (up to 3):
      ```
-     Grep(pattern="{tag}", path="./insights/", output_mode="files_with_matches", head_limit=5)
+     Grep(pattern="{tag}", path="{WD}/insights/", output_mode="files_with_matches", head_limit=5)
      ```
    - Exclude the current insight from results
 
@@ -401,11 +407,11 @@ Deep dive into a specific insight.
 Review and apply evolution proposals for both LENS.md and config.yaml.
 
 1. Check prerequisites:
-   - `./LENS.md` must exist → if not: "No LENS.md found. Run `/intel setup` first." → **stop**
-   - Read current `./LENS.md`
-   - Read current `./config.yaml`
+   - `{WD}/LENS.md` must exist → if not: "No LENS.md found. Run `/intel setup` first." → **stop**
+   - Read current `{WD}/LENS.md`
+   - Read current `{WD}/config.yaml`
 
-2. Read `./.lens-signals.yaml`:
+2. Read `{WD}/.lens-signals.yaml`:
    - If file doesn't exist or is empty → "No evolution signals detected yet. Run more scans to accumulate signals." → **stop**
 
 3. Group signals by type and deduplicate (same value across multiple dates → merge, keep all evidence IDs).
@@ -452,7 +458,7 @@ Review and apply evolution proposals for both LENS.md and config.yaml.
      - For suggest-official-path: find the matching company in LENS.md, append path to `paths[]`
      - For suggest-domain: append `{name: value}` to `domains[]`
 
-6. Clear processed signals from `.lens-signals.yaml` (remove entries that were presented, whether approved or skipped).
+6. Clear processed signals from `{WD}/.lens-signals.yaml` (remove entries that were presented, whether approved or skipped).
 
 7. Output:
 ```
