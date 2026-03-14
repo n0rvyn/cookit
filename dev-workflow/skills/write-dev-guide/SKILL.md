@@ -73,13 +73,25 @@ When the agent completes:
 | Phase 2 | {goal} | Phase 1 |
 | ... | ... | ... |
 
-3. **Decision Points:** Check the agent's return for `Decisions:` count.
-   - If Decisions > 0: read the `## Decisions` section from the dev-guide file
-   - For each `blocking` decision: present to user via AskUserQuestion with options from the decision point
-   - For each `recommended` decision: present as a group — "The dev-guide has {N} recommended decisions with defaults. Accept all defaults, or review individually?"
+3. **Decision Points:**
+   **Ordering constraint:** The Phase outline table (step 2 above) must be presented to the user BEFORE any decision points. Do not reorder.
+   - Read the `## Decisions` section from the dev-guide file. If the section content is `None.`, skip to step 4. Otherwise, process each `### [DP-xxx]` entry:
+   - **Comparison table** (all decisions): extract from the decision's `**Options:**` lines, keeping each option's `{description} — {trade-off}` as-is in one column:
+
+     ### [DP-xxx] {title}
+
+     **Context:** {from decision}
+
+     | 方案 | 描述与代价 |
+     |------|-----------|
+     | A | {description} — {trade-off} |
+     | B | {description} — {trade-off} |
+
+   - **Recommendation line**: only for `recommended` decisions, append `**推荐:** {option} — {reason}` after the table. For `blocking` decisions, omit this line.
+   - **AskUserQuestion**: for `recommended` decisions, mark the recommended option with "(推荐)" in the label. For `blocking` decisions, do not pre-select any option.
    - Record user choices: edit the dev-guide file, replace `**Recommendation:**` with `**Chosen:** {user's choice}`
 4. Ask user (AskUserQuestion): **确认结构** / **调整结构**（reorder, merge, split）
-4. If user chooses「调整结构」:
+5. If user chooses「调整结构」:
    - Re-dispatch the agent with structural revision instructions appended to the original prompt
    - Re-read output, re-present table, repeat until user confirms
 
