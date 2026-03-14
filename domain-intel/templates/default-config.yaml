@@ -34,6 +34,21 @@ sources:
     # - name: Feed Name
     #   url: https://example.com/feed.xml
 
+  # Product Hunt — discover new tools and launches via API.
+  # Requires a free API key from https://www.producthunt.com/v2/oauth/applications
+  # Leave client_id/client_secret empty to skip Product Hunt collection.
+  producthunt:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    # Topic filter — only collect posts matching these PH topics.
+    # Empty list = collect all. Use PH topic slugs (lowercase, hyphenated).
+    topics:
+      - artificial-intelligence
+      - developer-tools
+    # - productivity
+    # - open-source
+
   # Official sites — changelog/blog pages to monitor
   # NOTE: For companies with multiple pages, use the `companies` section
   # in LENS.md instead (supports paths[] per company).

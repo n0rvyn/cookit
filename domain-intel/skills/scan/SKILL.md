@@ -25,6 +25,7 @@ Designed for **automated cron execution** — minimal output, no interactive pro
    - `sources.github` — enabled flag, languages, min_stars
    - `sources.rss[]` — list of {name, url}
    - `sources.official[]` — list of {name, url, paths[]}
+   - `sources.producthunt` — enabled flag, client_id, client_secret, topics[]
    - `scan.max_items_per_source` (default: 20)
    - `scan.significance_threshold` (default: 2)
 
@@ -59,6 +60,9 @@ Dispatch the `source-scanner` agent with:
 - **rss_feeds**: list of URLs from `sources.rss[].url` (for source signal detection)
 - **browser_fallback**: from config `scan.browser_fallback` (default: false)
 - **fallback_script_path**: (only if browser_fallback is true) resolve via `Bash(command="echo ${CLAUDE_PLUGIN_ROOT}/scripts/fetch_rendered.py")` and pass the absolute path. If `CLAUDE_PLUGIN_ROOT` is empty, set `browser_fallback` to false and log a warning.
+- **fetch_script_path**: resolve via `Bash(command="echo ${CLAUDE_PLUGIN_ROOT}/scripts/fetch_url.py")` and pass the absolute path. This is always required — it replaces WebFetch for all page fetching (with explicit timeout control).
+- **producthunt_script_path**: resolve via `Bash(command="echo ${CLAUDE_PLUGIN_ROOT}/scripts/fetch_producthunt.py")` and pass the absolute path.
+- **producthunt_config**: from config `sources.producthunt` (if present). Pass the full block: `enabled`, `client_id`, `client_secret`, `topics[]`. If the section is missing or `enabled` is false, omit this input.
 
 Wait for completion. The agent returns:
 ```yaml
@@ -69,7 +73,7 @@ failed_sources:
 source_signals:
   - type, value, reason
 stats:
-  github: N, rss: N, official: N, figure: N, company: N, failed: N, total: N
+  github: N, producthunt: N, rss: N, official: N, figure: N, company: N, failed: N, total: N
 ```
 
 Save `source_signals` for merging in Step 6.5.
@@ -138,9 +142,10 @@ For each anti_interest extracted from LENS.md body:
   if anti_interest appears in item.title OR item.snippet (case-insensitive):
     score -= 3
 
-# Source-type baseline — figure and company items were explicitly requested via LENS.md,
-# so they get a baseline relevance score
-if item.source == "figure" OR item.source == "company":
+# Source-type baseline — figure, company, and producthunt items have inherent relevance:
+# figure/company were explicitly requested via LENS.md;
+# producthunt items were already topic-filtered by the API script
+if item.source == "figure" OR item.source == "company" OR item.source == "producthunt":
   score += 1
 ```
 
@@ -154,11 +159,11 @@ Track: `after_keyword = N`
 
 ### Step 4: Dispatch insight-analyzer
 
-Group filtered items by source type (github, rss, official, figure, company).
+Group filtered items by source type (github, producthunt, rss, official, figure, company).
 
 For each non-empty group, dispatch one `insight-analyzer` agent with:
 - **items**: the filtered items for that source type
-- **source_type**: github | rss | official | figure | company
+- **source_type**: github | producthunt | rss | official | figure | company
 - **domains**: domain definitions from config
 - **significance_threshold**: from config
 - **date**: today's date
