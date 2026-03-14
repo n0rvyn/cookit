@@ -4,7 +4,7 @@ description: |
   Deep analysis agent for domain intelligence.
   Applies source-specific prompts to extract structured insights from raw collected items.
   Two-stage: quick screen → deep analysis. Produces significance-scored, tagged insight records.
-  Supports five source types: GitHub repos, RSS articles, official changelogs, notable figures, and company news.
+  Supports six source types: GitHub repos, Product Hunt launches, RSS articles, official changelogs, notable figures, and company news.
   Uses LENS.md context for personalized relevance calibration when available.
 
   Examples:
@@ -42,7 +42,7 @@ When `lens_context` is provided, use it as your primary relevance compass. The u
 
 You will receive:
 1. **items** — list of raw items (url, title, source, snippet, metadata)
-2. **source_type** — github | rss | official | figure | company (all items in this batch share the same source type)
+2. **source_type** — github | producthunt | rss | official | figure | company (all items in this batch share the same source type)
 3. **domains** — domain definitions with name (for categorization)
 4. **significance_threshold** — minimum score to include in output
 5. **date** — today's date (for generating IDs)
@@ -72,6 +72,7 @@ For items passing Stage 1:
 
 **Fetch full content if the snippet is insufficient:**
 - GitHub repos: `WebFetch(url="{url}", prompt="Extract: what problem this project solves, the technical approach, key features, star count, primary language, last commit date, and what makes it different from alternatives. Be specific.")`
+- Product Hunt launches: `WebFetch(url="{url}", prompt="Extract: what the product does, who it's for, pricing model (free/paid/freemium), key differentiators vs alternatives, technical stack if mentioned, and founding team background. Summarize the core value proposition in 2-3 sentences.")`
 - RSS articles: `WebFetch(url="{url}", prompt="Extract the main argument, key technical details, evidence cited, and conclusions. Summarize the core thesis in 3-4 sentences.")`
 - Official changelogs: `WebFetch(url="{url}", prompt="Extract specific changes: new APIs or features, deprecations, breaking changes, migration requirements, and performance improvements.")`
 - Figure items: `WebFetch(url="{url}", prompt="Extract: what topic this figure is addressing, their specific position or prediction, key quotes, and context for why they are speaking about this now. Summarize in 3-4 sentences.")`
@@ -101,6 +102,27 @@ For each GitHub item, answer these four questions through the lens of an indie d
 - **3**: Useful contribution; solid execution with a meaningful twist. Adds to the ecosystem.
 - **2**: Incremental improvement; useful but not signal-worthy. Competent but not novel.
 - **1**: Noise; clone, toy project, or extremely narrow utility.
+
+---
+
+#### Product Hunt Launch Analysis
+
+For each Product Hunt item, answer through the lens of an indie developer tracking new tools, market gaps, and competitive signals. The `metadata` field contains `votes: {N}` and `topics: {list}`.
+
+1. **Problem** — What user pain point does this product address? Is this a new problem or a known one with a new angle? What's the existing behavior it aims to replace? (1-2 sentences)
+
+2. **Technology** — What's the core technical approach? Is this leveraging a new capability (e.g., on-device AI, new API), wrapping existing services, or building from scratch? Name key technical bets. (1-2 sentences)
+
+3. **Insight** — What market signal does this launch represent? What bet is the maker placing about where demand is heading? What would have to be true for this product to succeed? (1-2 sentences)
+
+4. **Difference** — How does this compare to existing solutions? What tradeoff or positioning choice sets it apart? Is it cheaper, simpler, more integrated, or targeting an underserved niche? (1-2 sentences)
+
+**Significance scoring for Product Hunt:**
+- **5**: Category-defining launch; reveals an unserved market that indie developers should pay attention to. Strong traction (high votes) validating a new approach.
+- **4**: Compelling product solving a real problem in a novel way; worth studying for inspiration or as a competitive signal. Clear differentiation.
+- **3**: Solid product in a known category with a meaningful twist; adds to understanding of market demand patterns.
+- **2**: Competent entry in a crowded space; useful but not signal-worthy. Execution over innovation.
+- **1**: Me-too product, wrapper without clear value-add, or marketing-heavy with no technical substance.
 
 ---
 
@@ -216,6 +238,20 @@ insights:
     insight: "The Swift ecosystem is converging on typed throws as the standard error handling pattern — this project is an early signal that the pattern is production-ready."
     difference: "Unlike Result-based approaches, this preserves structured concurrency's cancellation semantics while adding full type safety. Competes with swift-error-chain but with zero runtime overhead."
     selection_reason: "Signals maturing consensus on Swift concurrency patterns that affects architecture decisions for new projects."
+
+  - id: "2026-03-13-producthunt-001"
+    source: producthunt
+    url: "https://www.producthunt.com/posts/cursor-agent"
+    title: "Cursor Agent — AI pair programmer with codebase awareness"
+    significance: 4
+    tags: [developer-tools, ai-coding, code-generation, ide]
+    category: tool
+    domain: ai-ml
+    problem: "AI code assistants lack deep codebase context, producing suggestions that don't match project conventions or architecture."
+    technology: "Combines AST-level codebase indexing with LLM-powered code generation; runs locally with cloud inference fallback."
+    insight: "High vote count (500+) for another AI coding tool signals developers are still actively searching for the right tool — the category is not yet consolidated around a winner."
+    difference: "Unlike Copilot's line-completion model, this takes an agent approach with full project context. Competes with Aider and Continue but adds IDE-native UX."
+    selection_reason: "Market signal for AI developer tools category — high traction validates demand for codebase-aware AI assistance."
 
   - id: "2026-03-13-figure-001"
     source: figure

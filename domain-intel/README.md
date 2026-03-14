@@ -1,6 +1,6 @@
 # domain-intel
 
-Domain intelligence engine for Claude Code. Automated collection, AI analysis, and trend synthesis from GitHub, RSS, official changelogs, notable figures, and company news.
+Domain intelligence engine for Claude Code. Automated collection, AI analysis, and trend synthesis from GitHub (via API), Product Hunt, RSS, official changelogs, notable figures, and company news.
 
 ## Quick Start
 
@@ -51,7 +51,7 @@ Switch profiles by switching directories. No global config needed.
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
-| source-scanner | sonnet | Web collection from GitHub, RSS, official changelogs, figures, companies (optional Playwright fallback for JS-rendered pages) |
+| source-scanner | sonnet | Collection from GitHub (gh API), Product Hunt (GraphQL API), RSS, official changelogs, figures, companies (optional Playwright fallback for JS-rendered pages) |
 | insight-analyzer | sonnet | Deep analysis with source-specific prompts, LENS-aware |
 | trend-synthesizer | sonnet | Cross-insight pattern detection and synthesis |
 
@@ -96,7 +96,7 @@ Note: Cron jobs auto-expire after 3 days. Recreate in new sessions.
 
 ## Optional: Browser Fallback
 
-Some company pages and official changelogs use JavaScript rendering (SPA). WebFetch returns empty content for these. Enable browser fallback for better collection:
+Some company pages and official changelogs use JavaScript rendering (SPA). `fetch_url.py` returns empty content for these (exit code 2). Enable browser fallback for better collection:
 
 ```bash
 pip install playwright && playwright install chromium
@@ -109,7 +109,7 @@ scan:
   browser_fallback: true
 ```
 
-When enabled, the source-scanner retries failed WebFetch calls using a headless Chromium browser (up to 5 pages per scan). Pages that work with WebFetch are not affected.
+When enabled, the source-scanner retries failed `fetch_url.py` calls (exit code 1 or 2) using a headless Chromium browser (up to 5 pages per scan). Pages that work with `fetch_url.py` are not affected.
 
 ## Hooks
 
@@ -119,7 +119,7 @@ When enabled, the source-scanner retries failed WebFetch calls using a headless 
 ## Pipeline
 
 ```
-Sources (GitHub/RSS/Official/Figures/Companies)
+Sources (GitHub API/Product Hunt/RSS/Official/Figures/Companies)
     │ source-scanner (sonnet)
     ▼
 Raw Items
