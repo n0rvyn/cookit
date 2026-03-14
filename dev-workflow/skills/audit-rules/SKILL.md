@@ -53,17 +53,18 @@ Installed plugin behaviors:
 
 When the agent completes:
 
-1. Present the Rules Review Report returned by the agent
-2. **Decision Points:** Check the agent's return for `Decisions:` count.
+1. **Validate DP count**: Parse the `Decisions:` line for N+M total, count actual `DP-\d+` entries in headings. If mismatch, prepend warning to report: `⚠️ 报告声称 {N+M} 个决策点，实际只列了 {actual} 个。以实际条目为准。`
+2. Present the Rules Review Report returned by the agent
+3. **Decision Points:** Check the agent's return for `Decisions:` count.
    - If Decisions > 0: read the `## Decisions` section from the report
    - For each `blocking` decision: present to user via AskUserQuestion with options from the decision point
    - For each `recommended` decision: present as a group — "The audit has {N} recommended decisions with defaults. Accept all defaults, or review individually?"
    - Record user choices in conversation (note which option was chosen for each DP)
-3. If fix recommendations were made:
+4. If fix recommendations were made:
    - List each recommendation
    - Ask the user: "Execute these fixes?"
-4. If user approves: apply the recommended changes to the CLAUDE.md files
-5. If user declines: done
+5. If user approves: apply the recommended changes to the CLAUDE.md files
+6. If user declines: done
 
 ## Completion Criteria
 
