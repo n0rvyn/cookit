@@ -1,6 +1,6 @@
 {
   "name": "domain-intel",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Domain intelligence engine — automated collection, AI analysis, and trend synthesis from GitHub, RSS, official changelogs, notable figures, and companies. LENS-personalized with evolving preference and source profiles.",
   "author": {
     "name": "Norvyn"
