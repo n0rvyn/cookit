@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Indie toolkit with iOS development, macOS tooling, and more",
-    "version": "1.21.0"
+    "version": "1.21.1"
   },
   "plugins": [
     {
       "name": "dev-workflow",
       "source": "./dev-workflow",
       "description": "Cross-stack development workflow: brainstorm, planning, phase orchestration, execution, review, debugging, design analysis, commits, and session management",
-      "version": "2.14.0",
+      "version": "2.14.1",
       "category": "development",
       "tags": [
         "workflow",
@@ -88,7 +88,7 @@
       "name": "skill-audit",
       "source": "./skill-audit",
       "description": "Review Claude Code plugins, skills, agents, hooks, and commands from the AI executor perspective",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "category": "development",
       "tags": [
         "review",
