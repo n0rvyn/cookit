@@ -118,6 +118,24 @@
         "evolution"
       ],
       "strict": true
+    },
+    {
+      "name": "session-intel",
+      "source": "./session-intel",
+      "description": "AI session analytics: extract, analyze, and correlate Claude Code and Codex sessions with git history. Retro, search, replay, trends, cost, and health scoring.",
+      "version": "1.0.0",
+      "category": "analytics",
+      "tags": [
+        "sessions",
+        "analytics",
+        "retro",
+        "trends",
+        "cost",
+        "health",
+        "codex",
+        "emotion"
+      ],
+      "strict": true
     }
   ]
 }
