@@ -10,7 +10,7 @@ Complete iOS/macOS/iPadOS development workflow plugin.
 
 For Codex/OpenCode: see `.codex/INSTALL.md` or `.opencode/INSTALL.md`.
 
-## Skills (16)
+## Skills (19)
 
 | Skill | Trigger | Description |
 |-------|---------|-------------|
@@ -23,6 +23,8 @@ For Codex/OpenCode: see `.codex/INSTALL.md` or `.opencode/INSTALL.md`.
 | submission-preview | `/submission-preview` | App Review Guidelines pre-check |
 | appstoreconnect-review | `/appstoreconnect-review` | ASC submission material check |
 | testing-guide | `/testing-guide` | Interactive testing best practices guidance |
+| profiling | `/profiling` | Performance profiling (OSSignposter, MetricKit, XCTMetric, anti-patterns) |
+| xc-ui-test | `/xc-ui-test` | Advanced XCUITest (flow tests, network stub, snapshot, a11y, CI) |
 | swiftdata-patterns | `/swiftdata-patterns` | SwiftData best practices guidance |
 | localization-setup | `/localization-setup` | String Catalogs + localization guidance |
 | fetch-swift-api-updates | `/fetch-swift-api-updates` | Fetch latest WWDC API changes |
@@ -30,6 +32,7 @@ For Codex/OpenCode: see `.codex/INSTALL.md` or `.opencode/INSTALL.md`.
 | generate-stitch-prompts | `/generate-stitch-prompts` | Generate UI prompts from requirements |
 | project-kickoff | `/project-kickoff` | New project feasibility + requirements |
 | setup-ci-cd | `/setup-ci-cd` | Fastlane + GitHub Actions for TestFlight |
+| update-asc-docs | `/update-asc-docs` | Audit and update ASC legal/marketing documents |
 
 ## Agents (4)
 
@@ -46,7 +49,7 @@ For Codex/OpenCode: see `.codex/INSTALL.md` or `.opencode/INSTALL.md`.
 |------|-------|---------|
 | protect-pbxproj | PreToolUse | Prevents direct editing of `.xcodeproj/project.pbxproj` files |
 
-## References (12)
+## References (14)
 
 Platform-specific sections are tagged with `platform: iOS` or `platform: macOS`. Sections without a tag apply to both platforms.
 
@@ -59,6 +62,8 @@ Platform-specific sections are tagged with `platform: iOS` or `platform: macOS`.
 | swift-coding-standards.md | Swift naming and code organization |
 | swiftdata-guide.md | SwiftData best practices |
 | testing-guide.md | Unit test, UI test, TDD |
+| profiling-guide.md | OSSignposter, MetricKit, XCTMetric, anti-patterns, Instruments |
+| xc-ui-test-guide.md | Advanced XCUITest (flow tests, network stub, snapshot, a11y, CI) |
 | localization-guide.md | String Catalogs, pluralization |
 | app-review-guidelines.md | Apple App Review Guidelines |
 | macos-distribution-guide.md | Notarization, sandboxing, Sparkle |

@@ -1,6 +1,6 @@
 ---
 name: testing-guide
-description: "Use when the user asks about testing approaches, setting up unit tests or UI tests, mocking strategies, TDD workflow, or test coverage strategies. Provides interactive guidance on iOS testing best practices based on the reference guide."
+description: "Use when the user asks about testing approaches, setting up unit tests or basic UI tests (Page Object, wait strategies), mocking strategies, TDD workflow, or test coverage strategies. For performance tests (measure, XCTMetric), use /profiling instead. For advanced XCUITest (E2E flows, network stub, snapshot, accessibility audit, CI), use /xc-ui-test instead. Provides interactive guidance on iOS testing best practices based on the reference guide."
 compatibility: Requires macOS and Xcode
 ---
 
@@ -47,6 +47,7 @@ Section-to-need mapping:
 - Async testing → section "4. 异步测试"
 - TDD → section "5. TDD 流程"
 - Coverage → section "6. 测试覆盖率"
+- Common mistakes / pitfalls → section "7. 常见陷阱"
 
 ### 3. Provide Contextual Guidance
 
@@ -57,10 +58,11 @@ Based on user's specific scenario:
 - Demonstrate test naming conventions
 - Explain setUp/tearDown usage
 
-**For UI Tests**:
+**For UI Tests** (basics only):
 - Show Page Object pattern from guide Section 2
 - Demonstrate wait strategies
 - Explain element identification
+- If user needs advanced patterns (multi-screen flows, network stubbing, snapshot testing, accessibility audit, CI integration), suggest `/xc-ui-test`
 
 **For Mocking**:
 - Show protocol-based mocking from guide Section 3
@@ -95,3 +97,8 @@ Extract relevant testing patterns from the guide and adapt to user's code.
 - Tests follow best practices (isolated, fast, deterministic)
 - Mocking strategy is appropriate
 - Test coverage is meaningful, not just high percentage
+
+## 串联提示
+
+- `/profiling` — 性能分析与插桩（OSSignposter、MetricKit、XCTMetric、反模式扫描）
+- `/xc-ui-test` — XCUITest 高级用法（多屏幕旅程、网络 Stub、Snapshot、无障碍、CI 集成）

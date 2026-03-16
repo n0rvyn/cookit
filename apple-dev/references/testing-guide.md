@@ -491,6 +491,7 @@ xcodebuild test \
 - 边界条件（空数组、nil 值、极大/极小值）
 - 权限处理（未登录、权限不足）
 
+<!-- section: 7. 常见陷阱 keywords: pitfall, mistake, anti-pattern, flaky test, test smell -->
 ## 7. 常见陷阱
 
 ### 避免测试实现细节
@@ -542,3 +543,8 @@ func testDeleteItem_WithExistingItem_RemovesIt() {
 - [Apple Testing Documentation](https://developer.apple.com/documentation/xctest)
 - [WWDC21: Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132/)
 - [Test Driven Development: By Example - Kent Beck](https://www.amazon.com/Test-Driven-Development-Kent-Beck/dp/0321146530)
+
+### 相关 Skill
+
+- `/profiling` — 性能分析与插桩（OSSignposter、MetricKit、XCTMetric 性能测试、反模式扫描、Instruments 工作流）
+- `/xc-ui-test` — XCUITest 高级用法（多屏幕用户旅程、网络层 Stub、Snapshot 测试、无障碍测试、CI 集成）
