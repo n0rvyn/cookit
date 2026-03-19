@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Indie toolkit with iOS development, macOS tooling, and more",
-    "version": "1.21.4"
+    "version": "1.21.5"
   },
   "plugins": [
     {
@@ -29,7 +29,7 @@
       "name": "apple-dev",
       "source": "./apple-dev",
       "description": "Complete iOS/macOS/iPadOS development workflow plugin for Claude Code",
-      "version": "1.7.1",
+      "version": "1.7.2",
       "category": "development",
       "tags": [
         "ios",
