@@ -154,6 +154,25 @@
         "ansible"
       ],
       "strict": true
+    },
+    {
+      "name": "oss-governance",
+      "source": "./oss-governance",
+      "description": "Open source governance: multi-host dependency scanning, license compliance, vulnerability audit, and reporting via SSH",
+      "version": "1.0.0",
+      "category": "operations",
+      "tags": [
+        "governance",
+        "compliance",
+        "license",
+        "security",
+        "sbom",
+        "audit",
+        "ansible",
+        "ssh",
+        "dependencies"
+      ],
+      "strict": true
     }
   ]
 }

@@ -1,0 +1,111 @@
+# oss-governance configuration
+# Compatible with Ansible inventory format for easy migration.
+#
+# Hosts can be defined in two ways:
+#   1. Inline in this file (below)
+#   2. External Ansible inventory file (set inventory_file)
+
+# ── Connection Defaults ──────────────────────────────────────────────
+defaults:
+  # SSH connection settings (applied to all hosts unless overridden)
+  ansible_user: root
+  ansible_port: 22
+  # ansible_ssh_private_key_file: ~/.ssh/id_rsa
+  # ansible_become: true
+  # ansible_become_method: sudo
+  timeout: 30                    # SSH command timeout (seconds)
+  parallel: 5                    # Max concurrent host connections
+
+# ── External Inventory (optional) ────────────────────────────────────
+# Point to an existing Ansible YAML inventory file.
+# When set, the 'hosts' section below is ignored.
+# inventory_file: /path/to/ansible/hosts
+
+# ── Host Inventory ───────────────────────────────────────────────────
+# Define hosts and groups directly. Uses Ansible-compatible variable names.
+#
+# Supported per-host variables:
+#   ansible_host          - IP or hostname to connect to
+#   ansible_port          - SSH port (default: 22)
+#   ansible_user          - SSH user (default: from defaults)
+#   ansible_ssh_private_key_file - Path to SSH key
+#   ansible_become        - Enable privilege escalation (true/false)
+#   ansible_become_method - Escalation method (sudo/su)
+#   tags                  - Custom tags for filtering (oss-governance extension)
+
+all:
+  children:
+    dev_servers:
+      hosts:
+        # dev1:
+        #   ansible_host: 192.168.1.10
+        #   ansible_user: deploy
+        #   tags: [development, node]
+        # dev2:
+        #   ansible_host: 192.168.1.11
+        #   tags: [development, python]
+    build_servers:
+      hosts:
+        # ci1:
+        #   ansible_host: 192.168.1.20
+        #   ansible_user: jenkins
+        #   tags: [ci, docker]
+    production:
+      hosts:
+        # web1:
+        #   ansible_host: 10.0.1.10
+        #   ansible_user: deploy
+        #   ansible_become: true
+        #   tags: [production, nginx]
+
+# ── Scan Settings ────────────────────────────────────────────────────
+scan:
+  # Directories to scan on each remote host
+  paths:
+    - /home
+    - /opt
+    - /srv
+    - /var/www
+  depth: 4                    # Max directory recursion depth
+
+  # Package managers to scan for (all by default)
+  package_managers:
+    - npm           # package.json / package-lock.json
+    - pip           # requirements.txt / pyproject.toml / Pipfile.lock
+    - cargo         # Cargo.toml / Cargo.lock
+    - go            # go.mod / go.sum
+    - maven         # pom.xml
+    - gradle        # build.gradle / build.gradle.kts
+    - swift         # Package.swift / Package.resolved
+    - cocoapods     # Podfile / Podfile.lock
+    - ruby          # Gemfile / Gemfile.lock
+    - composer      # composer.json / composer.lock
+
+  # Directories to exclude from scan
+  exclude:
+    - node_modules
+    - .git
+    - vendor
+    - __pycache__
+    - .venv
+    - .tox
+    - dist
+    - build
+
+  # Output directory for reports (relative to config file location)
+  report_dir: ./reports
+  report_format: markdown
+
+# ── Vulnerability Scanning (optional) ────────────────────────────────
+# Requires grype, trivy, or language-specific audit tools on the controller.
+# Set to false to skip vulnerability scanning entirely.
+vuln_scan:
+  enabled: true
+  # Minimum severity to report: CRITICAL, HIGH, MEDIUM, LOW
+  min_severity: MEDIUM
+
+# ── Notification (optional) ──────────────────────────────────────────
+# notify:
+#   # Threshold: only notify if findings at this severity or above exist
+#   threshold: HIGH
+#   # Future: webhook, email, slack integration
