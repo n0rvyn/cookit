@@ -95,42 +95,42 @@ When the agent completes:
    - Re-dispatch the agent with structural revision instructions appended to the original prompt
    - Re-read output, re-present table, repeat until user confirms
 
-### Step 4: Phase-by-Phase Confirmation
+### Step 4: Phase Details Review
 
-For each Phase i = 1..N:
+Display all Phase details in one block, then confirm once.
 
-1. Present Phase detail:
+1. For each Phase i = 1..N, present a detail table:
+
+**Phase {i}: {goal}**
 
 | 维度 | 内容 |
 |------|------|
-| 目标 | {phase goal} |
 | 前置依赖 | {dependencies} |
 | 范围项 | {scope items, bulleted} |
 | 用户可见的变化 | {from dev-guide, or "无 — 纯基建阶段"} |
 | 关键文件/组件 | {key files and components} |
-| 待定架构决策 | {architecture decisions to resolve} |
+| 待定架构决策 | {architecture decisions to resolve, or "无"} |
 | 验收标准 | {acceptance criteria} |
 
-2. Ask user (AskUserQuestion):
-   - If Phase has 用户可见的变化 (not "无") AND 待定架构决策: **确认** / **调整范围** / **调整视觉预期** / **解决架构决策**
-   - If Phase has 用户可见的变化 (not "无") but no 待定架构决策: **确认** / **调整范围** / **调整视觉预期**
-   - If Phase has no 用户可见的变化 (infrastructure) AND 待定架构决策: **确认** / **调整范围** / **解决架构决策**
-   - If Phase has no 用户可见的变化 AND no 待定架构决策: **确认** / **调整范围**
-3. If user chooses「调整范围」:
-   - Re-dispatch the agent with phase-scoped revision: "Revise Phase {i} with {user's changes}. Keep all other Phases unchanged."
-   - Re-read output, re-present this Phase, repeat until user confirms
-4. If user chooses「调整视觉预期」:
-   - User provides corrections/additions to visual expectations
-   - Re-dispatch the agent: "Revise Phase {i}'s 「用户可见的变化」section with: {user's input}. Keep all other Phases unchanged."
-   - Re-read output, re-present this Phase, repeat until user confirms
-5. If user chooses「解决架构决策」:
-   - List each pending decision as a numbered item
-   - For each decision, ask user for their choice or direction
-   - Re-dispatch the agent: "Update Phase {i}: resolve architecture decisions as follows: {user's decisions}. Keep all other Phases unchanged."
-   - Re-read output, re-present this Phase (resolved decisions should move from「待定架构决策」into「范围项」or「验收标准」as appropriate), repeat until user confirms
-6. Proceed to next Phase
+2. After ALL Phase tables are displayed, ask user (AskUserQuestion): **整体确认** / **指定调整**
+3. If user chooses「指定调整」:
+   - User specifies which Phase(s) to change and what to change (scope, visual expectations, architecture decisions, or any combination)
+   - **Content adjustments** (move scope items between Phases, edit visual expectations, resolve architecture decisions, adjust acceptance criteria): directly Edit the dev-guide file in main context. After editing, sync acceptance criteria if scope changed (same logic as run-phase Step 1.5: flag criteria referencing removed items, flag new items lacking criteria)
+   - **Structural changes** (merge Phases, split a Phase, add/remove a Phase): re-dispatch the agent with revision instructions. Re-read output and re-present all Phases from step 1
+   - After content adjustments, re-present only the modified Phase table(s) for confirmation, not the full list
+   - Max 2 adjustment cycles; after that, proceed with last-confirmed content
+4. User confirms → proceed to Step 5.
 
-All Phases confirmed → proceed to Step 5.
+### Step 4.5: Mark Confirmation Timestamp
+
+After user confirms in Step 4, update the dev-guide file's YAML frontmatter:
+
+1. Read the dev-guide file's first lines (frontmatter block between `---` markers)
+2. If a `confirmed_at:` field exists: update its value to current ISO timestamp
+3. If no `confirmed_at:` field: add `confirmed_at: YYYY-MM-DDTHH:MM:SS` after the `current:` field
+4. Write back the file
+
+This timestamp is consumed by run-phase Step 1.5 to avoid redundant scope confirmation.
 
 ### Step 5: Next Steps
 
@@ -142,6 +142,6 @@ After user confirms:
 
 - Dev-guide file saved to `docs/06-plans/`
 - Structure confirmed by user (Step 3)
-- All phases individually confirmed by user (Step 4)
+- Phase details reviewed and confirmed by user (Step 4)
 - Previous dev-guide(s) marked `current: false` (Step 2.5)
 - Next step (run-phase) communicated

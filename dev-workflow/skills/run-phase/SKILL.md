@@ -87,8 +87,11 @@ Before dispatching plan-writer, present the Phase scope and visual expectations 
 
 **Skip condition:** When resuming from state file with `phase_step` not `plan`, skip this step — scope was already confirmed in a prior session.
 
-1. Read the Phase's scope items and `**用户可见的变化:**` section from the dev-guide
-2. Present to the user:
+**Freshness check:** Before presenting, read the dev-guide's YAML frontmatter for `confirmed_at:`. If the timestamp is within 60 minutes of now, use **lightweight mode** (step 1b). Otherwise, use **full mode** (step 1a).
+
+**1a. Full mode** (default):
+
+Read the Phase's scope items and `**用户可见的变化:**` section from the dev-guide. Present to the user:
 
 ```
 Phase {N} — confirm before planning:
@@ -108,7 +111,18 @@ Phase {N} — confirm before planning:
 
 If `**用户可见的变化:**` starts with "无" (infrastructure Phase, e.g., "无" or "无 — 纯基建阶段"), present scope only (omit the visual section).
 
-3. Wait for user response:
+**1b. Lightweight mode** (confirmed_at within 60 min):
+
+```
+Phase {N} 范围已在 dev-guide 中确认。
+有新增视觉/交互细节要补充吗？没有则直接开始规划。
+```
+
+User responds:
+- No additions → proceed to Step 2 (skip steps 3-4 below)
+- Adds visual/interaction details → proceed to step 4 (auto-crystal), same as full mode
+
+3. Wait for user response (full mode only):
    - User confirms without additions → proceed to Step 2
    - User corrects scope → edit the Phase's `**Scope:**` bulleted list in the dev-guide file to match user's corrections, then check acceptance criteria sync (see below), re-present for confirmation
    - User adds visual/interaction details → proceed to step 4 (auto-crystal)
