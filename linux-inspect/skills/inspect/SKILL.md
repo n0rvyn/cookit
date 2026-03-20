@@ -96,55 +96,60 @@ Guided first-time configuration.
    Read ${CLAUDE_PLUGIN_ROOT}/templates/default-config.yaml
    ```
 
-3. Ask about inventory source using AskUserQuestion:
-   - "Use an existing Ansible inventory file?"
+3. Ask how to define hosts using AskUserQuestion:
+   - "How would you like to add hosts?"
    - Options:
-     - "Yes, I have an Ansible YAML inventory file" → ask for path
-     - "No, I'll define hosts here" → proceed with inline config
+     - "Quick — just hostnames (uses SSH config)" → go to step 4
+     - "Detailed — specify connection settings per host" → go to step 5
+     - "Ansible inventory file — I have one already" → go to step 5b
 
-4. **If external inventory:**
+4. **Quick path** (SSH config already works):
+   - Ask one free-text question: "Enter hostnames, comma-separated (e.g. web1, db1, 10.0.0.5):"
+   - If parsed list is empty (blank input or only whitespace/commas): re-prompt "No hostnames provided. Enter at least one hostname."
+   - Parse the comma-separated list into individual hosts.
+   - For each hostname: set `ansible_host: <hostname>`, no explicit user/port/key (relies on user's `~/.ssh/config`).
+   - Do NOT set `ansible_user` or `ansible_port` per-host; the SSH config and `defaults` section handle this.
+   - Ask one follow-up using AskUserQuestion:
+     - "Do these hosts need sudo for inspection?"
+     - Options:
+       - "Yes, sudo with NOPASSWD" → set `ansible_become: true` in defaults
+       - "Yes, sudo with password" → ask for sudo password once (applied to all hosts via `ansible_become_pass` in defaults)
+       - "No, running as root or no sudo needed"
+   - Go to step 6.
+
+5. **Detailed path:**
+   - Ask one free-text question: "Enter hostnames, comma-separated:"
+   - If parsed list is empty: re-prompt (same as step 4).
+   - If more than 10 hosts: output "For 10+ hosts, use an Ansible inventory file for efficiency." and redirect to step 5b. Do NOT proceed with per-host questions for more than 10 hosts.
+   - For each host, ask ONE combined AskUserQuestion:
+     - "Host: {name} — connection settings"
+     - Options:
+       - "Use defaults (hostname as-is, SSH config)" → no per-host overrides
+       - "Custom settings" → ask ONE free-text follow-up: "Enter settings for {name} — format: `user=X port=Y key=/path sudo=yes/no` (or `password=XXX` instead of key). Omit fields to keep defaults."
+         Parse the key=value pairs. Unrecognized or missing fields use template defaults.
+   - Go to step 6.
+
+5b. **Ansible inventory file:**
    - Ask for inventory file path via AskUserQuestion (free text)
    - Verify the file exists: `Bash(command="ls -la <path>")`
-   - If exists: set `inventory_file` in config and skip inline host definition
-   - If not found: warn and fall back to inline definition
+   - If exists: set `inventory_file` in config and go to step 6
+   - If not found: warn and redirect to step 4 (Quick path)
 
-5. **If inline hosts:**
-   Ask using AskUserQuestion:
-   - "How many hosts to inspect?" (options: "1-3", "4-10", "10+")
-   - For each host (or first 3 if many), ask:
-     - Host name (label)
-     - IP or hostname (ansible_host)
-     - SSH user (default: root)
-     - SSH port (default: 22)
-     - Authentication method using AskUserQuestion:
-       - "SSH key (recommended)" → ask key path (default: ~/.ssh/id_rsa)
-       - "Password" → ask password. Show note: "SSH key-based auth is recommended for security. Password is stored in plaintext in config and requires sshpass."
-     - Need sudo? (yes/no)
-       - If yes and auth is password-based: ask "Use the same password for sudo?" (yes → reuse as become_pass, no → ask for separate sudo password or NOPASSWD)
-     - Tags (optional, comma-separated)
-   - If 10+: suggest creating an Ansible inventory file instead
+6. Ask about inspection scope using AskUserQuestion:
+   - "What to inspect?"
+   - Options:
+     - "All categories (recommended)" → security, vulnerabilities, logs, system, network, compliance; severity = LOW
+     - "Custom selection" → follow up with multiSelect: Security, Vulnerabilities, Logs, System Health, Network, Compliance.
+       Then ask "Minimum severity?" with options: LOW (all), MEDIUM, HIGH, CRITICAL
 
-6. Ask about inspection categories using AskUserQuestion (multiSelect):
-   - Security (SSH, firewall, users, permissions)
-   - Vulnerabilities (kernel, updates, CVE, services)
-   - Logs (auth, system, audit, rotation)
-   - System Health (disk, memory, CPU, services)
-   - Network (config, connections, DNS)
-   - Compliance (integrity, NTP, kernel params)
-   Default: all selected.
+7. Generate `{WD}/inspect-config.yaml` from template with user selections.
 
-7. Ask about minimum severity using AskUserQuestion:
-   - "Minimum severity to report?"
-   - Options: "LOW (all findings)", "MEDIUM", "HIGH", "CRITICAL (only critical)"
-
-8. Generate `{WD}/inspect-config.yaml` from template with user selections.
-
-9. Create output directory:
+8. Create output directory:
    ```
    Bash(command="mkdir -p ./reports")
    ```
 
-10. **Check sshpass** — if any host uses password auth (`ansible_ssh_pass` is set):
+9. **Check sshpass** — if any host uses password auth (`ansible_ssh_pass` is set):
     ```
     Bash(command="which sshpass")
     ```
@@ -155,14 +160,19 @@ Guided first-time configuration.
         - "No, switch to SSH key auth" → go back and reconfigure affected hosts with key-based auth
     - If found: proceed.
 
-11. **Test connectivity** — for each configured host (up to 3):
+10. **Test connectivity** — for each configured host (up to 3):
     ```
-    bash "${CLAUDE_PLUGIN_ROOT}/scripts/ssh_exec.sh" "<host>" "<port>" "<user>" "<key>" "10" "false" "sudo" "<password>" <<< "echo ok"
+    bash "${CLAUDE_PLUGIN_ROOT}/scripts/ssh_exec.sh" "<host>" "<port>" "<user>" "<key>" "<timeout>" "false" "sudo" "<password>" <<< "echo ok"
     ```
-    - Pass `<password>` from the host's `ansible_ssh_pass` field; omit or pass empty if using key auth.
+    - For fields not set on the host, use values from the `defaults` section in the generated config.
+    - `<port>`: host's `ansible_port`, or `defaults.ansible_port` (22).
+    - `<user>`: host's `ansible_user`, or `defaults.ansible_user` (root).
+    - `<key>`: host's `ansible_ssh_private_key_file`, or `none` if not configured (SSH agent/config handles auth).
+    - `<timeout>`: from `defaults.timeout` in the config.
+    - `<password>`: host's `ansible_ssh_pass`, or empty string if using key auth.
     - Report result per host: ✓ reachable or ✗ unreachable (with error)
 
-12. Output:
+11. Output:
     ```
     [linux-inspect] Setup complete in {CWD}.
       Hosts: {N} ({N} reachable, {N} unreachable)
