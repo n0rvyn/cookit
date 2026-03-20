@@ -1,0 +1,641 @@
+# linux-inspect v2 Check Definitions
+# Each check declares: id, name, category, severity, requires (filters), commands (OS variants), findings (AI guidance)
+# OS variant keys: all, debian, rhel, suse, alpine. Collector picks: exact match > 'all' fallback > skip.
+# requires: ALL conditions must match. Omit = no filter (runs on all hosts).
+
+checks:
+  # ── Security ────────────────────────────────────────────────────────────────
+
+  - id: SEC-001
+    name: SSH Configuration
+    category: security
+    severity: HIGH
+    requires:
+      service: [sshd, ssh]
+    commands:
+      all: "cat /etc/ssh/sshd_config"
+    findings:
+      - condition: "PermitRootLogin not set to 'no'"
+        severity: HIGH
+        remediation: "Set 'PermitRootLogin no' in /etc/ssh/sshd_config and restart sshd"
+      - condition: "PasswordAuthentication not set to 'no'"
+        severity: HIGH
+        remediation: "Set 'PasswordAuthentication no' in /etc/ssh/sshd_config"
+      - condition: "PermitEmptyPasswords not set to 'no'"
+        severity: HIGH
+        remediation: "Set 'PermitEmptyPasswords no' in /etc/ssh/sshd_config"
+      - condition: "MaxAuthTries > 5"
+        severity: MEDIUM
+        remediation: "Set 'MaxAuthTries 3' in /etc/ssh/sshd_config"
+      - condition: "X11Forwarding set to 'yes'"
+        severity: MEDIUM
+        remediation: "Set 'X11Forwarding no' unless X11 is required"
+      - condition: "AllowTcpForwarding set to 'yes' (if not needed)"
+        severity: LOW
+        remediation: "Set 'AllowTcpForwarding no' if TCP forwarding is not required"
+
+  - id: SEC-002
+    name: SUID/SGID Files
+    category: security
+    severity: MEDIUM
+    commands:
+      all: "timeout 60 find / -maxdepth 5 -type f \\( -perm -4000 -o -perm -2000 \\) -exec ls -la {} \\; 2>/dev/null | head -100"
+    findings:
+      - condition: "Unexpected SUID/SGID binaries outside standard paths (/usr/bin, /usr/sbin, /bin, /sbin)"
+        severity: MEDIUM
+        remediation: "Remove SUID/SGID bit: chmod u-s /path/to/file or chmod g-s /path/to/file"
+      - condition: "Custom scripts with SUID bit set"
+        severity: HIGH
+        remediation: "Remove SUID bit from custom scripts immediately"
+
+  - id: SEC-003
+    name: User Account Audit
+    category: security
+    severity: HIGH
+    commands:
+      all: |
+        cat /etc/passwd
+        cat /etc/shadow 2>/dev/null || echo "NO_SHADOW_ACCESS"
+        awk -F: '$3==0{print $1}' /etc/passwd
+        awk -F: '($2==""){print $1}' /etc/shadow 2>/dev/null
+        lastlog 2>/dev/null | head -50
+    findings:
+      - condition: "Multiple UID 0 accounts (besides root)"
+        severity: HIGH
+        remediation: "Remove or change UID of non-root UID-0 accounts"
+      - condition: "Accounts with empty passwords"
+        severity: HIGH
+        remediation: "Set passwords or lock accounts: passwd -l <username>"
+      - condition: "System accounts with login shells"
+        severity: MEDIUM
+        remediation: "Set shell to /sbin/nologin for system accounts"
+      - condition: "Dormant accounts with no login history"
+        severity: LOW
+        remediation: "Review and lock dormant accounts"
+
+  - id: SEC-004
+    name: Sudo Configuration
+    category: security
+    severity: HIGH
+    commands:
+      all: |
+        cat /etc/sudoers 2>/dev/null
+        ls -la /etc/sudoers.d/ 2>/dev/null
+        cat /etc/sudoers.d/* 2>/dev/null
+    findings:
+      - condition: "NOPASSWD entries"
+        severity: MEDIUM
+        remediation: "Remove NOPASSWD and require password for sudo"
+      - condition: "Overly broad sudo rules (ALL=(ALL) ALL)"
+        severity: HIGH
+        remediation: "Restrict sudo rules to specific commands"
+      - condition: "Writable sudoers files"
+        severity: HIGH
+        remediation: "Fix permissions: chmod 440 /etc/sudoers"
+
+  - id: SEC-005
+    name: Firewall Status
+    category: security
+    severity: HIGH
+    commands:
+      all: |
+        iptables -L -n 2>/dev/null || echo "NO_IPTABLES"
+        nft list ruleset 2>/dev/null || echo "NO_NFTABLES"
+        firewall-cmd --list-all 2>/dev/null || echo "NO_FIREWALLD"
+        ufw status verbose 2>/dev/null || echo "NO_UFW"
+    findings:
+      - condition: "No firewall active"
+        severity: HIGH
+        remediation: "Enable and configure firewall (firewalld, ufw, or iptables)"
+      - condition: "Default ACCEPT policy on INPUT chain"
+        severity: HIGH
+        remediation: "Set default INPUT policy to DROP"
+      - condition: "No rules defined"
+        severity: HIGH
+        remediation: "Define firewall rules to restrict access"
+      - condition: "Overly permissive rules (0.0.0.0/0 accept)"
+        severity: MEDIUM
+        remediation: "Restrict source IPs in firewall rules"
+
+  - id: SEC-006a
+    name: SELinux Status
+    category: security
+    severity: MEDIUM
+    requires:
+      security_framework: [selinux]
+    commands:
+      all: |
+        getenforce 2>/dev/null
+        sestatus 2>/dev/null
+    findings:
+      - condition: "SELinux disabled or permissive"
+        severity: MEDIUM
+        remediation: "Set SELinux to enforcing: setenforce 1 and edit /etc/selinux/config"
+
+  - id: SEC-006b
+    name: AppArmor Status
+    category: security
+    severity: MEDIUM
+    requires:
+      security_framework: [apparmor]
+    commands:
+      all: "aa-status 2>/dev/null"
+    findings:
+      - condition: "AppArmor not loaded or profiles in complain mode"
+        severity: MEDIUM
+        remediation: "Load AppArmor profiles and set to enforce mode"
+
+  - id: SEC-007
+    name: File Permissions
+    category: security
+    severity: MEDIUM
+    commands:
+      all: |
+        timeout 60 find / -maxdepth 5 -type f -perm -0002 -not -path "/proc/*" -not -path "/sys/*" 2>/dev/null | head -50
+        timeout 60 find / -maxdepth 5 -type d -perm -0002 -not -path "/proc/*" -not -path "/sys/*" -not -path "/tmp" -not -path "/var/tmp" 2>/dev/null | head -50
+        ls -la /etc/passwd /etc/shadow /etc/group /etc/gshadow 2>/dev/null
+        ls -la /etc/crontab /etc/cron.d/ 2>/dev/null
+    findings:
+      - condition: "World-writable files outside /tmp, /var/tmp"
+        severity: MEDIUM
+        remediation: "Remove world-writable permission: chmod o-w /path/to/file"
+      - condition: "Sensitive files with incorrect permissions (shadow readable)"
+        severity: HIGH
+        remediation: "Fix permissions: chmod 640 /etc/shadow"
+      - condition: "Crontab files writable by non-root"
+        severity: MEDIUM
+        remediation: "Fix permissions: chmod 644 /etc/crontab"
+
+  - id: SEC-008
+    name: Password Policy
+    category: security
+    severity: MEDIUM
+    commands:
+      debian: |
+        grep -E "^(PASS_MAX_DAYS|PASS_MIN_DAYS|PASS_MIN_LEN|PASS_WARN_AGE)" /etc/login.defs
+        cat /etc/pam.d/common-password 2>/dev/null
+        chage -l root 2>/dev/null
+      rhel: |
+        grep -E "^(PASS_MAX_DAYS|PASS_MIN_DAYS|PASS_MIN_LEN|PASS_WARN_AGE)" /etc/login.defs
+        cat /etc/pam.d/system-auth 2>/dev/null
+        chage -l root 2>/dev/null
+      all: |
+        grep -E "^(PASS_MAX_DAYS|PASS_MIN_DAYS|PASS_MIN_LEN|PASS_WARN_AGE)" /etc/login.defs
+        cat /etc/pam.d/common-password 2>/dev/null || cat /etc/pam.d/system-auth 2>/dev/null
+        chage -l root 2>/dev/null
+    findings:
+      - condition: "PASS_MAX_DAYS > 90 or not set"
+        severity: MEDIUM
+        remediation: "Set PASS_MAX_DAYS 90 in /etc/login.defs"
+      - condition: "PASS_MIN_LEN < 8"
+        severity: MEDIUM
+        remediation: "Set PASS_MIN_LEN 8 in /etc/login.defs"
+      - condition: "No password complexity requirements in PAM"
+        severity: MEDIUM
+        remediation: "Configure pam_pwquality or pam_cracklib"
+      - condition: "Password never expires for privileged accounts"
+        severity: MEDIUM
+        remediation: "Set password expiry: chage -M 90 <username>"
+
+  # ── Vulnerabilities ─────────────────────────────────────────────────────────
+
+  - id: VUL-001
+    name: Kernel Version
+    category: vulnerabilities
+    severity: HIGH
+    commands:
+      all: |
+        uname -r
+        uname -a
+        cat /proc/version
+    findings:
+      - condition: "Kernel version significantly outdated (compare against known EOL)"
+        severity: HIGH
+        remediation: "Update kernel and reboot"
+      - condition: "Known vulnerable kernel versions"
+        severity: CRITICAL
+        remediation: "Patch kernel immediately"
+
+  - id: VUL-002
+    name: Package Updates
+    category: vulnerabilities
+    severity: HIGH
+    commands:
+      debian: |
+        apt-get -s upgrade 2>/dev/null | grep -c "^Inst" || echo "0"
+        apt-get -s upgrade 2>/dev/null | grep "^Inst" | head -30
+      rhel: |
+        dnf check-update --quiet 2>/dev/null | tail -n +2 | head -30
+        dnf check-update --quiet 2>/dev/null | tail -n +2 | wc -l
+      suse: "zypper list-updates 2>/dev/null | head -30"
+    findings:
+      - condition: "Security updates available"
+        severity: HIGH
+        remediation: "Apply pending updates"
+      - condition: "Large number of pending updates (>50)"
+        severity: MEDIUM
+        remediation: "Schedule maintenance window for mass update"
+      - condition: "Critical packages outdated (openssl, openssh, kernel)"
+        severity: HIGH
+        remediation: "Prioritize updating critical packages"
+
+  - id: VUL-003
+    name: Security Updates (CVE)
+    category: vulnerabilities
+    severity: CRITICAL
+    commands:
+      debian: |
+        apt-get -s upgrade 2>/dev/null | grep -i security | head -20
+        unattended-upgrades --dry-run 2>/dev/null | head -20
+      rhel: "dnf updateinfo list --security 2>/dev/null | head -30"
+      suse: "zypper list-patches --category security 2>/dev/null | head -30"
+    findings:
+      - condition: "Outstanding security/CVE patches"
+        severity: CRITICAL
+        remediation: "Apply security patches immediately"
+      - condition: "Critical CVEs unpatched"
+        severity: CRITICAL
+        remediation: "Emergency patching required"
+
+  - id: VUL-004
+    name: Listening Services
+    category: vulnerabilities
+    severity: MEDIUM
+    commands:
+      all: |
+        ss -tlnp 2>/dev/null || netstat -tlnp 2>/dev/null
+        ss -ulnp 2>/dev/null || netstat -ulnp 2>/dev/null
+    findings:
+      - condition: "Services listening on 0.0.0.0 (all interfaces)"
+        severity: MEDIUM
+        remediation: "Bind services to specific interfaces"
+      - condition: "Unexpected ports open"
+        severity: MEDIUM
+        remediation: "Stop unnecessary services or restrict via firewall"
+      - condition: "Services running as root unnecessarily"
+        severity: MEDIUM
+        remediation: "Run services as dedicated non-root user"
+
+  - id: VUL-005
+    name: Software Versions
+    category: vulnerabilities
+    severity: MEDIUM
+    commands:
+      all: |
+        openssl version 2>/dev/null
+        ssh -V 2>/dev/null
+        curl --version 2>/dev/null | head -1
+        python3 --version 2>/dev/null
+        java -version 2>/dev/null 2>&1 | head -1
+        php --version 2>/dev/null | head -1
+        nginx -v 2>/dev/null 2>&1
+        apache2 -v 2>/dev/null 2>&1 || httpd -v 2>/dev/null 2>&1
+        mysql --version 2>/dev/null
+        postgres --version 2>/dev/null
+    findings:
+      - condition: "Known vulnerable versions of critical software"
+        severity: HIGH
+        remediation: "Update affected software packages"
+      - condition: "End-of-life software versions"
+        severity: MEDIUM
+        remediation: "Plan migration to supported versions"
+
+  # ── Logs ─────────────────────────────────────────────────────────────────────
+
+  - id: LOG-001
+    name: Authentication Logs
+    category: logs
+    severity: HIGH
+    commands:
+      all: |
+        journalctl -u sshd --since "7 days ago" --no-pager 2>/dev/null | grep -i "failed\|invalid\|error" | tail -50
+        grep -i "failed\|invalid" /var/log/auth.log 2>/dev/null | tail -50
+        grep -i "failed\|invalid" /var/log/secure 2>/dev/null | tail -50
+        last -n 20 2>/dev/null
+        lastb -n 20 2>/dev/null
+    findings:
+      - condition: "Brute-force patterns (many failed attempts from same IP)"
+        severity: HIGH
+        remediation: "Install fail2ban; restrict SSH access via firewall"
+      - condition: "Successful login from unexpected IPs"
+        severity: HIGH
+        remediation: "Investigate unauthorized access; rotate credentials"
+      - condition: "Root login via SSH"
+        severity: MEDIUM
+        remediation: "Disable root SSH login; use sudo instead"
+      - condition: "Login at unusual hours"
+        severity: LOW
+        remediation: "Review with account owner; consider time-based access rules"
+
+  - id: LOG-002
+    name: System Logs
+    category: logs
+    severity: MEDIUM
+    commands:
+      all: |
+        journalctl -p err --since "7 days ago" --no-pager 2>/dev/null | tail -50
+        dmesg -T 2>/dev/null | grep -i "error\|warn\|fail\|oom\|segfault" | tail -30
+        cat /var/log/syslog 2>/dev/null | grep -i "error\|critical" | tail -30
+        cat /var/log/messages 2>/dev/null | grep -i "error\|critical" | tail -30
+    findings:
+      - condition: "OOM killer invocations"
+        severity: HIGH
+        remediation: "Increase memory or tune application memory usage"
+      - condition: "Segfaults in critical services"
+        severity: HIGH
+        remediation: "Update affected packages; check for known bugs"
+      - condition: "Hardware errors (disk, memory)"
+        severity: HIGH
+        remediation: "Run hardware diagnostics; plan replacement if needed"
+      - condition: "Service crash/restart loops"
+        severity: MEDIUM
+        remediation: "Check service logs; fix configuration or dependencies"
+
+  - id: LOG-003
+    name: Audit Logs
+    category: logs
+    severity: MEDIUM
+    requires:
+      command_exists: [auditctl]
+    commands:
+      all: |
+        auditctl -l 2>/dev/null
+        ausearch -m execve --start recent 2>/dev/null | tail -30
+        ausearch -m USER_AUTH --start recent 2>/dev/null | tail -30
+        cat /var/log/audit/audit.log 2>/dev/null | tail -50
+    findings:
+      - condition: "No audit rules configured"
+        severity: MEDIUM
+        remediation: "Configure audit rules for critical file and command monitoring"
+      - condition: "Suspicious command execution patterns"
+        severity: HIGH
+        remediation: "Investigate suspicious commands; check for compromise"
+      - condition: "Privilege escalation events"
+        severity: HIGH
+        remediation: "Review privilege escalation events for legitimacy"
+
+  - id: LOG-004
+    name: Log Rotation and Retention
+    category: logs
+    severity: LOW
+    commands:
+      all: |
+        cat /etc/logrotate.conf 2>/dev/null
+        ls -la /etc/logrotate.d/ 2>/dev/null
+        du -sh /var/log/ 2>/dev/null
+        ls -lt /var/log/*.log 2>/dev/null | head -10
+    findings:
+      - condition: "Log rotation not configured"
+        severity: LOW
+        remediation: "Configure logrotate for all log files"
+      - condition: "Logs consuming excessive disk space (>5GB)"
+        severity: MEDIUM
+        remediation: "Review log verbosity; configure retention limits"
+      - condition: "Logs not written to recently (possible logging failure)"
+        severity: MEDIUM
+        remediation: "Check rsyslog/journald service status"
+
+  # ── System Health ───────────────────────────────────────────────────────────
+
+  - id: SYS-001
+    name: Disk Usage
+    category: system
+    severity: MEDIUM
+    commands:
+      all: |
+        df -h
+        df -i
+        du -sh /var/log/ /tmp/ /home/ 2>/dev/null
+    findings:
+      - condition: "Partition usage > 85%"
+        severity: MEDIUM
+        remediation: "Clean up disk space or expand partition"
+      - condition: "Inode usage > 85%"
+        severity: MEDIUM
+        remediation: "Find and remove excessive small files"
+      - condition: "/var/log abnormally large"
+        severity: LOW
+        remediation: "Configure log rotation and retention"
+
+  - id: SYS-002
+    name: Memory and Swap
+    category: system
+    severity: MEDIUM
+    commands:
+      all: |
+        free -h
+        cat /proc/meminfo | head -10
+        swapon --show 2>/dev/null
+    findings:
+      - condition: "Memory usage > 90%"
+        severity: MEDIUM
+        remediation: "Identify memory-hungry processes; consider adding memory"
+      - condition: "No swap configured"
+        severity: LOW
+        remediation: "Configure swap space for OOM protection"
+      - condition: "Swap usage > 50%"
+        severity: MEDIUM
+        remediation: "Investigate memory pressure; tune vm.swappiness"
+
+  - id: SYS-003
+    name: CPU and Load
+    category: system
+    severity: LOW
+    commands:
+      all: |
+        uptime
+        cat /proc/loadavg
+        nproc
+        top -bn1 | head -20
+    findings:
+      - condition: "Load average > 2x number of CPUs"
+        severity: MEDIUM
+        remediation: "Identify CPU-intensive processes"
+      - condition: "Single process consuming >80% CPU"
+        severity: LOW
+        remediation: "Review process; consider resource limits"
+      - condition: "System uptime > 365 days (likely unpatched)"
+        severity: MEDIUM
+        remediation: "Schedule maintenance reboot after patching"
+
+  - id: SYS-004
+    name: Running Services
+    category: system
+    severity: LOW
+    requires:
+      command_exists: [systemctl]
+    commands:
+      all: |
+        systemctl list-units --type=service --state=running 2>/dev/null | head -40
+        systemctl list-units --type=service --state=failed 2>/dev/null
+    findings:
+      - condition: "Failed services"
+        severity: MEDIUM
+        remediation: "Investigate and fix or disable failed services"
+      - condition: "Unnecessary services running (telnet, ftp, rsh)"
+        severity: MEDIUM
+        remediation: "Stop and disable unnecessary services"
+      - condition: "Missing expected services (sshd, rsyslog, crond)"
+        severity: LOW
+        remediation: "Start and enable missing services"
+
+  - id: SYS-005
+    name: Scheduled Tasks
+    category: system
+    severity: MEDIUM
+    commands:
+      all: |
+        crontab -l 2>/dev/null
+        ls -la /etc/cron.d/ 2>/dev/null
+        cat /etc/cron.d/* 2>/dev/null
+        ls -la /etc/cron.daily/ /etc/cron.hourly/ /etc/cron.weekly/ /etc/cron.monthly/ 2>/dev/null
+        for user in $(awk -F: '$3==0||$3>=1000{print $1}' /etc/passwd); do echo "=== $user ==="; crontab -u "$user" -l 2>/dev/null; done
+        systemctl list-timers --all 2>/dev/null | head -20
+    findings:
+      - condition: "Suspicious cron jobs (wget/curl to external URLs, reverse shells)"
+        severity: HIGH
+        remediation: "Remove suspicious cron jobs immediately; investigate for compromise"
+      - condition: "Cron jobs running as root unnecessarily"
+        severity: MEDIUM
+        remediation: "Run cron jobs as least-privileged user"
+      - condition: "Cron jobs with world-writable scripts"
+        severity: HIGH
+        remediation: "Fix script permissions immediately"
+
+  # ── Network ─────────────────────────────────────────────────────────────────
+
+  - id: NET-001
+    name: Network Configuration
+    category: network
+    severity: LOW
+    commands:
+      all: |
+        ip addr show 2>/dev/null || ifconfig -a 2>/dev/null
+        ip route show 2>/dev/null || route -n 2>/dev/null
+        cat /etc/resolv.conf 2>/dev/null
+        cat /etc/hosts 2>/dev/null
+    findings:
+      - condition: "Interfaces in promiscuous mode"
+        severity: HIGH
+        remediation: "Investigate why interface is in promiscuous mode"
+      - condition: "Unexpected routes"
+        severity: MEDIUM
+        remediation: "Review and remove unauthorized routes"
+      - condition: "DNS pointing to suspicious servers"
+        severity: MEDIUM
+        remediation: "Update /etc/resolv.conf with trusted DNS servers"
+      - condition: "Suspicious entries in /etc/hosts"
+        severity: MEDIUM
+        remediation: "Remove unauthorized host entries"
+
+  - id: NET-002
+    name: Network Connections
+    category: network
+    severity: MEDIUM
+    commands:
+      all: |
+        ss -tnp 2>/dev/null | head -50 || netstat -tnp 2>/dev/null | head -50
+        ss -tnp state established 2>/dev/null | head -30
+    findings:
+      - condition: "Connections to known malicious IPs/ports"
+        severity: CRITICAL
+        remediation: "Block IP immediately; investigate for compromise"
+      - condition: "Unexpected outbound connections"
+        severity: MEDIUM
+        remediation: "Identify process and determine if legitimate"
+      - condition: "Connections on non-standard ports"
+        severity: LOW
+        remediation: "Verify legitimacy of non-standard port usage"
+
+  - id: NET-003
+    name: DNS and Name Resolution
+    category: network
+    severity: LOW
+    commands:
+      all: |
+        cat /etc/nsswitch.conf 2>/dev/null | grep hosts
+        systemd-resolve --status 2>/dev/null | head -20
+    findings:
+      - condition: "Non-standard name resolution order"
+        severity: LOW
+        remediation: "Review nsswitch.conf hosts order"
+      - condition: "DNS over non-standard ports"
+        severity: MEDIUM
+        remediation: "Verify DNS configuration is intentional"
+
+  # ── Compliance ──────────────────────────────────────────────────────────────
+
+  - id: CMP-001
+    name: File Integrity
+    category: compliance
+    severity: MEDIUM
+    commands:
+      rhel: |
+        rpm -Va 2>/dev/null | head -30
+        aide --check 2>/dev/null | tail -20 || echo "NO_AIDE"
+      debian: |
+        dpkg -V 2>/dev/null | head -30
+        aide --check 2>/dev/null | tail -20 || echo "NO_AIDE"
+      all: "aide --check 2>/dev/null | tail -20 || echo 'NO_AIDE'"
+    findings:
+      - condition: "Modified system files"
+        severity: MEDIUM
+        remediation: "Investigate modified files; reinstall affected packages"
+      - condition: "No file integrity monitoring installed"
+        severity: LOW
+        remediation: "Install and configure AIDE, OSSEC, or Tripwire"
+
+  - id: CMP-002
+    name: Time Synchronization
+    category: compliance
+    severity: LOW
+    commands:
+      all: |
+        timedatectl status 2>/dev/null
+        chronyc tracking 2>/dev/null || ntpq -p 2>/dev/null || echo "NO_NTP"
+    findings:
+      - condition: "Time not synchronized"
+        severity: LOW
+        remediation: "Enable and configure NTP or Chrony"
+      - condition: "No NTP/Chrony service running"
+        severity: LOW
+        remediation: "Install and start chronyd or ntpd"
+      - condition: "Clock drift > 1 second"
+        severity: MEDIUM
+        remediation: "Check NTP configuration and network connectivity to time servers"
+
+  - id: CMP-003
+    name: Kernel Parameters
+    category: compliance
+    severity: MEDIUM
+    commands:
+      all: |
+        sysctl net.ipv4.ip_forward 2>/dev/null
+        sysctl net.ipv4.conf.all.accept_redirects 2>/dev/null
+        sysctl net.ipv4.conf.all.send_redirects 2>/dev/null
+        sysctl net.ipv4.conf.all.accept_source_route 2>/dev/null
+        sysctl net.ipv4.conf.all.log_martians 2>/dev/null
+        sysctl net.ipv4.icmp_echo_ignore_broadcasts 2>/dev/null
+        sysctl net.ipv4.tcp_syncookies 2>/dev/null
+        sysctl kernel.randomize_va_space 2>/dev/null
+        sysctl fs.suid_dumpable 2>/dev/null
+        sysctl kernel.core_uses_pid 2>/dev/null
+    findings:
+      - condition: "IP forwarding enabled (unless router)"
+        severity: MEDIUM
+        remediation: "Disable: sysctl -w net.ipv4.ip_forward=0"
+      - condition: "ICMP redirects accepted"
+        severity: MEDIUM
+        remediation: "Disable: sysctl -w net.ipv4.conf.all.accept_redirects=0"
+      - condition: "Source routing accepted"
+        severity: MEDIUM
+        remediation: "Disable: sysctl -w net.ipv4.conf.all.accept_source_route=0"
+      - condition: "SYN cookies disabled"
+        severity: MEDIUM
+        remediation: "Enable: sysctl -w net.ipv4.tcp_syncookies=1"
+      - condition: "ASLR disabled"
+        severity: HIGH
+        remediation: "Enable: sysctl -w kernel.randomize_va_space=2"
+      - condition: "Core dumps with SUID enabled"
+        severity: MEDIUM
+        remediation: "Disable: sysctl -w fs.suid_dumpable=0"

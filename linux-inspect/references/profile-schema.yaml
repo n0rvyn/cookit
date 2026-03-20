@@ -1,0 +1,175 @@
+# Host Profile Schema Reference — linux-inspect v2
+#
+# Each host gets a profile at {WD}/profiles/{hostname}.yaml
+# Profiles store per-host state: discovery data, applicable checks,
+# baselines, suppressions, custom checks, and audit log.
+# Profiles evolve over time through the profile-evolver agent.
+
+schema:
+  version:
+    type: integer
+    description: Schema version for future migration
+    current: 2
+
+  host:
+    type: string
+    description: Hostname as defined in inspect-config.yaml
+
+  last_updated:
+    type: string
+    format: ISO-8601
+    description: Last profile modification timestamp
+
+  discovered:
+    type: object
+    description: Host state from collector.sh discovery phase
+    fields:
+      os_family:
+        type: string
+        enum: [rhel, debian, suse, alpine, arch, unknown]
+      os_version:
+        type: string
+      distro:
+        type: string
+        example: "CentOS Stream"
+      kernel:
+        type: string
+      arch:
+        type: string
+        enum: [x86_64, aarch64, armv7l, s390x]
+      init_system:
+        type: string
+        enum: [systemd, sysvinit, openrc, unknown]
+      security_framework:
+        type: string
+        enum: [selinux, apparmor, none]
+      security_mode:
+        type: string
+        description: "SELinux mode (enforcing/permissive) or empty"
+      package_manager:
+        type: string
+        enum: [apt, dnf, yum, zypper, apk, pacman, unknown]
+      services:
+        type: array
+        items: string
+        description: Running service names
+      installed_commands:
+        type: array
+        items: string
+        description: Available inspection commands (auditctl, aide, etc.)
+      cpu_count:
+        type: integer
+      memory_total_mb:
+        type: integer
+
+  applicable_checks:
+    type: array
+    items: string
+    description: Check IDs that apply to this host (auto-derived from discovery + checks.yaml requires)
+
+  excluded_checks:
+    type: array
+    items:
+      id:
+        type: string
+        description: Check ID
+      reason:
+        type: string
+      source:
+        type: string
+        enum: [auto, user, profile-evolver]
+      timestamp:
+        type: string
+        format: ISO-8601
+
+  baselines:
+    type: object
+    description: "Map of check_id -> key-value pairs representing known-good state"
+    example:
+      SEC-001:
+        PermitRootLogin: "no"
+      SYS-001:
+        disk_usage_threshold: 85
+
+  suppressions:
+    type: array
+    items:
+      finding_id:
+        type: string
+        description: "e.g. SEC-003-1"
+      reason:
+        type: string
+      expires:
+        type: string
+        format: YYYY-MM-DD
+        nullable: true
+        description: "null = permanent suppression"
+      approved_by:
+        type: string
+      created:
+        type: string
+        format: ISO-8601
+
+  custom_checks:
+    type: array
+    items:
+      id:
+        type: string
+        description: "e.g. CUSTOM-001"
+      name:
+        type: string
+      category:
+        type: string
+      severity:
+        type: string
+        enum: [CRITICAL, HIGH, MEDIUM, LOW]
+      command:
+        type: string
+
+  last_run:
+    type: object
+    nullable: true
+    description: Previous inspection snapshot for delta calculation
+    fields:
+      timestamp:
+        type: string
+        format: ISO-8601
+      findings:
+        type: array
+        items:
+          id:
+            type: string
+          severity:
+            type: string
+      security_score:
+        type: integer
+      health_score:
+        type: integer
+
+  audit_log:
+    type: array
+    max_items: 100
+    description: Chronological record of profile changes (rotated at 100 entries)
+    items:
+      timestamp:
+        type: string
+        format: ISO-8601
+      action:
+        type: string
+        enum:
+          - profile_created
+          - discovery_updated
+          - field_updated
+          - check_excluded
+          - check_included
+          - baseline_set
+          - suppression_added
+          - suppression_expired
+          - suppression_removed
+          - custom_check_added
+          - custom_check_removed
+      detail:
+        type: string
+      source:
+        type: string
+        enum: [discovery, auto, user, profile-evolver]
