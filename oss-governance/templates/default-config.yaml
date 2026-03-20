@@ -14,7 +14,6 @@ defaults:
   # ansible_become: true
   # ansible_become_method: sudo
   timeout: 30                    # SSH command timeout (seconds)
-  parallel: 5                    # Max concurrent host connections
 
 # ── External Inventory (optional) ────────────────────────────────────
 # Point to an existing Ansible YAML inventory file.

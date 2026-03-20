@@ -42,7 +42,7 @@ You will receive:
    package_managers: [npm, pip, cargo, go, ...]
    ```
 3. **ssh_script** — absolute path to `ssh_exec.sh`
-4. **collect_script** — absolute path to `collect-manifests.sh` (content, not path on remote)
+4. **collect_script** — absolute path to `collect-manifests.sh` on the controller. The agent reads this file and pipes its content to remote hosts.
 5. **staging_dir** — local directory to stage fetched files (e.g., `/tmp/oss-audit/`)
 
 ## Process

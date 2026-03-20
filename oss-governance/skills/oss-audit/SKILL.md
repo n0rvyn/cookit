@@ -1,6 +1,6 @@
 ---
 name: oss-audit
-description: "Use when the user says 'oss audit', 'open source audit', 'license check', 'compliance scan', 'dependency audit', 'oss governance', '开源治理', '合规扫描', '许可证检查', or wants to scan hosts for open source compliance. Single entry point for OSS governance: setup, run, status, report, config, help."
+description: "Use when the user says 'oss audit', 'open source audit', 'license check', 'license compliance', 'dependency license scan', 'SBOM', 'software bill of materials', 'copyleft check', 'dependency audit', 'oss governance', '开源治理', '合规扫描', '许可证检查', '依赖审计', or wants to scan projects or hosts for open source license compliance and dependency risks. Not for Linux host security inspection (use inspect) or CLAUDE.md rule auditing (use audit-rules). Single entry point for OSS governance: setup, run, status, report, config, help."
 model: sonnet
 user-invocable: true
 allowed-tools: Bash(${CLAUDE_PLUGIN_ROOT}/scripts/*) Bash(echo*) Bash(mkdir*) Bash(ls*) Bash(pwd*) Bash(scp*) Bash(which*) Bash(tar*) Bash(rm*) Bash(cat*) Bash(python3*) Read Write
@@ -209,7 +209,11 @@ Execute the full compliance scan pipeline.
 
 3. **Detect available tools** (for vuln scanning):
    ```bash
-   which grype trivy npm pip-audit cargo-audit 2>/dev/null
+   which grype 2>/dev/null && echo "grype: YES" || echo "grype: NO" && \
+   which trivy 2>/dev/null && echo "trivy: YES" || echo "trivy: NO" && \
+   which npm 2>/dev/null && echo "npm: YES" || echo "npm: NO" && \
+   which pip-audit 2>/dev/null && echo "pip-audit: YES" || echo "pip-audit: NO" && \
+   which cargo-audit 2>/dev/null && echo "cargo-audit: YES" || echo "cargo-audit: NO"
    ```
 
 4. **Phase 1 — Collection:**
@@ -227,7 +231,7 @@ Execute the full compliance scan pipeline.
    ```bash
    bash "${CLAUDE_PLUGIN_ROOT}/scripts/collect-manifests.sh" "<paths_colon_separated>" "<depth>" "<excludes_colon_separated>"
    ```
-   Parse JSON lines output. Copy/symlink discovered files to staging dir.
+   Parse JSON lines output. For local-only mode, use the original directory paths directly as `local_dir` — no copying needed.
 
    **Progress output:**
    ```
@@ -249,7 +253,7 @@ Execute the full compliance scan pipeline.
    - **package_managers**: content of package-managers.md
    - **license_compatibility**: content of license-compatibility.md
 
-   For large fleets (> 20 projects), split into batches by host and dispatch multiple dependency-analyzer agents in parallel (one per host).
+   For large fleets (> 20 projects), split into batches by host and dispatch all dependency-analyzer agents in a single message for parallel execution (one agent per host). For smaller fleets (<= 20 projects), dispatch a single dependency-analyzer agent with all projects.
 
    Wait for completion.
 

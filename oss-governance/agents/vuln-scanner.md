@@ -86,7 +86,12 @@ Parse: `.vulnerabilities.list[].advisory.id`, `.vulnerabilities.list[].advisory.
 
 **trivy** (universal fallback):
 ```bash
-trivy fs "<local_dir>" -f json --severity HIGH,CRITICAL 2>/dev/null
+# Build severity filter from min_severity upward:
+#   LOW     → LOW,MEDIUM,HIGH,CRITICAL
+#   MEDIUM  → MEDIUM,HIGH,CRITICAL
+#   HIGH    → HIGH,CRITICAL
+#   CRITICAL→ CRITICAL
+trivy fs "<local_dir>" -f json --severity <severity_filter_from_min_severity> 2>/dev/null
 ```
 Parse: `.Results[].Vulnerabilities[].VulnerabilityID`, `.Results[].Vulnerabilities[].Severity`, `.Results[].Vulnerabilities[].PkgName`, `.Results[].Vulnerabilities[].InstalledVersion`, `.Results[].Vulnerabilities[].FixedVersion`
 
