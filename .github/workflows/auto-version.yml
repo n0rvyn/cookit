@@ -11,6 +11,8 @@ on:
       - "rag-server/**"
       - "skill-audit/**"
       - "domain-intel/**"
+      - "session-intel/**"
+      - "linux-inspect/**"
 
 permissions:
   contents: write
@@ -38,7 +40,7 @@ jobs:
           set -euo pipefail
 
           MARKET_FILE=".claude-plugin/marketplace.json"
-          ALL_PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "rag-server" "skill-audit" "domain-intel")
+          ALL_PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "rag-server" "skill-audit" "domain-intel" "session-intel" "linux-inspect")
 
           bump_semver() {
             local version="$1"
