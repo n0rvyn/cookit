@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Indie toolkit with iOS development, macOS tooling, and more",
-    "version": "1.21.5"
+    "version": "1.22.0"
   },
   "plugins": [
     {
       "name": "dev-workflow",
       "source": "./dev-workflow",
       "description": "Cross-stack development workflow: brainstorm, planning, phase orchestration, execution, review, debugging, design analysis, commits, and session management",
-      "version": "2.14.4",
+      "version": "2.15.0",
       "category": "development",
       "tags": [
         "workflow",
@@ -103,7 +103,7 @@
       "name": "domain-intel",
       "source": "./domain-intel",
       "description": "Domain intelligence engine: automated collection, AI analysis, and trend synthesis from GitHub, RSS, official changelogs, notable figures, and companies. LENS-personalized with evolving profiles.",
-      "version": "1.2.1",
+      "version": "1.3.0",
       "category": "intelligence",
       "tags": [
         "intelligence",
@@ -123,7 +123,7 @@
       "name": "session-intel",
       "source": "./session-intel",
       "description": "AI session analytics: extract, analyze, and correlate Claude Code and Codex sessions with git history. Retro, search, replay, trends, cost, and health scoring.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "category": "analytics",
       "tags": [
         "sessions",
@@ -141,7 +141,7 @@
       "name": "linux-inspect",
       "source": "./linux-inspect",
       "description": "Batch Linux host inspection plugin — security audit, log analysis, vulnerability scanning, and compliance checks via SSH. Ansible-compatible inventory.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "category": "operations",
       "tags": [
         "linux",
