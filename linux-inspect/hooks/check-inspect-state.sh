@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# check-inspect-state.sh — SessionStart hook for linux-inspect
-# Reports last inspection state if config exists in the current directory.
+# check-inspect-state.sh — SessionStart hook for linux-inspect v2
+# Reports last inspection state and profile count if config exists.
 
 set -euo pipefail
 
@@ -17,12 +17,12 @@ if [[ ! -f "$STATE_FILE" ]]; then
     exit 0
 fi
 
-# Extract key fields from state.
-# Format assumption: .inspect-state.yaml is flat (no nesting), written by
-# the /inspect skill. Fields are "key: value" on separate lines.
-# If the format changes, update this parser accordingly.
+# Extract fields from state YAML (flat key: value format)
 last_run=$(grep "^last_run:" "$STATE_FILE" 2>/dev/null | sed 's/last_run: *"\?\([^"]*\)"\?/\1/' || echo "unknown")
 fleet_score=$(grep "^fleet_score:" "$STATE_FILE" 2>/dev/null | sed 's/fleet_score: *//' || echo "?")
 total_findings=$(grep "^total_findings:" "$STATE_FILE" 2>/dev/null | sed 's/total_findings: *//' || echo "?")
+profile_count=$(grep "^profile_count:" "$STATE_FILE" 2>/dev/null | sed 's/profile_count: *//' || echo "0")
+delta_new=$(grep "^delta_new:" "$STATE_FILE" 2>/dev/null | sed 's/delta_new: *//' || echo "0")
+delta_resolved=$(grep "^delta_resolved:" "$STATE_FILE" 2>/dev/null | sed 's/delta_resolved: *//' || echo "0")
 
-echo "[linux-inspect] Last inspection: ${last_run} | Score: ${fleet_score}/100 | Findings: ${total_findings}. Use /inspect to re-run."
+echo "[linux-inspect] Last: ${last_run} | Score: ${fleet_score}/100 | Findings: ${total_findings} | Profiles: ${profile_count} | Delta: +${delta_new} new, -${delta_resolved} resolved"
