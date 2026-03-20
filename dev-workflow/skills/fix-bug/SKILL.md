@@ -125,8 +125,10 @@ If input is incomplete, ask for:
    2. Record what was invalidated and the user's correction
    3. Return to Step 3: regenerate assertions incorporating the user's new information
    4. Present new assertions to user before proceeding
+   5. After new assertions are verified, Step 7 (plan the fix) must be executed again — the previous plan (if any) was based on invalidated premises
 
    Do NOT patch the old hypothesis. A negated foundation requires new assertions.
+   Do NOT skip ahead to implementation — reset means the full gate chain (Step 3 → 4 → 7) restarts.
 
 5. **Trace value domain — MANDATORY GATE for value-related bugs**
 
