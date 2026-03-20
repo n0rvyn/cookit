@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ssh_exec.sh — Execute a command on a remote host via SSH
 #
-# Usage: ssh_exec.sh <host> <port> <user> [key_file] [timeout] [become] [become_method]
+# Usage: echo "<commands>" | ssh_exec.sh <host> <port> <user> [key_file] [timeout] [become] [become_method]
 #
 # Arguments:
 #   host           - Hostname or IP
@@ -12,12 +12,20 @@
 #   become         - "true" to use privilege escalation (default: "false")
 #   become_method  - "sudo" or "su" (default: "sudo")
 #
-# The command to execute is read from stdin.
+# The command to execute is read from stdin and piped to the remote shell
+# via `bash -s` (no quoting issues — stdin is not subject to shell expansion).
+#
+# NOTE: BatchMode=yes is set, so password-based SSH auth is NOT supported.
+# Only key-based authentication works. For sudo, use NOPASSWD or pass
+# credentials via ansible_become_pass (not recommended in plaintext).
+#
+# NOTE: StrictHostKeyChecking=accept-new auto-trusts unknown hosts on first
+# connection. This is a TOFU (trust-on-first-use) model. For high-security
+# environments, pre-populate known_hosts or set StrictHostKeyChecking=yes.
 #
 # Exit codes:
 #   0 - Success
-#   1 - SSH connection failed
-#   2 - Command execution failed
+#   1 - SSH connection failed or command failed
 #   3 - Invalid arguments
 
 set -euo pipefail
@@ -56,20 +64,20 @@ if [[ "$KEY_FILE" != "none" && -f "$KEY_FILE" ]]; then
     SSH_OPTS+=(-i "$KEY_FILE")
 fi
 
-# Wrap command with privilege escalation if needed
+# Wrap command with privilege escalation if needed.
+# The command is piped via stdin to `bash -s` on the remote host,
+# avoiding all shell quoting/escaping issues.
 if [[ "$BECOME" == "true" ]]; then
     if [[ "$BECOME_METHOD" == "sudo" ]]; then
-        COMMAND="sudo -n bash -c '${COMMAND//\'/\'\\\'\'}'"
+        COMMAND="sudo -n bash <<'INSPECT_EOF'
+${COMMAND}
+INSPECT_EOF"
     elif [[ "$BECOME_METHOD" == "su" ]]; then
-        COMMAND="su -c '${COMMAND//\'/\'\\\'\'}'"
+        COMMAND="su -c bash <<'INSPECT_EOF'
+${COMMAND}
+INSPECT_EOF"
     fi
 fi
 
-# Execute
-ssh "${SSH_OPTS[@]}" "${USER}@${HOST}" bash -c "'${COMMAND//\'/\'\\\'\'}'" 2>&1
-
-exit_code=$?
-if [[ $exit_code -ne 0 ]]; then
-    echo "[ssh_exec] Connection to ${USER}@${HOST}:${PORT} failed with exit code ${exit_code}" >&2
-    exit 1
-fi
+# Execute via stdin pipe — no bash -c quoting needed
+echo "$COMMAND" | ssh "${SSH_OPTS[@]}" "${USER}@${HOST}" bash -s 2>&1

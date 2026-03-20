@@ -17,7 +17,7 @@ defaults:
   parallel: 5                    # Max concurrent host connections
 
 # ── External Inventory (optional) ────────────────────────────────────
-# Point to an existing Ansible inventory file. Supports INI and YAML formats.
+# Point to an existing Ansible YAML inventory file.
 # When set, the 'hosts' section below is ignored.
 # inventory_file: /path/to/ansible/hosts
 
@@ -31,7 +31,8 @@ defaults:
 #   ansible_ssh_private_key_file - Path to SSH key
 #   ansible_become        - Enable privilege escalation (true/false)
 #   ansible_become_method - Escalation method (sudo/su)
-#   ansible_become_pass   - Escalation password (use ansible-vault in production)
+#   ansible_become_pass   - NOT RECOMMENDED. Do not store passwords in plaintext.
+#                          Configure NOPASSWD in sudoers for the inspection user instead.
 #   tags                  - Custom tags for filtering (linux-inspect extension)
 
 all:

@@ -3,7 +3,7 @@ name: inspect
 description: "Use when the user says 'inspect', 'inspection', 'linux inspection', 'host inspection', 'security audit', 'batch inspection', 'inspect hosts', 'inspect setup', 'inspect config', or asks about Linux host security checks. Single human-facing entry point for batch Linux host inspection: setup, run, status, report, and help."
 model: sonnet
 user-invocable: true
-allowed-tools: Bash(${CLAUDE_PLUGIN_ROOT}/scripts/*) Bash(ssh*) Bash(mkdir*) Bash(cat*) Bash(ls*) Bash(pwd*)
+allowed-tools: Bash(${CLAUDE_PLUGIN_ROOT}/scripts/*) Bash(echo*) Bash(mkdir*) Bash(ls*) Bash(pwd*) Read Write
 ---
 
 ## Overview
@@ -66,7 +66,7 @@ Configuration:
   inspect-config.yaml  — Host inventory and inspection settings (Ansible-compatible)
   Supports:
     - Inline host definitions (Ansible YAML inventory format)
-    - External Ansible inventory file (inventory_file: /path/to/hosts)
+    - External Ansible YAML inventory file (inventory_file: /path/to/hosts.yml)
     - Host groups, per-host variables, tags
 
 Inspection Categories:
@@ -98,7 +98,7 @@ Guided first-time configuration.
 3. Ask about inventory source using AskUserQuestion:
    - "Use an existing Ansible inventory file?"
    - Options:
-     - "Yes, I have an Ansible inventory file" → ask for path
+     - "Yes, I have an Ansible YAML inventory file" → ask for path
      - "No, I'll define hosts here" → proceed with inline config
 
 4. **If external inventory:**
@@ -115,7 +115,7 @@ Guided first-time configuration.
      - IP or hostname (ansible_host)
      - SSH user (default: root)
      - SSH port (default: 22)
-     - SSH key path (default: ~/.ssh/id_rsa, or "password" for password auth)
+     - SSH key path (default: ~/.ssh/id_rsa). Only key-based auth is supported (BatchMode=yes).
      - Need sudo? (yes/no)
      - Tags (optional, comma-separated)
    - If 10+: suggest creating an Ansible inventory file instead
@@ -171,9 +171,8 @@ Execute the full inspection pipeline.
 2. **Parse host inventory:**
 
    a. If `inventory_file` is set:
-      - Read the inventory file
-      - Parse Ansible inventory format (INI or YAML)
-      - Extract hosts with connection variables
+      - Read the inventory file (must be Ansible YAML inventory format)
+      - Parse YAML structure and extract hosts with connection variables
 
    b. If inline hosts:
       - Parse the `all.children` structure

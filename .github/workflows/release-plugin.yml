@@ -16,6 +16,8 @@ on:
           - rag-server
           - skill-audit
           - domain-intel
+          - session-intel
+          - linux-inspect
           - all
       bump:
         description: "Semver bump type"
@@ -80,7 +82,7 @@ jobs:
           }
 
           if [[ "$TARGET" == "all" ]]; then
-            PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "rag-server" "skill-audit" "domain-intel")
+            PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "rag-server" "skill-audit" "domain-intel" "session-intel" "linux-inspect")
           else
             PLUGINS=("$TARGET")
           fi

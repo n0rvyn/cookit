@@ -23,7 +23,7 @@ This checklist defines all inspection items. Each item has a category, ID, sever
 - **Severity**: MEDIUM
 - **Commands**:
   ```
-  find / -type f \( -perm -4000 -o -perm -2000 \) -exec ls -la {} \; 2>/dev/null | head -100
+  timeout 60 find / -maxdepth 5 -type f \( -perm -4000 -o -perm -2000 \) -exec ls -la {} \; 2>/dev/null | head -100
   ```
 - **Findings**:
   - Unexpected SUID/SGID binaries outside standard paths
@@ -89,8 +89,8 @@ This checklist defines all inspection items. Each item has a category, ID, sever
 - **Severity**: MEDIUM
 - **Commands**:
   ```
-  find / -type f -perm -0002 -not -path "/proc/*" -not -path "/sys/*" 2>/dev/null | head -50
-  find / -type d -perm -0002 -not -path "/proc/*" -not -path "/sys/*" -not -path "/tmp" -not -path "/var/tmp" 2>/dev/null | head -50
+  timeout 60 find / -maxdepth 5 -type f -perm -0002 -not -path "/proc/*" -not -path "/sys/*" 2>/dev/null | head -50
+  timeout 60 find / -maxdepth 5 -type d -perm -0002 -not -path "/proc/*" -not -path "/sys/*" -not -path "/tmp" -not -path "/var/tmp" 2>/dev/null | head -50
   ls -la /etc/passwd /etc/shadow /etc/group /etc/gshadow 2>/dev/null
   ls -la /etc/crontab /etc/cron.d/ 2>/dev/null
   ```
@@ -162,6 +162,8 @@ This checklist defines all inspection items. Each item has a category, ID, sever
     yum updateinfo list security 2>/dev/null | head -30
   elif command -v dnf &>/dev/null; then
     dnf updateinfo list --security 2>/dev/null | head -30
+  elif command -v zypper &>/dev/null; then
+    zypper list-patches --category security 2>/dev/null | head -30
   fi
   ```
 - **Findings**:
@@ -326,7 +328,7 @@ This checklist defines all inspection items. Each item has a category, ID, sever
   ls -la /etc/cron.d/ 2>/dev/null
   cat /etc/cron.d/* 2>/dev/null
   ls -la /etc/cron.daily/ /etc/cron.hourly/ /etc/cron.weekly/ /etc/cron.monthly/ 2>/dev/null
-  for user in $(cut -f1 -d: /etc/passwd); do echo "=== $user ==="; crontab -u $user -l 2>/dev/null; done
+  for user in $(awk -F: '$3==0||$3>=1000{print $1}' /etc/passwd); do echo "=== $user ==="; crontab -u "$user" -l 2>/dev/null; done
   systemctl list-timers --all 2>/dev/null | head -20
   ```
 - **Findings**:

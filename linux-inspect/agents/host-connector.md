@@ -14,7 +14,7 @@ description: |
   </example>
 
 model: haiku
-tools: Bash, Read
+tools: Bash
 color: cyan
 ---
 
@@ -114,7 +114,8 @@ stats:
 1. **No analysis.** Return raw command output only. Interpretation is done by other agents.
 2. **Fail gracefully.** If a host is unreachable or a command fails, record it and continue.
 3. **Respect timeouts.** Use the configured timeout for each SSH command.
-4. **Sequential execution.** Run all checks for one host before moving to the next to keep output organized.
+4. **Batch execution.** Process hosts in batches of `parallel` size (from config). Within each batch, run all checks for one host before the next.
 5. **No invented data.** If a command produces no output, return empty string. Do not fabricate results.
 6. **Escape safely.** Commands may contain special characters; use the stdin pipe pattern to avoid shell injection.
 7. **Privilege escalation.** Use become/become_method as configured per host. If sudo fails (requires password), record the error and continue.
+8. **Truncate large output.** If any single check output exceeds 200 lines, keep the first 200 lines and append `[truncated: N lines total, showing first 200]`. This prevents context overflow in downstream analysis agents.
