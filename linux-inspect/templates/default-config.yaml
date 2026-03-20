@@ -1,0 +1,95 @@
+# linux-inspect configuration
+# Compatible with Ansible inventory format for easy migration.
+#
+# Hosts can be defined in two ways:
+#   1. Inline in this file (below)
+#   2. External Ansible inventory file (set inventory_file)
+
+# ── Connection Defaults ──────────────────────────────────────────────
+defaults:
+  # SSH connection settings (applied to all hosts unless overridden)
+  ansible_user: root
+  ansible_port: 22
+  # ansible_ssh_private_key_file: ~/.ssh/id_rsa
+  # ansible_become: true
+  # ansible_become_method: sudo
+  timeout: 30                    # SSH command timeout (seconds)
+  parallel: 5                    # Max concurrent host connections
+
+# ── External Inventory (optional) ────────────────────────────────────
+# Point to an existing Ansible inventory file. Supports INI and YAML formats.
+# When set, the 'hosts' section below is ignored.
+# inventory_file: /path/to/ansible/hosts
+
+# ── Host Inventory ───────────────────────────────────────────────────
+# Define hosts and groups directly. Uses Ansible-compatible variable names.
+#
+# Supported per-host variables:
+#   ansible_host          - IP or hostname to connect to
+#   ansible_port          - SSH port (default: 22)
+#   ansible_user          - SSH user (default: from defaults)
+#   ansible_ssh_private_key_file - Path to SSH key
+#   ansible_become        - Enable privilege escalation (true/false)
+#   ansible_become_method - Escalation method (sudo/su)
+#   ansible_become_pass   - Escalation password (use ansible-vault in production)
+#   tags                  - Custom tags for filtering (linux-inspect extension)
+
+all:
+  children:
+    webservers:
+      hosts:
+        # web1:
+        #   ansible_host: 192.168.1.10
+        #   ansible_user: deploy
+        #   tags: [production, nginx]
+        # web2:
+        #   ansible_host: 192.168.1.11
+        #   tags: [production, nginx]
+    dbservers:
+      hosts:
+        # db1:
+        #   ansible_host: 192.168.1.20
+        #   ansible_user: dba
+        #   ansible_port: 2222
+        #   tags: [production, mysql]
+    monitoring:
+      hosts:
+        # mon1:
+        #   ansible_host: 192.168.1.30
+        #   tags: [infra, prometheus]
+
+# ── Inspection Settings ──────────────────────────────────────────────
+inspection:
+  # Which checklist categories to run (all by default)
+  categories:
+    - security
+    - vulnerabilities
+    - logs
+    - system
+    - network
+    - compliance
+
+  # Minimum severity to report: CRITICAL, HIGH, MEDIUM, LOW
+  min_severity: LOW
+
+  # Output directory for reports (relative to config file location)
+  report_dir: ./reports
+
+  # Report format: markdown (default)
+  report_format: markdown
+
+  # Skip specific check IDs (e.g., if a check is known to be irrelevant)
+  skip_checks: []
+  # - SEC-002    # Skip SUID check on dev machines
+  # - CMP-002   # Skip NTP check
+
+  # Only run specific check IDs (overrides categories if set)
+  # only_checks: []
+  # - SEC-001
+  # - VUL-002
+
+# ── Notification (optional) ──────────────────────────────────────────
+# notify:
+#   # Threshold: only notify if findings at this severity or above exist
+#   threshold: HIGH
+#   # Future: webhook, email, slack integration
