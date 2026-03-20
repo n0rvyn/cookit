@@ -9,6 +9,9 @@
 - "batch inspect hosts"
 - "inspect config"
 - "host security check"
+- "inspect profile web1"
+- "show host profiles"
+- "suppress finding SEC-001-1 on web1"
 
 ## Negative Trigger Tests
 - "inspect the code"
@@ -17,12 +20,18 @@
 - "scan my domain for intel"
 
 ## Output Assertions
-- [ ] Correctly identifies user intent (setup/run/status/report/config/help)
+- [ ] Correctly identifies user intent (setup/run/status/report/config/profile/help)
 - [ ] Checks for config file existence before running
 - [ ] Prompts for setup if config missing
-- [ ] Setup offers three host definition methods (Quick / Detailed / Ansible file)
-- [ ] Quick path accepts comma-separated hostnames without asking per-host connection details
-- [ ] Quick path asks about sudo as a single follow-up question
-- [ ] Detailed path rejects 10+ hosts and redirects to Ansible file path
-- [ ] Tests SSH connectivity after setup completes
-- [ ] Uses defaults section values for missing per-host fields in connectivity test
+- [ ] Setup creates profiles/ directory alongside reports/
+- [ ] Setup verifies python3 + PyYAML availability
+- [ ] Run uses collector.sh (single SSH per host), not per-check SSH
+- [ ] Run creates profile from discovery for first-run hosts
+- [ ] Run updates discovery for hosts with existing profiles
+- [ ] Run dispatches analysis agents with structured JSON, not raw text
+- [ ] Run dispatches profile-evolver after analysis
+- [ ] Non-sensitive proposals auto-applied; sensitive proposals require confirmation
+- [ ] Report includes delta section (new/resolved findings)
+- [ ] Report includes profile evolution summary
+- [ ] Profile intent lists/shows/manages host profiles correctly
+- [ ] Suppress command asks for reason and expiry via AskUserQuestion
