@@ -140,7 +140,7 @@
     {
       "name": "linux-inspect",
       "source": "./linux-inspect",
-      "description": "Batch Linux host inspection plugin — security audit, log analysis, vulnerability scanning, and compliance checks via SSH. Ansible-compatible inventory.",
+      "description": "Adaptive Linux host inspection plugin — single-SSH collector, per-host profiles with auto-evolution, structured analysis with delta awareness. Ansible-compatible inventory.",
       "version": "2.1.0",
       "category": "operations",
       "tags": [
