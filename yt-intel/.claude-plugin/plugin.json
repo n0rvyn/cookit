@@ -1,0 +1,8 @@
+{
+  "name": "yt-intel",
+  "version": "1.0.0",
+  "description": "YouTube video curation tool - scrapes recommended/search videos, extracts transcripts, scores with Claude AI on 6 dimensions, outputs TOP-5 recommendations + FYI summaries",
+  "author": {
+    "name": "Norvyn"
+  }
+}
