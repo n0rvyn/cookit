@@ -43,13 +43,17 @@ if echo "$added_lines" | grep -qE '(sk-[a-zA-Z0-9]{20,}|pk_live_|ghp_[a-zA-Z0-9]
 fi
 
 # Private keys
-if echo "$added_lines" | grep -qE '-----BEGIN.*(RSA|DSA|EC|OPENSSH|PGP).*PRIVATE KEY-----'; then
+if echo "$added_lines" | grep -qE -- '-----BEGIN.*(RSA|DSA|EC|OPENSSH|PGP).*PRIVATE KEY-----'; then
   matches="${matches}
   - Private key"
 fi
 
 # Password/secret assignments
-if echo "$added_lines" | grep -qiE '(password|secret|token|api_key|apikey|api\.key)[[:space:]]*[=:][[:space:]]*["'"'"'][^[:space:]]{8,}'; then
+# Match: keyword = "actual_value" (8+ chars, not a placeholder)
+# Exclude: placeholder values, env references, HTML attributes, doc references
+if echo "$added_lines" | grep -iE '(password|secret|token|api_key|apikey|api\.key)[[:space:]]*[=:][[:space:]]*["'"'"'][^[:space:]]{8,}' \
+   | grep -viE '(your_|example|changeme|xxx|placeholder|process\.env|\.env|\$\{|type=)' \
+   | grep -qiE '(password|secret|token|api_key|apikey|api\.key)[[:space:]]*[=:][[:space:]]*["'"'"'][^[:space:]]{8,}'; then
   matches="${matches}
   - Hardcoded credential assignment"
 fi
