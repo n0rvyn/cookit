@@ -17,6 +17,10 @@ templates:
       plugins: ["/Users/norvyn/Code/Skills/indie-toolkit/pkos"]
       maxBudgetUsd: 1.0
       maxTurns: 50
+      fileAccess:
+        allowedPaths:
+          - "~/Obsidian/PKOS"
+          - "~/Library/Mobile Documents"
 
   - id: pkos-domain-scan
     name: "PKOS Domain Intel Scan"
