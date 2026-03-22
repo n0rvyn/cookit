@@ -122,29 +122,55 @@ status: seed
 {raw_content}
 ```
 
-2. Create Notion Pipeline DB entry:
-```bash
-NO_PROXY="*" python3 ~/.claude/skills/notion/scripts/notion_api.py create-db-item \
-  32a1bde4-ddac-81ff-8f82-f2d8d7a361d7 \
-  "{title}" \
-  --props '{"Status": "inbox", "Source": "{source}", "Type": "{classification}", "Topics": "{topics_csv}", "Priority": "{urgency}", "Created": "{today}"}'
+2. Create Notion Pipeline DB entry via MCP:
 ```
+mcp__claude_ai_Notion__notion-create-pages(
+  parent: {"data_source_id": "32a1bde4-ddac-8182-830b-000bbcbf077d"},
+  pages: [{"properties": {
+    "Title": "{title}",
+    "Status": "inbox",
+    "Source": "{source}",
+    "Type": "{classification}",
+    "Topics": "[{topics_json_array}]",
+    "Priority": "{urgency}",
+    "date:Created:start": "{today}",
+    "date:Created:is_datetime": 0
+  }}]
+)
+```
+Note the returned page ID.
 
-3. Update Notion status after Obsidian note written:
-```bash
-NO_PROXY="*" python3 ~/.claude/skills/notion/scripts/notion_api.py update-db-item-properties \
-  {notion_page_id} \
-  --props '{"Status": "processed", "Obsidian Link": "obsidian://open?vault=PKOS&file={obsidian_path_encoded}", "Processed": "{today}"}'
+3. Update Notion status after Obsidian note written via MCP:
+```
+mcp__claude_ai_Notion__notion-update-page(
+  page_id: "{notion_page_id}",
+  command: "update_properties",
+  properties: {
+    "Status": "processed",
+    "Obsidian Link": "obsidian://open?vault=PKOS&file={obsidian_path_encoded}",
+    "date:Processed:start": "{today}",
+    "date:Processed:is_datetime": 0
+  }
+)
 ```
 
 **B. task → Notion only (no Obsidian note)**
 
-1. Create Notion Pipeline DB entry with Status "actionable":
-```bash
-NO_PROXY="*" python3 ~/.claude/skills/notion/scripts/notion_api.py create-db-item \
-  32a1bde4-ddac-81ff-8f82-f2d8d7a361d7 \
-  "{title}" \
-  --props '{"Status": "actionable", "Source": "{source}", "Type": "task", "Topics": "{topics_csv}", "Priority": "{urgency}", "Created": "{today}"}'
+1. Create Notion Pipeline DB entry with Status "actionable" via MCP:
+```
+mcp__claude_ai_Notion__notion-create-pages(
+  parent: {"data_source_id": "32a1bde4-ddac-8182-830b-000bbcbf077d"},
+  pages: [{"properties": {
+    "Title": "{title}",
+    "Status": "actionable",
+    "Source": "{source}",
+    "Type": "task",
+    "Topics": "[{topics_json_array}]",
+    "Priority": "{urgency}",
+    "date:Created:start": "{today}",
+    "date:Created:is_datetime": 0
+  }}]
+)
 ```
 
 2. If urgency is high or a due date is mentioned, create a Reminder:
@@ -202,5 +228,7 @@ All items synced to Notion Pipeline DB.
 
 ## Notion Configuration
 
-- Pipeline DB ID: `32a1bde4-ddac-81ff-8f82-f2d8d7a361d7`
-- Token requires `NO_PROXY="*"` environment variable due to proxy configuration
+- Pipeline DB data source ID: `32a1bde4-ddac-8182-830b-000bbcbf077d`
+- Access method: Notion MCP (built-in, no token/proxy needed)
+- MCP tools: `mcp__claude_ai_Notion__notion-create-pages`, `mcp__claude_ai_Notion__notion-update-page`
+- Topics multi_select: only use existing options; to add new topics, update data source schema first
