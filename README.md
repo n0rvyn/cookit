@@ -4,7 +4,7 @@ Indie Toolkit is a mono-repo of AI-facing plugins, skills, agents, and local too
 
 The current codebase contains:
 
-- 7 top-level modules
+- 10 top-level modules
 - 57 skill folders with `SKILL.md`
 - 22 agent files
 - 1 local MCP server (`rag-server`)
@@ -20,6 +20,9 @@ The current codebase contains:
 | `rag-server` | Local MCP server | Offline-first hybrid search server using SQLite FTS5 + `sqlite-vec` + Apple `NLContextualEmbedding` |
 | `skill-audit` | Claude Code plugin | Auditor for plugins, skills, agents, hooks, commands, and trigger quality |
 | `domain-intel` | Claude Code plugin | Domain intelligence engine with automated collection, AI analysis, trend synthesis, and evolving LENS profiles |
+| `session-intel` | Claude Code plugin | AI session analytics: extract, analyze, and correlate Claude Code and Codex sessions with git history |
+| `yt-intel` | Claude Code plugin | YouTube video curation: scrape, transcript extraction, AI scoring, TOP-5 recommendations |
+| `pkos` | Claude Code plugin | Personal Knowledge Operating System: inbox processing, signal aggregation, digest generation, vault operations |
 
 ## Repository Layout
 
@@ -32,6 +35,9 @@ The current codebase contains:
 ├── rag-server/
 ├── skill-audit/
 ├── domain-intel/
+├── session-intel/
+├── yt-intel/
+├── pkos/
 ├── docs/
 ├── .claude-plugin/   # marketplace manifest
 ├── .codex/           # Codex install docs
@@ -56,6 +62,9 @@ Install any plugin you want:
 /plugin install rag-server@indie-toolkit
 /plugin install skill-audit@indie-toolkit
 /plugin install domain-intel@indie-toolkit
+/plugin install session-intel@indie-toolkit
+/plugin install yt-intel@indie-toolkit
+/plugin install pkos@indie-toolkit
 ```
 
 Current marketplace entries from `.claude-plugin/marketplace.json`:
@@ -69,6 +78,9 @@ Current marketplace entries from `.claude-plugin/marketplace.json`:
 | `rag-server` | `1.1.1` | Local hybrid search MCP server for project documentation | `rag-server/README.md` |
 | `skill-audit` | `1.1.1` | Audit plugins, skills, agents, hooks, commands, and trigger quality | `skill-audit/README.md` |
 | `domain-intel` | `1.1.0` | Domain intelligence: collection, analysis, trends, evolving LENS profiles | `domain-intel/README.md` |
+| `session-intel` | `1.1.0` | AI session analytics: extract, analyze, correlate sessions with git history | `session-intel/README.md` |
+| `yt-intel` | `1.0.0` | YouTube video curation, transcript extraction, AI scoring, recommendations | — |
+| `pkos` | `0.1.0` | Personal Knowledge OS: inbox, signals, digests, vault, profiles, serendipity | — |
 
 Note:
 
@@ -131,3 +143,4 @@ Detailed notes live in `docs/README.opencode.md`.
 - `rag-server/README.md`
 - `skill-audit/README.md`
 - `domain-intel/README.md`
+- `session-intel/README.md`

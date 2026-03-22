@@ -11,6 +11,7 @@ on:
       - "skill-audit/**"
       - "domain-intel/**"
       - "session-intel/**"
+      - "pkos/**"
 
 permissions:
   contents: write
@@ -38,7 +39,7 @@ jobs:
           set -euo pipefail
 
           MARKET_FILE=".claude-plugin/marketplace.json"
-          ALL_PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "skill-audit" "domain-intel" "session-intel")
+          ALL_PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "skill-audit" "domain-intel" "session-intel" "yt-intel" "pkos")
 
           bump_semver() {
             local version="$1"
