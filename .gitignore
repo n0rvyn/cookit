@@ -17,3 +17,4 @@ __pycache__/
 /.codex
 VALIDATION_REPORT.md
 pkos/scripts/.voice-transcribe-bin
+/.remember/
