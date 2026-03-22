@@ -42,8 +42,6 @@ elif echo "$lower" | grep -qE 'design.*prototype|prototype.*design|understand.*d
   echo "[skill-hint] Related: /understand-design — analyzes design prototypes with dual-channel image+code understanding"
 elif echo "$lower" | grep -qE 'phase|阶段|next phase|run.phase'; then
   echo "[skill-hint] Related: /run-phase — orchestrates plan-execute-review cycle"
-elif echo "$lower" | grep -qE 'handoff|交接|continue.*session|session.*transfer'; then
-  echo "[skill-hint] Related: /handoff — generates cold-start prompt for session transfer"
 elif echo "$lower" | grep -qE 'crystal|crystallize|固化.*决策|决策.*结晶|结晶|settle.*decision|lock.*decision'; then
   echo "[skill-hint] Related: /crystallize — locks settled decisions into a crystal file before planning"
 elif echo "$lower" | grep -qE 'design.*decision|设计决策|tradeoff|trade.off'; then

@@ -1,6 +1,7 @@
 ---
 name: handoff
 description: "Use when the session is running low on context, the user says 'handoff', or a complex task needs to continue in a new session. Generates a cold-start prompt for session transfer."
+disable-model-invocation: true
 context: fork
 model: sonnet
 ---
