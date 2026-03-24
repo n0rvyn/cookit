@@ -17,6 +17,21 @@ run-phase (orchestrator, main context)
   → fix gaps                           → Phase done
 ```
 
+## Agent Dispatch Guidelines
+
+### Explore-Intent Dispatch
+
+When dispatching a subagent (via Agent tool) for exploration/understanding purposes, include this instruction in the dispatch prompt:
+
+> Return your findings as:
+> 1. Summary (3-5 sentences): what you found, key patterns, notable concerns
+> 2. Key files (5-10): `{file_path} — {one-line relevance}`
+> 3. Do NOT paste full file contents into your response.
+
+The main context reads specific files as needed based on the returned list.
+
+This pattern applies to "understand X" / "explore Y" dispatches. Verification agents ("verify X" / "audit Y") should continue returning inline evidence.
+
 ## Agents
 
 | Agent | Model | Tools | Purpose |
@@ -65,7 +80,7 @@ run-phase (orchestrator, main context)
 | design-drift | dispatcher | Design document vs codebase drift audit |
 | crystallize | interactive | Lock settled decisions from current session into a persistent crystal file |
 | collect-lesson | interactive | Capture development lessons learned |
-| docs-rag | interactive | Documentation search and retrieval |
+| kb | interactive | Cross-project knowledge base search with freshness indicators |
 | distill-discussion | interactive | Extract structured outputs (crystals, lessons) from raw discussion files |
 | generate-vf-prompt | interactive | Generate Verification-First prompts with falsifiable assertions |
 
@@ -76,6 +91,7 @@ run-phase (orchestrator, main context)
 | SessionStart | check-workflow-state.sh | Detects in-progress phase, prompts resume |
 | PreToolUse (Bash) | scan-secrets.sh | Intercepts git commit, blocks if secrets detected in staged content |
 | UserPromptSubmit | suggest-skills.sh | Pattern-matches user prompt and suggests relevant skills |
+| SessionEnd | prompt-lesson.sh | Prompts lesson collection if session had significant work |
 
 ## Workflow State
 

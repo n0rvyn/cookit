@@ -20,7 +20,9 @@ Otherwise, ask:
 
 ### Step 2: Search
 
-Run two parallel Grep searches over `~/.claude/knowledge/`:
+First, resolve the knowledge base path: run `echo $HOME/.claude/knowledge/` via Bash to get the absolute path. Use this expanded path for all subsequent Grep and Read calls.
+
+Run two parallel Grep searches over the resolved knowledge base path:
 
 1. **Content search**: `Grep(pattern=<query>, path="~/.claude/knowledge/", output_mode="content", context=3)`
 2. **Keyword search**: `Grep(pattern=<query>, path="~/.claude/knowledge/", glob="*.md", output_mode="content", context=0)` targeting `keywords:` lines in frontmatter
@@ -31,15 +33,26 @@ If the query has multiple words, also try each word individually as a secondary 
 
 ### Step 3: Present Results
 
+**Freshness indicator:** First, run `date +%Y-%m-%d` via Bash to get today's date. Then for each result file, extract the `date:` field from YAML frontmatter. Compare against today:
+- 🟢 Fresh: < 30 days old
+- 🟡 Aging: 30-90 days old
+- 🔴 Stale: > 90 days old
+- ⚪ Unknown: no `date:` field and no `YYYY-MM-DD-` filename prefix
+
+If the frontmatter has no `date:` field, use the filename date prefix (`YYYY-MM-DD-*`) if present.
+
 Group results by file. For each file, show:
 
 ```
-[{rank}] {file_path}
-Category: {category from directory name}  |  Date: {from frontmatter}
+[{rank}] {freshness_emoji} {file_path}
+Category: {category from directory name}  |  Date: {from frontmatter}  |  Freshness: {Fresh/Aging/Stale}
 Keywords: {from frontmatter keywords line}
 
 {matching lines with context — up to 8 lines per file}
 ```
+
+If any results are 🔴 Stale (> 90 days), append after the results list:
+> ⚠️ {N} 条结果超过 90 天，信息可能过时。建议验证后再使用。
 
 After presenting all results: "Read any of these in full? Specify the number(s)."
 
