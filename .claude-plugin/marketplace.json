@@ -154,6 +154,21 @@
         "intelligence"
       ],
       "strict": true
+    },
+    {
+      "name": "wechat-bridge",
+      "source": "./wechat-bridge",
+      "description": "Bridge WeChat messages to Claude Code sessions via MCP --channels protocol. Enables permission relay and bidirectional messaging.",
+      "version": "1.0.0",
+      "category": "integration",
+      "tags": [
+        "wechat",
+        "mcp",
+        "messaging",
+        "bridge",
+        "channels"
+      ],
+      "strict": true
     }
   ]
 }
