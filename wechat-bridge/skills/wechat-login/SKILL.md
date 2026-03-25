@@ -48,7 +48,7 @@ After login is confirmed (or if already logged in), tell the user:
 > WeChat login is complete. To enable the WeChat bridge, you need to restart Claude Code with the `--channels` flag:
 >
 > ```
-> claude --channels wechat-bridge
+> claude --channels plugin:wechat-bridge@indie-toolkit
 > ```
 >
 > After that, you can:
@@ -60,6 +60,6 @@ After login is confirmed (or if already logged in), tell the user:
 
 ## Important
 
-- This skill handles login only. The MCP channel server starts automatically when Claude Code launches with `--channels wechat-bridge`.
+- This skill handles login only. The MCP channel server starts automatically when Claude Code launches with `--channels plugin:wechat-bridge@indie-toolkit`.
 - If the user is already in a `--channels` session, login is sufficient; no restart needed.
 - Credentials are stored at `~/.adam/wechat/`. Delete to force re-login, or use `--force`.
