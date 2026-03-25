@@ -48,14 +48,65 @@ if echo "$added_lines" | grep -qE -- '-----BEGIN.*(RSA|DSA|EC|OPENSSH|PGP).*PRIV
   - Private key"
 fi
 
-# Password/secret assignments
-# Match: keyword = "actual_value" (8+ chars, not a placeholder)
-# Exclude: placeholder values, env references, HTML attributes, doc references
-if echo "$added_lines" | grep -iE '(password|secret|token|api_key|apikey|api\.key)[[:space:]]*[=:][[:space:]]*["'"'"'][^[:space:]]{8,}' \
-   | grep -viE '(your_|example|changeme|xxx|placeholder|process\.env|\.env|\$\{|type=)' \
-   | grep -qiE '(password|secret|token|api_key|apikey|api\.key)[[:space:]]*[=:][[:space:]]*["'"'"'][^[:space:]]{8,}'; then
+# Password/secret/token assignments — entropy-aware detection
+# Uses python3 (already a dependency for JSON parsing above) for multi-layer filtering:
+#   1. Keyword presence  2. Skip type annotations  3. Extract quoted value
+#   4. Min length 12     5. Safe-value patterns    6. Shannon entropy >= 3.5
+credential_hits=$(echo "$added_lines" | python3 -c "
+import sys, re, math
+
+def entropy(s):
+    if not s:
+        return 0.0
+    freq = {}
+    for c in s:
+        freq[c] = freq.get(c, 0) + 1
+    length = len(s)
+    return -sum((count/length) * math.log2(count/length) for count in freq.values())
+
+keyword_re = re.compile(
+    r'(password|passwd|secret|token|api_key|apikey|api[._]key|auth_token|access_token|bearer)',
+    re.IGNORECASE
+)
+value_re = re.compile(r'''(?:=|:)\s*[\"']([^\"']{2,})[\"']''')
+safe_value_re = re.compile(
+    r'(test|mock|fake|dummy|sample|demo|example|changeme|placeholder|xxx|your_|process\.env|\.env|\\\$\{|type=|TODO|FIXME)',
+    re.IGNORECASE
+)
+schema_re = re.compile(
+    r'(interface\s|type\s|:\s*(string|number|boolean)|typeof|PropTypes|@param|@type)',
+    re.IGNORECASE
+)
+
+ENTROPY_THRESHOLD = 3.5
+MIN_LENGTH = 12
+
+for line in sys.stdin:
+    line = line.rstrip('\n')
+    if not keyword_re.search(line):
+        continue
+    if schema_re.search(line):
+        continue
+    m = value_re.search(line)
+    if not m:
+        continue
+    value = m.group(1)
+    if len(value) < MIN_LENGTH:
+        continue
+    if safe_value_re.search(value):
+        continue
+    if entropy(value) < ENTROPY_THRESHOLD:
+        continue
+    print(line.lstrip('+').strip())
+" 2>/dev/null)
+
+if [ -n "$credential_hits" ]; then
   matches="${matches}
-  - Hardcoded credential assignment"
+  - Hardcoded credential assignment:"
+  while IFS= read -r hit_line; do
+    matches="${matches}
+      ${hit_line}"
+  done <<< "$credential_hits"
 fi
 
 if [ -n "$matches" ]; then
