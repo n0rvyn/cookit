@@ -3,28 +3,32 @@
 ## Trigger Tests
 <!-- Prompts that SHOULD trigger this skill -->
 - "Set up CI/CD for my iOS project"
-- "Configure Fastlane and GitHub Actions"
+- "Configure Xcode Cloud and auto versioning"
 - "配置自动上传 TestFlight"
-- "Automate my build and release process"
-- "Set up CI for my Xcode project"
+- "Set up automatic version bumping"
+- "配置版本自动化"
+- "Setup CI for my Xcode project"
 
 ## Negative Trigger Tests
 <!-- Prompts that should NOT trigger this skill -->
 - "Write a plan"
 - "Review my code"
 - "Fix this build error"
+- "Bump the version manually"
 
 ## Output Assertions
 <!-- What must be true in the skill's output -->
-- [ ] Output confirms project root and Xcode Scheme name before configuration
-- [ ] Output creates fastlane/Fastfile with release lane for TestFlight upload
-- [ ] Output creates fastlane/Gemfile with fastlane gem dependency
-- [ ] Output configures match for certificate management
-- [ ] Output sets up GitHub Actions workflow triggered by tag
-- [ ] Output explains required secret configuration (MATCH_PASSWORD, APP_STORE_CONNECT_API_KEY, etc.)
+- [ ] Output detects .xcodeproj and lists all targets with current version numbers
+- [ ] Output fixes version mismatches across targets (MARKETING_VERSION and CURRENT_PROJECT_VERSION)
+- [ ] Output enables Apple Generic versioning if not already enabled
+- [ ] Output creates .github/workflows/auto-version.yml with conventional commit detection
+- [ ] Output creates ci_scripts/ci_post_clone.sh with agvtool and CI_BUILD_NUMBER
+- [ ] Output verifies agvtool works (what-version and what-marketing-version)
+- [ ] Output provides Xcode Cloud workflow configuration guidance (Dev to TestFlight, Main to App Store)
+- [ ] Output explains version management: MARKETING_VERSION by GitHub Actions, CURRENT_PROJECT_VERSION by Xcode Cloud
 
 ## Redundancy Risk
-Baseline comparison: Base model can write CI scripts but lacks project-specific interactive configuration flow
+Baseline comparison: Base model can write CI scripts but lacks Xcode-native versioning integration, project detection, and multi-target version synchronization
 Last tested model: Opus 4.6
-Last tested date: 2026-03-08
+Last tested date: 2026-03-26
 Verdict: essential

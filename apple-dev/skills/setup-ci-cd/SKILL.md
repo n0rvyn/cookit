@@ -1,152 +1,190 @@
 ---
 name: setup-ci-cd
-description: "Use when setting up CI/CD for the first time, or the user says 'setup CI', 'configure Fastlane', 'GitHub Actions'. Configures Fastlane and GitHub Actions for automated builds and TestFlight uploads."
-compatibility: Requires macOS and Xcode
+description: "Use when setting up CI/CD for the first time, or the user says 'setup CI', 'configure CI', 'Xcode Cloud', 'auto version', '版本自动化', '配置 CI'. Configures Xcode Cloud build number management and GitHub Actions automatic version bumping based on conventional commits."
+compatibility: "Requires macOS and Xcode"
 disable-model-invocation: true
 ---
 
 # Setup CI/CD
 
-配置 Fastlane + GitHub Actions，实现打 tag 自动上传 TestFlight。
+配置 Xcode Cloud + GitHub Actions，实现自动版本管理和分发。
+
+**职责分工**：
+- **GitHub Actions**（ubuntu-latest）：根据 conventional commit 自动 bump `MARKETING_VERSION`（semver）
+- **Xcode Cloud**（Apple 托管）：构建时自动设置 `CURRENT_PROJECT_VERSION`（build number），分发到 TestFlight / App Store
 
 ## 触发时机
 
-- 新项目初始化时（由 `/project-kickoff` 调用）
-- 现有项目需要添加 CI/CD 时（单独调用）
+- 新项目初始化时（由 `/project-kickoff` 步骤 9.10 调用）
+- 现有项目需要添加版本自动化时（单独调用）
+
+## 前置知识
+
+| 概念 | Build Setting | 格式 | 管理方 | 说明 |
+|------|--------------|------|--------|------|
+| 版本号 | `MARKETING_VERSION` | semver `1.2.0` | GitHub Actions | 用户在 App Store 看到的版本 |
+| 构建号 | `CURRENT_PROJECT_VERSION` | 整数 `42` | Xcode Cloud | ASC 内部区分同版本的不同构建 |
 
 ## 流程
 
-### 1. 确认项目路径和 Scheme
+### 1. 检测项目环境
 
-询问用户：
-- 当前目录是否为 Xcode 项目根目录？
-- App 的 Scheme 名称是什么？（如 `MyApp`）
+```bash
+# 找到 .xcodeproj
+xcodeproj=$(find . -maxdepth 2 -name "*.xcodeproj" -not -path "*/DerivedData/*" | head -1)
+project_name=$(basename "$xcodeproj" .xcodeproj)
+pbxproj="${xcodeproj}/project.pbxproj"
 
-### 2. 生成 Fastlane 配置
+# 提取当前版本号（所有 target）
+grep -n 'MARKETING_VERSION\|CURRENT_PROJECT_VERSION' "$pbxproj"
 
-创建 `fastlane/Fastfile`：
-
-```ruby
-default_platform(:ios)
-
-platform :ios do
-  desc "Release to TestFlight"
-  lane :release do
-    setup_ci
-
-    match(
-      type: "appstore",
-      readonly: true
-    )
-
-    build_app(
-      scheme: "[Scheme名称]",
-      export_method: "app-store"
-    )
-
-    upload_to_testflight(
-      skip_waiting_for_build_processing: true
-    )
-  end
-end
+# 检查 Apple Generic versioning
+grep 'VERSIONING_SYSTEM' "$pbxproj"
 ```
 
-创建 `fastlane/Gemfile`：
+如果找不到 `.xcodeproj`，终止并提示用户确认目录。
 
-```ruby
-source "https://rubygems.org"
+展示检测结果表格：
 
-gem "fastlane"
-```
+| Target | MARKETING_VERSION | CURRENT_PROJECT_VERSION |
+|--------|------------------|----------------------|
+| {从 pbxproj 解析} | ... | ... |
 
-### 3. 生成 GitHub Actions Workflow
+### 2. 修复版本一致性
 
-创建 `.github/workflows/release.yml`：
+**条件判断后执行**，不需要全部执行：
 
-```yaml
-name: Release to TestFlight
+#### 2.1 统一 MARKETING_VERSION
 
-on:
-  push:
-    tags:
-      - 'v*'
+如果各 target 值不一致，以主 app target 的值为准，用 `sed` 全局替换。
 
-jobs:
-  release:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
+如果当前是两位格式（如 `1.0`），询问用户是否迁移到三位（`1.0.0`）：
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2'
-          bundler-cache: true
+**询问用户**（使用 AskUserQuestion）：
 
-      - name: Install Fastlane
-        run: gem install fastlane
+> 当前 MARKETING_VERSION 是 `{current}`，是否迁移到三位 semver？
+>
+> - **迁移到 {current}.0** — 推荐，支持 patch 级别的版本管理
+> - **保持当前格式** — 不改变
 
-      - name: Release to TestFlight
-        env:
-          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
-          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        run: fastlane release
-```
+#### 2.2 统一 CURRENT_PROJECT_VERSION
 
-### 4. 更新 .gitignore
+如果各 target 值不一致，取最大值，用 `sed` 替换较小的值。
 
-添加 Fastlane 相关忽略：
+注意：`sed` 替换 `CURRENT_PROJECT_VERSION = 1;` 时必须精确匹配 `= 1;`（带空格和分号），避免误替换 `= 11;` 等值。如果存在多个不同的小值（如 1 和 5），需要逐个替换。
+
+#### 2.3 启用 Apple Generic Versioning
+
+如果 `grep VERSIONING_SYSTEM` 无结果，需要在项目级（非 target 级）的 Debug 和 Release buildSettings 中添加：
 
 ```
-# Fastlane
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots
-fastlane/test_output
+VERSIONING_SYSTEM = "apple-generic";
 ```
 
-### 5. 输出配置说明
+**定位方式**：在 pbxproj 中找到项目级 `XCBuildConfiguration` 的 `buildSettings` 块（通常包含 `ALWAYS_SEARCH_USER_PATHS`、`CLANG_ANALYZER_NONNULL` 等全局设置），在其中添加 `VERSIONING_SYSTEM`。
+
+添加后验证：
+
+```bash
+cd "$(dirname "$xcodeproj")"
+agvtool what-version
+agvtool what-marketing-version
+```
+
+两个命令都应返回正确的值。如果 `agvtool` 报错，说明 Apple Generic 未正确启用。
+
+### 3. 选择触发分支
+
+**询问用户**（使用 AskUserQuestion）：
+
+> GitHub Actions auto-version workflow 在哪些分支触发？
+>
+> - **main + dev**（推荐） — 两个分支的 push 都自动 bump 版本
+> - **仅 main** — 只在合并到 main 时 bump
+> - **自定义** — 指定分支列表
+
+### 4. 创建 GitHub Actions auto-version workflow
+
+Read `references/auto-version-template.yml`，替换占位符后写入 `.github/workflows/auto-version.yml`：
+
+| 占位符 | 替换为 | 来源 |
+|--------|--------|------|
+| `__BRANCHES__` | 用户选择的分支列表 | 步骤 3 |
+| `__PBXPROJ_PATH__` | pbxproj 相对路径 | 步骤 1 检测结果 |
+
+创建目录（如果不存在）：`mkdir -p .github/workflows`
+
+### 5. 创建 Xcode Cloud ci_post_clone.sh
+
+Read `references/ci-post-clone-template.sh`，写入 `ci_scripts/ci_post_clone.sh`。
+
+```bash
+mkdir -p ci_scripts
+# 写入文件内容
+chmod +x ci_scripts/ci_post_clone.sh
+```
+
+### 6. 验证
+
+```bash
+# 1. 版本一致性
+grep 'MARKETING_VERSION\|CURRENT_PROJECT_VERSION' "$pbxproj"
+
+# 2. Apple Generic
+grep 'VERSIONING_SYSTEM' "$pbxproj"
+
+# 3. agvtool
+agvtool what-version
+agvtool what-marketing-version
+
+# 4. ci_post_clone.sh 可执行
+ls -la ci_scripts/ci_post_clone.sh
+
+# 5. workflow 文件存在
+cat .github/workflows/auto-version.yml | head -5
+```
+
+### 7. 输出配置结果和 Xcode Cloud 指引
 
 ```
-✅ CI/CD 配置已生成
+✅ 版本自动化配置完成
 
-生成文件：
-- fastlane/Fastfile
-- fastlane/Gemfile
-- .github/workflows/release.yml
-- .gitignore (已更新)
+已创建/修改：
+- .github/workflows/auto-version.yml — 自动版本 bump
+- ci_scripts/ci_post_clone.sh — Xcode Cloud 构建号
+- {project}.xcodeproj — 版本统一 + Apple Generic
 
-下一步配置 GitHub Secrets：
+版本管理方式：
+- MARKETING_VERSION：push 到 {branches} 时，根据 commit 类型自动 bump
+  - feat: → minor（1.0.0 → 1.1.0）
+  - fix: → patch（1.0.0 → 1.0.1）
+  - feat!: / BREAKING CHANGE → major（1.0.0 → 2.0.0）
+- CURRENT_PROJECT_VERSION：Xcode Cloud 每次构建自动递增
 
-1. 在 GitHub 仓库设置中添加以下 Secrets：
-   - FASTLANE_USER: Apple ID 邮箱
-   - FASTLANE_PASSWORD: App-specific password（在 appleid.apple.com 生成）
-   - MATCH_PASSWORD: 签名证书密码（如使用 match）
+下一步 — 配置 Xcode Cloud（需在 Xcode 中操作）：
 
-2. 配置 Fastlane Match（可选，推荐）：
-   ```bash
-   fastlane match init
-   fastlane match appstore
-   ```
+1. 打开 Xcode → Product → Xcode Cloud → Create Workflow
+2. 首次需关联 Git 仓库
 
-3. 测试本地 release：
-   ```bash
-   fastlane release
-   ```
+推荐创建两个 Workflow：
 
-4. 发布版本：
-   ```bash
-   git tag v1.0.0
-   git push --tags
-   ```
-   → GitHub Actions 自动上传 TestFlight
+【Dev to TestFlight】
+- 触发：Branch Changes → dev
+- Actions：Build → Archive
+- Post-Action：TestFlight Internal Testing
+- 自动取消构建：开启
 
-详细文档：https://docs.fastlane.tools/
+【Main to App Store】
+- 触发：Branch Changes → main
+- Actions：Build → Test → Archive
+- Post-Action：TestFlight External + App Store Connect
+- 自动取消构建：关闭
 ```
 
 ## 原则
 
-1. **个人开发者优化**：只配置 tag 上传，不配置每次 push 的 CI
-2. **最小配置**：只需要 3 个 GitHub Secrets
-3. **本地可测试**：Fastlane 配置可以在本地运行测试
+1. **零 Secret**：不需要配置任何 GitHub Secret 或 API Key
+2. **ubuntu-latest**：GitHub Actions 版本管理不需要 macOS runner（10x 成本差异）
+3. **职责分离**：GitHub Actions 管版本号（轻量），Xcode Cloud 管构建和分发（重量）
+4. **所有 target 同步**：sed 全局替换 + agvtool -all 保证版本一致
+5. **Sonnet 友好**：流程化操作，无需复杂推理

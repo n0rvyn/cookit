@@ -1,0 +1,130 @@
+# Auto Version Bump for Xcode Projects
+#
+# Automatically bumps MARKETING_VERSION based on conventional commits.
+# Runs on ubuntu-latest (no macOS runner needed).
+#
+# Placeholders (replaced by /setup-ci-cd skill):
+#   __BRANCHES__     — trigger branch list (e.g., [main, dev])
+#   __PBXPROJ_PATH__ — relative path to project.pbxproj
+
+name: Auto Version Bump
+
+on:
+  push:
+    branches: __BRANCHES__
+
+permissions:
+  contents: write
+
+concurrency:
+  group: version-bump-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  auto-version:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Detect bump type and update version
+        id: bump
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PBXPROJ="__PBXPROJ_PATH__"
+
+          bump_semver() {
+            local version="$1" kind="$2"
+            IFS='.' read -r major minor patch <<< "$version"
+            : "${patch:=0}"
+            case "$kind" in
+              patch) patch=$((patch + 1)) ;;
+              minor) minor=$((minor + 1)); patch=0 ;;
+              major) major=$((major + 1)); minor=0; patch=0 ;;
+            esac
+            echo "${major}.${minor}.${patch}"
+          }
+
+          detect_bump_type() {
+            local commits="$1" result="none"
+            while IFS= read -r msg; do
+              [[ -z "$msg" ]] && continue
+              if echo "$msg" | grep -qE '^[a-z]+(\(.+\))?!:' || echo "$msg" | grep -q 'BREAKING CHANGE'; then
+                result="major"; break
+              elif echo "$msg" | grep -qE '^feat(\(.+\))?:'; then
+                if [[ "$result" != "major" ]]; then result="minor"; fi
+              elif echo "$msg" | grep -qE '^fix(\(.+\))?:'; then
+                if [[ "$result" == "none" ]]; then result="patch"; fi
+              fi
+            done <<< "$commits"
+            echo "$result"
+          }
+
+          # Read current version from pbxproj (first occurrence)
+          current_version=$(grep -m1 'MARKETING_VERSION' "$PBXPROJ" | sed 's/.*= *//;s/;.*//' | tr -d ' "')
+          echo "Current version: $current_version"
+
+          # Analyze commit messages
+          commit_messages="$(git log --no-merges --format='%s' HEAD~1..HEAD 2>/dev/null || git log --no-merges --format='%s' -1)"
+          bump_type="$(detect_bump_type "$commit_messages")"
+
+          if [[ "$bump_type" == "none" ]]; then
+            echo "No conventional commit prefix found. Skipping version bump."
+            echo "skipped=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          new_version="$(bump_semver "$current_version" "$bump_type")"
+          echo "Bump: $bump_type ($current_version -> $new_version)"
+
+          # Replace ALL MARKETING_VERSION occurrences (all targets sync)
+          sed -i "s/MARKETING_VERSION = ${current_version};/MARKETING_VERSION = ${new_version};/g" "$PBXPROJ"
+
+          {
+            echo "skipped=false"
+            echo "current=${current_version}"
+            echo "new=${new_version}"
+            echo "bump_type=${bump_type}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Commit version bump
+        if: steps.bump.outputs.skipped != 'true'
+        id: commit
+        run: |
+          set -euo pipefail
+          git add __PBXPROJ_PATH__
+          if git diff --cached --quiet; then
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "chore(release): bump version ${{ steps.bump.outputs.current }} -> ${{ steps.bump.outputs.new }} [skip ci]"
+          git push origin HEAD
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create tag
+        if: steps.commit.outputs.committed == 'true'
+        run: |
+          TAG="v${{ steps.bump.outputs.new }}"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+
+      - name: Summary
+        if: steps.bump.outputs.skipped != 'true'
+        run: |
+          {
+            echo "## Auto Version Bump"
+            echo ""
+            echo "- **${{ steps.bump.outputs.current }}** -> **${{ steps.bump.outputs.new }}** (${{ steps.bump.outputs.bump_type }})"
+            echo "- Branch: \`${{ github.ref_name }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
