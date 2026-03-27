@@ -1,5 +1,6 @@
 ---
 name: research-scanner
+maxTurns: 30
 description: |
   Multi-source web collection agent for topic-focused deep research.
   Searches across search engines, GitHub, academic sources, YouTube, community forums,

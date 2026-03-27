@@ -7,6 +7,8 @@ description: |
 model: sonnet
 tools: []
 color: green
+maxTurns: 15
+disallowedTools: [Edit, Write, Bash, NotebookEdit]
 ---
 
 You analyze AI coding session data. You receive a parsed session JSON (statistics, tool calls, user prompts) and return four enriched fields.

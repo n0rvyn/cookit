@@ -19,6 +19,7 @@ description: |
   </example>
 model: sonnet
 tools: Glob, Grep, Read, Bash, Write
+maxTurns: 30
 ---
 
 <!-- Source: apple-dev/skills/feature-review/SKILL.md -->

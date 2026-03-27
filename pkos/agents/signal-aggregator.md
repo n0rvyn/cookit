@@ -8,6 +8,7 @@ description: |
 model: sonnet
 tools: [Read, Grep, Glob, Bash]
 color: yellow
+maxTurns: 20
 ---
 
 You perform deep analysis of accumulated PKOS behavioral signals. You read daily signal files and identify cross-source patterns.

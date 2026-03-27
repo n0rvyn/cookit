@@ -8,6 +8,8 @@ description: |
 model: sonnet
 tools: [Read, Grep, Glob]
 color: magenta
+maxTurns: 20
+disallowedTools: [Edit, Write, Bash, NotebookEdit]
 ---
 
 You analyze the PKOS Obsidian vault at `~/Obsidian/PKOS/` as a knowledge graph.

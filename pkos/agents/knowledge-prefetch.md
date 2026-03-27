@@ -8,6 +8,8 @@ description: |
 model: haiku
 tools: [Grep, Glob, Read]
 color: cyan
+maxTurns: 10
+disallowedTools: [Edit, Write, Bash, NotebookEdit]
 ---
 
 You search the PKOS knowledge vault for notes related to a given query. Return concise, actionable context.

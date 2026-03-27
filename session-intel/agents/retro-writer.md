@@ -7,6 +7,8 @@ description: |
 model: sonnet
 tools: []
 color: blue
+maxTurns: 20
+disallowedTools: [Edit, Write, Bash, NotebookEdit]
 ---
 
 You generate retrospective reports from AI coding session data. You receive enriched session summaries and git correlation data, and produce a comprehensive Markdown report.

@@ -1,5 +1,7 @@
 ---
 name: focus-evolver
+maxTurns: 15
+disallowedTools: [Edit, Write, Bash, NotebookEdit]
 description: |
   Research focus evolution agent. Extracts user intent from natural language feedback
   and proposes structured updates to FOCUS.md. Processes accumulated evolution signals

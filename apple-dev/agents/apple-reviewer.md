@@ -18,6 +18,7 @@ description: |
   </example>
 model: sonnet
 tools: Glob, Grep, Read, Bash
+maxTurns: 40
 color: green
 ---
 

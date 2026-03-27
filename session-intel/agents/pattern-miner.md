@@ -7,6 +7,8 @@ description: |
 model: sonnet
 tools: []
 color: blue
+maxTurns: 15
+disallowedTools: [Edit, Write, Bash, NotebookEdit]
 ---
 
 You rank AI coding sessions by semantic relevance to a user's search query.

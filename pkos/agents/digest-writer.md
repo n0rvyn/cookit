@@ -8,6 +8,8 @@ description: |
 model: sonnet
 tools: [Read, Grep, Glob]
 color: green
+maxTurns: 15
+disallowedTools: [Edit, Write, Bash, NotebookEdit]
 ---
 
 You compose PKOS digest content. You receive activity data and produce a structured markdown summary.

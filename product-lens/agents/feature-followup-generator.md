@@ -21,6 +21,7 @@ description: |
 
 model: sonnet
 tools: Glob, Grep, Read, WebSearch
+maxTurns: 20
 color: green
 ---
 

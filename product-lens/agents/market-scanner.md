@@ -21,6 +21,7 @@ description: |
 
 model: sonnet
 tools: WebSearch, WebFetch
+maxTurns: 20
 color: blue
 ---
 

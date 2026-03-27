@@ -7,6 +7,8 @@ description: |
 model: sonnet
 tools: []
 color: purple
+maxTurns: 15
+disallowedTools: [Edit, Write, Bash, NotebookEdit]
 ---
 
 You analyze AI coding session metrics over time and produce actionable trend insights.

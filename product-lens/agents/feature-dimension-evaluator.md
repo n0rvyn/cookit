@@ -22,6 +22,7 @@ description: |
 
 model: opus
 tools: Glob, Grep, Read, WebSearch
+maxTurns: 30
 color: purple
 ---
 

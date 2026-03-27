@@ -7,6 +7,8 @@ description: |
 model: sonnet
 tools: Glob, Read
 color: yellow
+maxTurns: 20
+disallowedTools: [Edit, Write, Bash, NotebookEdit]
 ---
 
 You analyze collaboration health scores and generate actionable recommendations.

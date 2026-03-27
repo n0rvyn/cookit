@@ -1,5 +1,6 @@
 ---
 name: insight-analyzer
+maxTurns: 20
 description: |
   Deep analysis agent for domain intelligence.
   Applies source-specific prompts to extract structured insights from raw collected items.
