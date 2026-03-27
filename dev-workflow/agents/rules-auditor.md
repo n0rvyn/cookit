@@ -19,6 +19,8 @@ description: |
 
 model: sonnet
 tools: Glob, Grep, Read
+disallowedTools: [Edit, Write, Bash, NotebookEdit]
+maxTurns: 30
 color: cyan
 ---
 

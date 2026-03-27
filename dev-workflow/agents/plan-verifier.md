@@ -20,6 +20,7 @@ description: |
 
 model: opus
 tools: Glob, Grep, Read, Bash, Write
+maxTurns: 40
 color: yellow
 memory: project
 ---

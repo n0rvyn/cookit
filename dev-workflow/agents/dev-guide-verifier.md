@@ -1,14 +1,14 @@
 ---
 name: dev-guide-verifier
 description: |
-  Use this agent to verify a development guide after the dev-guide-writer produces it and before presenting to the user.
+  Use this agent to verify a development guide after write-dev-guide produces it and before presenting to the user.
   Checks feature coverage, dependency graph semantics, cross-phase data flow, existing code overlap,
   term definitions, acceptance criteria quality, and structural integrity.
 
   Examples:
 
   <example>
-  Context: dev-guide-writer just produced a development guide.
+  Context: write-dev-guide just produced a development guide.
   user: "Verify the dev guide before I review it"
   assistant: "I'll use the dev-guide-verifier agent to validate the development guide."
   </example>
@@ -21,6 +21,7 @@ description: |
 
 model: opus
 tools: Glob, Grep, Read, Bash, Write
+maxTurns: 40
 color: yellow
 memory: project
 ---
