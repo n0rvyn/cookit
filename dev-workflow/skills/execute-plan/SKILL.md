@@ -1,11 +1,11 @@
 ---
 name: execute-plan
-description: "Use when you have a written implementation plan to execute. Dispatches a sonnet agent for mechanical execution."
+description: "Use when the user says 'execute the plan', 'run the plan', 'implement the plan', or has a verified plan file ready for execution. Executes plan tasks mechanically without judgment calls; reports blocked/failed tasks for the user to fix. Not needed when run-phase is active — run-phase calls this internally at Step 4."
 ---
 
 ## Overview
 
-This skill dispatches the `dev-workflow:execute-plan` agent (sonnet) to execute a verified plan. The agent follows plan tasks precisely without making judgment calls. Build/test and failure fixes happen after the agent returns, in main context.
+This skill dispatches the `dev-workflow:execute-plan` agent (sonnet) to execute a verified plan. The agent follows plan tasks precisely without making judgment calls. The plan's final verification task runs the full build/test suite. Failure fixes happen after the agent returns, in main context.
 
 ## Process
 
@@ -39,10 +39,10 @@ When the agent returns:
 1. Read the execution report
 2. Present summary to the user: completed/blocked/failed counts
 3. If blocked or failed tasks exist: list them with reasons
-4. **Do NOT run build/test here** — when in run-phase context, the orchestrator handles build/test as a separate step
+
+4. **Build/test coverage check**: If the execution report shows no final verification task was run (no task with build/test commands in its Verify section): discover and run build/test commands directly (read package.json/Makefile/etc. to find commands)
 
 **Standalone mode** (not within run-phase):
-- Run full project build/test
 - If failures: fix in main context (opus)
 - Suggest `dev-workflow:implementation-reviewer` for plan-vs-code audit
 - Suggest `dev-workflow:finish-branch` for branch integration
@@ -60,4 +60,4 @@ If `.claude/dev-workflow-state.yml` exists and `phase_step` is `execute`:
 - All plan tasks attempted by the agent
 - Execution report reviewed and presented to user
 - When in run-phase context: handoff signal output
-- When standalone: build/test run, wrap-up suggestions presented
+- When standalone: wrap-up suggestions presented

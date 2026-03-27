@@ -1,6 +1,6 @@
 ---
 name: run-phase
-description: "Use when the user says 'run phase', 'start phase N', 'next phase', or when continuing development guided by a dev-guide. Orchestrates the plan-execute-review cycle for one phase of a development guide."
+description: "Use when the user says 'run phase', 'start phase N', 'next phase', '继续开发', '跑下一阶段', '开始第N阶段', or when continuing development guided by a dev-guide. Orchestrates the plan-execute-review cycle for one phase of a development guide."
 ---
 
 ## Overview
@@ -14,9 +14,8 @@ Locate/Resume Phase
   → UX review checkpoint (main context — if design has UX Assertions)
   → verify plan (dispatch opus agent — unbiased review)
   → execute plan (dispatch sonnet agent — mechanical, follows verified plan)
-  → build + test (dispatch sonnet agent — run commands, return results)
   → dispatch feature-spec + review agents in parallel (separate contexts)
-  → fix all issues (main context — opus: build/test failures + review gaps)
+  → fix all issues (main context — opus: execution failures + review gaps)
   → Phase done
 ```
 
@@ -30,12 +29,11 @@ This file tracks progress across sessions. Update it **before** starting each st
 project: <name>
 current_phase: 2
 phase_name: "Phase Name"
-phase_step: plan    # plan | ux-review | verify | execute | build-test | review | fix | done
+phase_step: plan    # plan | ux-review | verify | execute | review | fix | done
 dev_guide: docs/06-plans/YYYY-MM-DD-project-dev-guide.md
 plan_file: null  # set to docs/06-plans/YYYY-MM-DD-<name>-plan.md after Step 2
 verification_report: null
 task_progress: null
-build_test_result: null
 review_reports: []
 gaps_remaining: 0
 last_updated: "YYYY-MM-DDTHH:MM:SS"
@@ -50,6 +48,7 @@ last_updated: "YYYY-MM-DDTHH:MM:SS"
    If output is "NO_STATE_FILE": proceed to step 2 (starting fresh).
    Otherwise: parse the YAML content from the output.
    - If `phase_step` is `spec` (legacy): treat as `review` and proceed to Step 5
+   - If `phase_step` is `build-test` (legacy): treat as `review` and proceed to Step 5. Note: build/test from the old separate step was not run; finalize will catch any issues via full test suite.
    - If `phase_step` is not `done`:
      - Present: "Phase {N} ({name}) in progress — step: {phase_step}. Resume?"
      - If user accepts:
@@ -74,7 +73,6 @@ dev_guide: <dev-guide path>
 plan_file: null
 verification_report: null
 task_progress: null
-build_test_result: null
 review_reports: []
 gaps_remaining: 0
 last_updated: "<now>"
@@ -308,22 +306,6 @@ Wait for user choice. If A: stop. If B: mark state `verification_report: "partia
 5. If blocked or failed tasks exist: note them for Step 6 (Fix)
 6. Update state: `last_updated: <now>`
 
-### Step 4.5: Build & Test (agent dispatch)
-
-1. Update state: `phase_step: build-test`, `last_updated: <now>`
-2. Dispatch the `dev-workflow:build-test` agent:
-
-```
-Run build and test suite for the project.
-
-Project root: {project root}
-```
-
-3. When the agent returns: read the build/test results
-4. Present summary: build pass/fail, test pass/fail with counts
-5. Note any failures for Step 6 (Fix)
-6. Update state: `build_test_result: pass/fail`, `last_updated: <now>`
-
 ### Step 5: Document Features & Reviews (parallel agent dispatch)
 
 1. Update state: `phase_step: review`, `last_updated: <now>`
@@ -410,20 +392,17 @@ Project root: {project root}
 
 ### Step 6: Fix Issues
 
-If any of the following have issues: execution report (blocked/failed tasks), build/test results (failures), or review reports (gaps):
+If any of the following have issues: execution report (blocked/failed tasks) or review reports (gaps):
 
 1. Update state: `phase_step: fix`, `last_updated: <now>`
-2. Collect all issues from three sources:
-   a. **Execution failures** (from Step 4): blocked/failed tasks from the execute-plan agent report
-   b. **Build/test failures** (from Step 4.5): build errors, failing tests
-   c. **Review gaps** (from Step 5): plan-vs-code gaps, pre-existing issues
+2. Collect all issues from two sources:
+   a. **Execution failures** (from Step 4): blocked/failed tasks from the execute-plan agent report (includes build/test failures from the plan's final verification task)
+   b. **Review gaps** (from Step 5): plan-vs-code gaps, pre-existing issues
    Read the relevant report files for full details. Skip entries that are not file paths (e.g., `"user-override"` sentinel values).
 3. List all issues sorted by severity (critical first, then warnings)
    Separate by origin:
-   - **Build/test 失败（{N} 个）：**
-   > - {build errors or failing tests}
    - **执行阻塞（{N} 个）：**
-   > - {blocked/failed tasks with reasons}
+   > - {blocked/failed tasks with reasons, including build/test failures}
    - **Review 问题（{N} 个）：**
    > - {plan-vs-code gaps}
    - **已有问题（{M} 个）：**

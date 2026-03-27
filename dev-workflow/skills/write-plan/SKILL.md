@@ -1,6 +1,6 @@
 ---
 name: write-plan
-description: "Use when you have a spec or requirements for a multi-step task, before touching code. Creates comprehensive implementation plans with bite-size tasks."
+description: "Use when the user says 'write a plan', 'plan this', 'break this into tasks', or has requirements/specs for a multi-step task before touching code. Creates structured implementation plans with self-contained, verifiable tasks. Not for single-step changes. For phase-driven development, run-phase calls this internally."
 ---
 
 ## Behavior Note
@@ -186,6 +186,21 @@ These fields are optional per-task. Use them when the task has design-critical d
       - E2E/Snapshot/A11y → `apple-dev:xc-ui-test`
       - Performance → `apple-dev:profiling`
     - This supplements item 5 (No forced TDD) — tests are recommended where they add value, not mandated for every task
+11. **Final verification task** — Every plan must end with a verification task that runs the project's full build and test suite. Before writing this task:
+    a. Scan project root for build system files (`package.json`, `Package.swift`, `*.xcodeproj`, `Cargo.toml`, `go.mod`, `pyproject.toml`, `Makefile`)
+    b. For each build system found: read the file and extract all build/test commands (e.g., `scripts` in package.json, targets in Makefile)
+    c. Detect sub-projects: scan for nested directories with their own build system files (e.g., `web/package.json`, `packages/*/package.json`). Include their test commands too.
+    d. Detect package manager: check for lockfiles (`pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn, `package-lock.json` → npm, `bun.lockb` → bun)
+    e. Write the final task with ALL discovered commands in `**Verify:**`. Group by project/sub-project:
+       ```
+       ### Task N: Full verification
+       **Verify:**
+       Run: `pnpm typecheck`
+       Run: `pnpm test`
+       Run: `cd web && pnpm test`
+       Expected: All pass with zero failures
+       ```
+    f. If the project has separate test categories (unit, e2e, integration), list each command. Do NOT collapse to a single generic command unless that single command truly runs everything.
 
 ### Crystal File Integration
 

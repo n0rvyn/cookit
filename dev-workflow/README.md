@@ -10,11 +10,10 @@ Cross-stack development workflow plugin for Claude Code. Provides a full plan-ex
 run-phase (orchestrator, main context — opus)
   → write plan (main context — opus, full user intent)
   → plan-verifier agent (opus)         → verification report
-  → execute-plan agent (sonnet)        → code changes
-  → build/test agent (sonnet)          → pass/fail results
+  → execute-plan agent (sonnet)        → code changes + build/test results
   → feature-spec-writer agent (sonnet) → spec file
   → review agents (parallel — opus)    → consolidated findings
-  → fix all issues (main context — opus: build/test + review gaps)
+  → fix all issues (main context — opus: execution failures + review gaps)
   → Phase done
 
 finalize (after all phases complete)
@@ -42,8 +41,7 @@ This pattern applies to "understand X" / "explore Y" dispatches. Verification ag
 
 | Agent | Model | Tools | Purpose |
 |-------|-------|-------|---------|
-| build-test | sonnet | Bash, Glob, Read | Build and test runner; returns pass/fail results without fixing (read-only) |
-| execute-plan | sonnet | Glob, Grep, Read, Write, Edit, Bash, LSP | Mechanical plan execution — follows verified plan tasks |
+| execute-plan | sonnet | Glob, Grep, Read, Write, Edit, Bash, LSP | Mechanical plan execution — follows verified plan tasks (includes full build/test via final verification task) |
 | design-analyzer | opus | Glob, Grep, Read, Write | Multi-modal design prototype analysis (dual-channel image+code) |
 | design-drift-auditor | opus | Glob, Grep, Read | Design document vs codebase drift detection (read-only) |
 | flow-tracer | opus | Glob, Grep, Read | End-to-end call chain tracing with break detection (read-only) |

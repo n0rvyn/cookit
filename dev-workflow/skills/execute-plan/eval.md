@@ -12,7 +12,7 @@
 ## Output Assertions
 - [ ] Output checks for Verification section in plan before executing
 - [ ] Output includes batch progress tracking
-- [ ] Output invokes review at phase completion
+- [ ] Output suggests implementation-reviewer for plan-vs-code audit (standalone mode)
 - [ ] Each task's Verify command is run before marking task complete
 
 ## Redundancy Risk
