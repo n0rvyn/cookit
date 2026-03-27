@@ -18,3 +18,4 @@ __pycache__/
 VALIDATION_REPORT.md
 pkos/scripts/.voice-transcribe-bin
 /.remember/
+minimax-output/
