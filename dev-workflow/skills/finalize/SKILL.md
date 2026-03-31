@@ -22,9 +22,8 @@ Validate preconditions (all phases done?)
 
 ### Step 1: Validate Preconditions
 
-1. Check for `.claude/dev-workflow-state.yml`:
-   !`cat .claude/dev-workflow-state.yml 2>/dev/null || echo "NO_STATE_FILE"`
-   - If state file exists: read `dev_guide` path from it
+1. Read `.claude/dev-workflow-state.yml` using the Read tool.
+   - If the file exists: read `dev_guide` path from it
    - If no state file: search `docs/06-plans/*-dev-guide.md`. If `docs/06-plans/` does not exist, ask user for the dev-guide path via AskUserQuestion. If multiple dev-guides found, prefer the file with `current: true` in frontmatter; if none has `current:`, ask user.
 2. Read the dev-guide file
 3. Parse all `## Phase N:` sections. For each Phase:
@@ -149,11 +148,9 @@ This step catches tests that per-phase implementation-reviewer missed.
    - ❌ Missing: file does not exist
 
 4. **Scan for untested source files:**
-   - Identify the commit that added the dev-guide file and store the hash:
-     !`git log --diff-filter=A --format=%H -- {dev_guide_path} | head -1`
+   - Identify the commit that added the dev-guide file: run `git log --diff-filter=A --format=%H -- {dev_guide_path} | head -1` via Bash and store the hash
    - If no result (dev-guide not tracked in git): skip the untested-source-files scan and note "base commit not found — untested files scan skipped" in the report
-   - Get source files modified since that point (omit HEAD to include uncommitted changes):
-     !`git diff --name-only {base_commit} -- '*.swift' '*.ts' '*.tsx' '*.js' '*.jsx' '*.py' '*.go' '*.rs'`
+   - Get source files modified since that point: run `git diff --name-only {base_commit} -- '*.swift' '*.ts' '*.tsx' '*.js' '*.jsx' '*.py' '*.go' '*.rs'` via Bash (omit HEAD to include uncommitted changes)
    - For each modified source file: check if a corresponding test file exists (convention: `FooTests.swift` for `Foo.swift`, `foo.test.ts` for `foo.ts`, `test_foo.py` for `foo.py`)
    - List source files with no corresponding test
 
