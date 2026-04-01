@@ -93,20 +93,6 @@ If input is incomplete, ask for:
 
    Principle: backward verification (testing specific assertions) is significantly more accurate than forward generation (guessing a single cause). Even if all assertions are falsified, the verification process exposes reasoning paths that reveal the root cause.
 
-   **Assertion confirmation gate:**
-
-   Present assertions to user via AskUserQuestion:
-   "Diagnostic assertions ranked by likelihood. Confirm direction, reorder,
-    point to the most likely one, or add your own."
-
-   User can:
-   - Confirm all — proceed to Step 4 in listed order
-   - Point to one — verify that assertion first, skip others if confirmed
-   - Reorder — adjust verification sequence
-   - Add their own — prepend user's assertion as highest priority
-
-   Proceeding to Step 4 without presenting assertions to the user is a violation
-   of this skill's protocol.
 
 4. **Verify assertions systematically**
    - Test each assertion from Step 3, one at a time
@@ -124,8 +110,7 @@ If input is incomplete, ask for:
    1. Stop current investigation path
    2. Record what was invalidated and the user's correction
    3. Return to Step 3: regenerate assertions incorporating the user's new information
-   4. Present new assertions to user before proceeding
-   5. After new assertions are verified, Step 7 (plan the fix) must be executed again — the previous plan (if any) was based on invalidated premises
+   4. After new assertions are verified, Step 7 (plan the fix) must be executed again — the previous plan (if any) was based on invalidated premises
 
    Do NOT patch the old hypothesis. A negated foundation requires new assertions.
    Do NOT skip ahead to implementation — reset means the full gate chain (Step 3 → 4 → 7) restarts.
@@ -189,18 +174,13 @@ If input is incomplete, ask for:
 
    **Required actions:**
 
-   → If **Simple**: present a mini-plan block and wait for approval before proceeding:
+   → If **Simple**: enter Claude Code native plan mode (`EnterPlanMode`).
+     Present diagnosis context (confirmed assertions, consumer impact) in the plan.
+     User reviews and approves within plan mode, then proceed to Step 8.
 
-     ```
-     [Fix Plan]
-     - Location: {file:line}
-     - Current behavior: {what happens now}
-     - Target behavior: {what should happen}
-     - Approach: {1-2 sentence description}
-     - Consumer impact: none / {list affected consumers}
-     ```
-
-   → If **Complex**: invoke `/write-plan` with the diagnosis context (confirmed assertions, value domain trace, parallel path analysis) as input. Wait for plan approval before proceeding.
+   → If **Complex**: invoke `/write-plan` with the diagnosis context
+     (confirmed assertions, value domain trace, parallel path analysis) as input.
+     Wait for plan approval before proceeding.
 
    **Proceeding to Step 8 without a user-approved plan is a violation of this skill's protocol.**
 

@@ -97,7 +97,6 @@ This pattern applies to "understand X" / "explore Y" dispatches. Verification ag
 | SessionStart | check-workflow-state.sh | Detects in-progress phase, prompts resume |
 | PreToolUse (Bash) | scan-secrets.sh | Intercepts git commit, blocks if secrets detected in staged content |
 | UserPromptSubmit | suggest-skills.sh | Pattern-matches user prompt and suggests relevant skills |
-| SessionEnd | prompt-lesson.sh | Prompts lesson collection if session had significant work |
 
 ## Workflow State
 

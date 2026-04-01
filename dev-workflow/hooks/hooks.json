@@ -32,17 +32,6 @@
           }
         ]
       }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/prompt-lesson.sh",
-            "timeout": 5
-          }
-        ]
-      }
     ]
   }
 }

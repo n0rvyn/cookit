@@ -125,6 +125,10 @@ Estimate whether the agent can complete its task within Claude Code's operationa
 3. Flag: instruction requires a tool not in the agent's `tools` list
 4. Flag: agent instructions mention "Task tool" or "dispatch agent" (agents cannot dispatch other agents)
 
+**Claude Code built-in tools** (available to the main conversation; skills can reference these even though agents may not have access):
+Read, Edit, Write, Bash, Glob, Grep, LSP, NotebookEdit, Agent, AskUserQuestion, EnterPlanMode, ExitPlanMode, EnterWorktree, ExitWorktree, WebFetch, WebSearch, Skill, CronCreate, CronDelete, CronList, TaskCreate, TaskUpdate, TaskList, TaskGet, TaskOutput, TaskStop, RemoteTrigger.
+When a skill instructs the executor to use one of these tools (e.g., `EnterPlanMode`, `AskUserQuestion`, `Skill`), that is valid; do NOT flag it as missing.
+
 **Interaction assumptions:**
 1. Flag: agent instructions that assume it can ask the user questions (agents run in separate context, they return results to the skill, not to the user)
 2. Flag: agent instructions that assume access to conversation history (agents start with fresh context)
