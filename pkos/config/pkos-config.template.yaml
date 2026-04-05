@@ -1,0 +1,26 @@
+# PKOS Configuration
+# Copy this file to ~/Obsidian/PKOS/.state/pkos-config.yaml and customize.
+
+# External intelligence source integration
+intel_sources:
+  domain_intel:
+    # REQUIRED: path to your domain-intel workspace's insights/ directory
+    # This is {WD}/insights where WD is the directory you run /scan from
+    # Example: ~/Code/InfoHub/insights
+    insights_path: ""
+    # Only import insights with significance >= this threshold
+    significance_threshold: 3
+    # Maximum insights to import per sync run (prevents ripple overload)
+    max_per_sync: 10
+
+# Ripple compilation settings
+ripple:
+  # Minimum notes with same topic before auto-creating a MOC
+  moc_creation_threshold: 3
+  # Maximum cross-references to add per ripple run
+  max_cross_refs_per_run: 20
+
+# Lint settings
+lint:
+  # Days after which a seed note is considered stale
+  stale_threshold_days: 180

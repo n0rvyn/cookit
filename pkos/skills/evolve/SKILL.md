@@ -1,7 +1,6 @@
 ---
 name: evolve
-description: "Use when the user says 'evolve', 'update profile', '更新画像', or wants to review and update LENS/FOCUS profiles based on accumulated signals. Generates profile update suggestions."
-user_invocable: true
+description: "Internal skill — generates LENS/FOCUS profile update suggestions from accumulated signals. Triggered by Adam event after weekly review."
 model: sonnet
 ---
 

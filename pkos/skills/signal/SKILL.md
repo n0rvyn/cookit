@@ -1,7 +1,6 @@
 ---
 name: signal
-description: "Use when the user says 'signal', 'collect signals', '采集信号', or wants to gather behavioral feedback data. Reads pipeline metrics from Notion, graph density from Obsidian, and session citations."
-user_invocable: true
+description: "Internal skill — collects behavioral signals from Notion pipeline and Obsidian graph. Triggered by Adam cron (daily 10pm)."
 model: sonnet
 ---
 

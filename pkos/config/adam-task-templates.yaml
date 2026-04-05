@@ -3,12 +3,14 @@
 # Or import via Adam CLI when available
 
 templates:
+  # ═══════ Daily Pipeline ═══════
+
   - id: pkos-inbox
     name: "PKOS Inbox Monitor"
     description: "Process pending items from Reminders, Notes, and voice files"
     trigger:
       type: cron
-      cron: "*/15 * * * *"  # Every 15 minutes
+      cron: "*/15 * * * *"
     steps:
       - id: process-inbox
         prompt: "/inbox"
@@ -22,12 +24,32 @@ templates:
           - "~/Obsidian/PKOS"
           - "~/Library/Mobile Documents"
 
+  - id: pkos-ripple-verify
+    name: "PKOS Ripple Verification"
+    description: "Verify ripple compilation completed after inbox processing"
+    trigger:
+      type: event
+      event: "template_complete:pkos-inbox"
+    steps:
+      - id: verify
+        prompt: "Read ~/Obsidian/PKOS/.state/ripple-log.yaml. Check the latest entry's date matches today. If the entry shows mocs_updated or mocs_created counts > 0, report success. If no entry for today exists, report that ripple may have been skipped (no knowledge/idea/reference items in this inbox run, which is normal)."
+    tags: [pkos, ripple, verify]
+    config:
+      plugins: ["/Users/norvyn/Code/Skills/indie-toolkit/pkos"]
+      maxBudgetUsd: 0.3
+      maxTurns: 10
+      fileAccess:
+        allowedPaths:
+          - "~/Obsidian/PKOS"
+
+  # ═══════ Intel Integration ═══════
+
   - id: pkos-domain-scan
     name: "PKOS Domain Intel Scan"
     description: "Run domain-intel collection pipeline"
     trigger:
       type: cron
-      cron: "0 8,20 * * *"  # Twice daily at 8am and 8pm
+      cron: "0 8,20 * * *"
     steps:
       - id: scan
         prompt: "/scan"
@@ -42,7 +64,7 @@ templates:
     description: "Run youtube-scout curation pipeline"
     trigger:
       type: cron
-      cron: "0 12 * * *"  # Daily at noon
+      cron: "0 12 * * *"
     steps:
       - id: scan
         prompt: "/youtube-scan"
@@ -52,12 +74,52 @@ templates:
       maxBudgetUsd: 2.0
       maxTurns: 100
 
+  - id: pkos-intel-sync
+    name: "PKOS Intel Sync"
+    description: "Import new domain-intel insights into PKOS vault with ripple compilation"
+    trigger:
+      type: event
+      event: "template_complete:pkos-domain-scan"
+    steps:
+      - id: sync
+        prompt: "/intel-sync"
+    tags: [pkos, intel-sync, ief]
+    config:
+      plugins: ["/Users/norvyn/Code/Skills/indie-toolkit/pkos"]
+      maxBudgetUsd: 2.0
+      maxTurns: 80
+      fileAccess:
+        allowedPaths:
+          - "~/Obsidian/PKOS"
+          # intel-sync reads insights_path from pkos-config.yaml at runtime
+
+  - id: pkos-intel-sync-yt
+    name: "PKOS Intel Sync (YouTube)"
+    description: "Import new insights after YouTube scan completes"
+    trigger:
+      type: event
+      event: "template_complete:pkos-youtube-scan"
+    steps:
+      - id: sync
+        prompt: "/intel-sync"
+    tags: [pkos, intel-sync, youtube]
+    config:
+      plugins: ["/Users/norvyn/Code/Skills/indie-toolkit/pkos"]
+      maxBudgetUsd: 1.5
+      maxTurns: 60
+      fileAccess:
+        allowedPaths:
+          - "~/Obsidian/PKOS"
+          # intel-sync reads insights_path from pkos-config.yaml at runtime
+
+  # ═══════ Daily Signals ═══════
+
   - id: pkos-signal
     name: "PKOS Signal Aggregator"
     description: "Collect behavioral signals from Notion + Obsidian"
     trigger:
       type: cron
-      cron: "0 22 * * *"  # Daily at 10pm
+      cron: "0 22 * * *"
     steps:
       - id: collect-signals
         prompt: "/signal --days 1"
@@ -69,10 +131,10 @@ templates:
 
   - id: pkos-digest
     name: "PKOS Daily Digest"
-    description: "Generate daily digest for Obsidian + Notion"
+    description: "Generate daily digest for Obsidian"
     trigger:
       type: cron
-      cron: "30 7 * * *"  # Daily at 7:30am
+      cron: "30 7 * * *"
     steps:
       - id: generate-digest
         prompt: "/digest --type daily"
@@ -82,45 +144,47 @@ templates:
       maxBudgetUsd: 0.5
       maxTurns: 30
 
-  - id: pkos-sync
-    name: "PKOS Notion Sync"
-    description: "Sync latest processing status to Notion Pipeline DB"
-    trigger:
-      type: event
-      event: "template_complete:pkos-inbox"
-    steps:
-      - id: sync
-        prompt: "Query Notion Pipeline DB for items with Status 'inbox' and check if corresponding Obsidian notes exist. Update status to 'processed' for items that have been routed."
-    tags: [pkos, sync, notion]
-    config:
-      plugins: ["/Users/norvyn/Code/Skills/indie-toolkit/pkos"]
-      maxBudgetUsd: 0.3
-      maxTurns: 20
+  # ═══════ Weekly Maintenance ═══════
 
   - id: pkos-review
     name: "PKOS Weekly Review"
-    description: "Generate weekly review with digest + signal analysis"
+    description: "Generate weekly digest"
     trigger:
       type: cron
-      cron: "0 9 * * 0"  # Weekly on Sunday at 9am
+      cron: "0 9 * * 0"
     steps:
       - id: weekly-digest
         prompt: "/digest --type weekly"
-      - id: evolve-suggestions
-        prompt: "/evolve --days 7"
-        dependsOn: weekly-digest
     tags: [pkos, review, weekly]
     config:
       plugins: ["/Users/norvyn/Code/Skills/indie-toolkit/pkos"]
-      maxBudgetUsd: 1.5
-      maxTurns: 80
+      maxBudgetUsd: 1.0
+      maxTurns: 50
+
+  - id: pkos-lint
+    name: "PKOS Wiki Lint"
+    description: "Health check the knowledge wiki — orphans, broken links, stale notes, contradictions"
+    trigger:
+      type: event
+      event: "template_complete:pkos-review"
+    steps:
+      - id: lint
+        prompt: "/lint --report-only"
+    tags: [pkos, lint, health]
+    config:
+      plugins: ["/Users/norvyn/Code/Skills/indie-toolkit/pkos"]
+      maxBudgetUsd: 1.0
+      maxTurns: 50
+      fileAccess:
+        allowedPaths:
+          - "~/Obsidian/PKOS"
 
   - id: pkos-serendipity
     name: "PKOS Serendipity Discovery"
     description: "Find unexpected cross-domain connections in knowledge graph"
     trigger:
       type: cron
-      cron: "0 10 * * 0"  # Weekly on Sunday at 10am (after review)
+      cron: "0 10 * * 0"
     steps:
       - id: discover
         prompt: "/serendipity --count 5"
@@ -135,7 +199,7 @@ templates:
     description: "Generate LENS/FOCUS update suggestions from weekly signals"
     trigger:
       type: event
-      event: "template_complete:pkos-review"
+      event: "template_complete:pkos-lint"
     steps:
       - id: evolve
         prompt: "/evolve --days 7"

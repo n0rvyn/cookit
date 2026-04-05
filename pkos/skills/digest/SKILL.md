@@ -1,7 +1,6 @@
 ---
 name: digest
-description: "Use when the user says 'digest', 'daily digest', '每日摘要', or wants a summary of recent PKOS activity. Generates daily/weekly digest with captures, intel highlights, and pending items."
-user_invocable: true
+description: "Internal skill — generates daily/weekly digest. Triggered by Adam cron (daily 7:30am, weekly Sunday 9am)."
 model: sonnet
 ---
 

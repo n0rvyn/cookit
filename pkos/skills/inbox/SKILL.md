@@ -1,7 +1,6 @@
 ---
 name: inbox
-description: "Use when the user says 'inbox', 'process inbox', '处理收件箱', or wants to process captured items from iOS (Reminders, Notes, voice memos). Reads from all PKOS input sources, classifies, and routes to Obsidian/Notion."
-user_invocable: true
+description: "Internal skill — processes captured items from iOS (Reminders, Notes, voice memos). Reads from all PKOS input sources, classifies, routes to Obsidian/Notion, and triggers ripple compilation. Triggered by Adam cron or via /pkos ingest."
 model: sonnet
 ---
 
@@ -180,16 +179,37 @@ mkdir -p ~/Library/Mobile\ Documents/com~apple~CloudDocs/PKOS/voice/processed/
 mv "{voice_file_path}" ~/Library/Mobile\ Documents/com~apple~CloudDocs/PKOS/voice/processed/
 ```
 
+### Step 5.5: Ripple Compilation
+
+For each item that was routed to Obsidian (classification: knowledge, idea, or reference):
+
+Dispatch `pkos:ripple-compiler` agent with:
+```yaml
+note_path: "{obsidian_path}"
+title: "{title}"
+topics: [{topics from inbox-processor decision}]
+related_notes: [{related_notes from inbox-processor decision}]
+```
+
+If processing multiple items, dispatch ripple for each sequentially (not parallel) to avoid concurrent MOC edits.
+
+If ripple fails for an item, log warning and continue — the source note is already saved, ripple can be retried later.
+
 ### Step 6: Report
 
 Present final summary:
 ```
-✅ PKOS Inbox processed: {N} items
-  📋 knowledge: {count} → Obsidian 10-Knowledge/
-  💡 idea: {count} → Obsidian 20-Ideas/
-  📎 reference: {count} → Obsidian 50-References/
-  ✅ task: {count} → Notion
-  💬 feedback: {count} → .signals/
+PKOS Inbox processed: {N} items
+  knowledge: {count} → Obsidian 10-Knowledge/
+  idea: {count} → Obsidian 20-Ideas/
+  reference: {count} → Obsidian 50-References/
+  task: {count} → Notion
+  feedback: {count} → .signals/
+
+Wiki compilation:
+  MOCs updated: {count}
+  MOCs created: {count}
+  Cross-references added: {count}
 
 All items synced to Notion Pipeline DB.
 ```

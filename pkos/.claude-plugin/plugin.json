@@ -1,7 +1,7 @@
 {
   "name": "pkos",
-  "version": "0.2.1",
-  "description": "Personal Knowledge Operating System: inbox processing, signal aggregation, digest generation, vault operations, profile evolution, and serendipity discovery",
+  "version": "0.3.0",
+  "description": "Personal Knowledge Operating System: automated knowledge compilation with ripple ingest, wiki health maintenance, cross-plugin intel sync, and unified /pkos entry point",
   "author": {
     "name": "Norvyn"
   }

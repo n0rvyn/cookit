@@ -1,7 +1,6 @@
 ---
 name: vault
-description: "Use when the user says 'vault', 'obsidian', 'search vault', '搜索笔记', or wants to read/write/search the Obsidian PKOS vault. Provides filesystem-level operations on the knowledge graph."
-user_invocable: true
+description: "Obsidian vault operations for PKOS knowledge graph. Use when the user says 'vault', 'search vault', '搜索笔记', or wants direct vault access. Not the primary entry point — use /pkos for most interactions."
 model: haiku
 ---
 

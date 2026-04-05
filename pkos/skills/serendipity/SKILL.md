@@ -1,7 +1,6 @@
 ---
 name: serendipity
-description: "Use when the user says 'serendipity', 'surprise me', '意外发现', or wants to discover unexpected connections in the knowledge graph. Finds cross-domain associations between notes."
-user_invocable: true
+description: "Internal skill — discovers cross-domain connections via topic similarity. Triggered by Adam cron (weekly Sunday 10am)."
 model: sonnet
 ---
 
