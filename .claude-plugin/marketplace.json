@@ -126,13 +126,15 @@
       "strict": true
     },
     {
-      "name": "yt-intel",
-      "source": "./yt-intel",
-      "description": "YouTube video curation tool - scrapes recommended/search videos, extracts transcripts, scores with Claude AI on 6 dimensions, outputs TOP-5 recommendations + FYI summaries",
+      "name": "youtube-scout",
+      "source": "./youtube-scout",
+      "description": "YouTube video intelligence — scrapes recommended/search videos, extracts transcripts, scores with Claude AI on 6 quality dimensions, exports IEF-compliant insights for cross-plugin consumption",
       "version": "1.0.0",
       "category": "intelligence",
       "tags": [
         "youtube",
+        "intelligence",
+        "insight-exchange",
         "curation",
         "video",
         "recommendations",

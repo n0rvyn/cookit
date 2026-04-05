@@ -2,7 +2,7 @@
 """Scrape YouTube recommended feed and topic search results.
 
 Usage:
-    python3 scrape_youtube.py --topic "AI" --cookie-dir ~/.yt-intel \\
+    python3 scrape_youtube.py --topic "AI" --cookie-dir ~/.youtube-scout \\
         --max-recommended 30 --max-search 20
 
 Output:
@@ -268,8 +268,8 @@ def main():
     parser.add_argument("--topic", default="AI", help="Search topic (default: AI)")
     parser.add_argument(
         "--cookie-dir",
-        default="~/.yt-intel",
-        help="Directory for cookie storage (default: ~/.yt-intel)",
+        default="~/.youtube-scout",
+        help="Directory for cookie storage (default: ~/.youtube-scout)",
     )
     parser.add_argument(
         "--max-recommended",

@@ -11,7 +11,7 @@ on:
       - "skill-audit/**"
       - "domain-intel/**"
       - "session-intel/**"
-      - "yt-intel/**"
+      - "youtube-scout/**"
       - "pkos/**"
       - "wechat-bridge/**"
 
@@ -41,7 +41,7 @@ jobs:
           set -euo pipefail
 
           MARKET_FILE=".claude-plugin/marketplace.json"
-          ALL_PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "skill-audit" "domain-intel" "session-intel" "yt-intel" "pkos" "wechat-bridge")
+          ALL_PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "skill-audit" "domain-intel" "session-intel" "youtube-scout" "pkos" "wechat-bridge")
 
           bump_semver() {
             local version="$1"

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deduplication helper for yt-intel.
+"""Deduplication helper for youtube-scout.
 
 Tracks seen video IDs across runs using SHA-256 hashes stored in a JSONL file.
 
@@ -11,7 +11,7 @@ Usage:
     echo '[{"video_id": "abc123", "title": "..."}]' | python3 dedup.py mark-seen
 
 Storage:
-    ~/.yt-intel/seen.jsonl — one JSON line per seen video:
+    ~/.youtube-scout/seen.jsonl — one JSON line per seen video:
     {"hash": "a1b2c3d4", "video_id": "abc123", "date": "2026-03-21", "title": "..."}
 """
 
@@ -23,7 +23,7 @@ import sys
 from datetime import datetime
 
 
-SEEN_FILE = os.path.expanduser("~/.yt-intel/seen.jsonl")
+SEEN_FILE = os.path.expanduser("~/.youtube-scout/seen.jsonl")
 
 
 def get_hash(video_id: str) -> str:
@@ -73,7 +73,7 @@ def mark_seen(videos: list[dict]):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Dedup helper for yt-intel")
+    parser = argparse.ArgumentParser(description="Dedup helper for youtube-scout")
     parser.add_argument(
         "action",
         choices=["filter", "mark-seen"],

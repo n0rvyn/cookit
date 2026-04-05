@@ -1,7 +1,7 @@
 {
-  "name": "yt-intel",
+  "name": "youtube-scout",
   "version": "1.0.0",
-  "description": "YouTube video curation tool - scrapes recommended/search videos, extracts transcripts, scores with Claude AI on 6 dimensions, outputs TOP-5 recommendations + FYI summaries",
+  "description": "YouTube video intelligence — scrapes recommended/search videos, extracts transcripts, scores with Claude AI on 6 quality dimensions, exports IEF-compliant insights for cross-plugin consumption",
   "author": {
     "name": "Norvyn"
   }
