@@ -1,6 +1,6 @@
 ---
-name: yt-scan
-description: "Use when the user says 'yt-scan', 'scan youtube', 'youtube recommendations', 'yt recommendations'. Scrapes YouTube recommended feed and topic search, extracts transcripts, scores videos with Claude AI on 6 dimensions, outputs TOP-5 recommendations with reasons + FYI summaries for the rest."
+name: youtube-scan
+description: "Use when the user says 'youtube-scan', 'youtube scan', 'scan youtube', 'youtube recommendations'. Scrapes YouTube recommended feed and topic search, extracts transcripts, scores videos with Claude AI on 6 quality dimensions. Exports TOP findings as IEF-compliant insight files for domain-intel consumption."
 model: sonnet
 user-invocable: true
 ---
@@ -27,23 +27,53 @@ Bash(command="date +%Y-%m-%d")
 ```
 Store as `TODAY`.
 
+### Step 0.5: Load Config
+
+Resolve config path:
+```
+Bash(command="echo ~/.youtube-scout/config.yaml")
+```
+Store the absolute path. Read the file if it exists. Extract:
+- `export.path` (default: `~/.youtube-scout/exports`)
+- `export.min_score` (default: 3.0) — minimum weighted_total for export
+- `export.domains` (default: []) — domain list for category matching, passed to video-scorer
+- `scan.topic` (default: "AI") — topic for YouTube search
+
+If config file does not exist, use all defaults.
+
+Resolve `export.path` to an absolute path:
+```
+Bash(command="echo {export.path}")
+```
+Store the resolved absolute path as `export_path`.
+
+### Cron Mode Detection
+
+If the invocation prompt contains `[cron]`:
+- Set `CRON_MODE = true`
+- All parameters from config (no AskUserQuestion)
+- Suppress terminal TOP-5 detail output (file report still generated)
+- Login and empty-result stops are handled differently in cron mode — see Step 1
+
 ### Step 1: Scrape Videos
 
 ```
-Bash(command="python3 {SCRIPTS}/scrape_youtube.py --topic 'AI' --cookie-dir ~/.yt-intel --max-recommended 30 --max-search 20")
+Bash(command="python3 {SCRIPTS}/scrape_youtube.py --topic '{scan.topic}' --cookie-dir ~/.youtube-scout --max-recommended 30 --max-search 20")
 ```
 
 Parse the JSON output from stdout. Check the `status` field:
 
-- `"login_required"` → output:
-  ```
-  [yt-intel] YouTube login required. Please run again after logging in — the script will open a browser window for you.
-  ```
-  **Stop here.**
+- `"login_required"`:
+  - If `CRON_MODE`: log `[youtube-scout] Login required (skipped in cron mode)` to `~/.youtube-scout/cron.log` via Bash append. **Skip to Step 7** with zero scored videos. The file report should note `status: login_required` in frontmatter. Then exit.
+  - If NOT `CRON_MODE`: output:
+    ```
+    [youtube-scout] YouTube login required. Please run again after logging in — the script will open a browser window for you.
+    ```
+    **Stop here.**
 
 - `"partial"` → output warning:
   ```
-  [yt-intel] Warning: Recommended feed unavailable (login may be stale). Proceeding with search results only.
+  [youtube-scout] Warning: Recommended feed unavailable (login may be stale). Proceeding with search results only.
   ```
   Continue with available videos.
 
@@ -62,7 +92,7 @@ Bash(command="echo '<videos_json>' | python3 {SCRIPTS}/dedup.py filter")
 Parse the filtered JSON output. If the filtered list is empty:
 
 ```
-[yt-intel] No new videos since last scan. All videos have been processed before.
+[youtube-scout] No new videos since last scan. All videos have been processed before.
 ```
 
 **Stop here.**
@@ -79,7 +109,14 @@ Parse the JSON output. For each video, attach the transcript text (or null) to t
 
 ### Step 4: Score Videos
 
-Prepare the input for the video-scorer agent. For each video, format:
+Prepare the input for the video-scorer agent.
+
+If `export.domains` is non-empty, prepend a preamble before the video list:
+```
+Domains: [{export.domains joined by comma}]
+```
+
+For each video, format:
 
 ```
 VIDEO {N}:
@@ -109,6 +146,53 @@ Write the full scored video list (all videos, not just TOP-5) as JSON and pipe t
 Bash(command="echo '<all_videos_json>' | python3 {SCRIPTS}/dedup.py mark-seen")
 ```
 
+### Step 6.5: Export IEF Insights
+
+Create export directory and clean stale files from today (handles re-runs):
+```
+Bash(command="mkdir -p {export_path} && rm -f {export_path}/{TODAY}-youtube-*.md")
+```
+
+For each scored video with `weighted_total >= export.min_score`:
+
+1. Generate insight ID: `{TODAY}-youtube-{NNN}` (NNN = 001, 002, ... in weighted_total descending order)
+2. Map `round(weighted_total)` to significance (1-5)
+3. Write file to `{export_path}/{id}.md`:
+
+```markdown
+---
+id: {id}
+source: youtube
+url: "https://www.youtube.com/watch?v={video_id}"
+title: "{title}"
+significance: {round(weighted_total)}
+tags: [{tags from scorer}]
+category: {category from scorer}
+domain: {domain from scorer}
+date: {TODAY}
+read: false
+channel: "{channel}"
+duration: "{duration}"
+weighted_total: {weighted_total}
+---
+
+# {title}
+
+**Problem:** {problem}
+
+**Technology:** {technology}
+
+**Insight:** {insight}
+
+**Difference:** {difference}
+
+---
+
+*Selection reason: {one_liner}*
+```
+
+4. Output: `[youtube-scout] Exported {N} insights to {export_path}`
+
 ### Step 7: Generate Report
 
 #### File Report
@@ -118,17 +202,17 @@ Create the reports directory if it doesn't exist:
 Bash(command="mkdir -p ./reports")
 ```
 
-Write a markdown report to `./reports/{TODAY}-yt-scan.md` with this structure:
+Write a markdown report to `./reports/{TODAY}-youtube-scan.md` with this structure:
 
 ```markdown
 ---
 date: {TODAY}
-topic: AI
+topic: {scan.topic}
 total_scanned: {total video count}
 top_k: 5
 ---
 
-# YT Intel — {TODAY}
+# YouTube Scout — {TODAY}
 
 ## TOP 5 Recommendations
 
@@ -155,9 +239,9 @@ top_k: 5
 Print a compact summary to the conversation:
 
 ```
-[yt-intel] Scan complete — {TODAY}
+[youtube-scout] Scan complete — {TODAY}
   Scanned: {N} → New: {N} → Scored: {N}
-  Report: ./reports/{TODAY}-yt-scan.md
+  Report: ./reports/{TODAY}-youtube-scan.md
 
   TOP 5:
   1. {title} ({weighted_total}) — {one_liner}

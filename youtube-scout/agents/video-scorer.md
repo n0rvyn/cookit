@@ -67,7 +67,14 @@ For each video, output one YAML block. Produce output for ALL videos in the batc
     credibility: 4
   weighted_total: 4.05
   has_transcript: true
-  one_liner: "Deep comparison of Claude 4 vs GPT-5 coding benchmarks with custom test suite"
+  one_liner: "Deep comparison of Claude 4 vs GPT-5 coding benchmarks"
+  tags: [claude-4, gpt-5, benchmarks, coding, llm-comparison]
+  category: ai-ml
+  domain: ai-ml
+  problem: "No independent benchmarks compare Claude 4 and GPT-5 on real coding tasks beyond synthetic tests."
+  technology: "Custom benchmark suite testing code generation, debugging, and refactoring across 5 languages."
+  insight: "Claude 4 outperforms on multi-file refactoring while GPT-5 leads on single-function generation — the gap narrows as task complexity increases."
+  difference: "First-party benchmarks from someone who built the test suite, not aggregated from published scores."
 ```
 
 ## TOP-K Recommendation Reasons
@@ -79,12 +86,33 @@ After scoring all videos, identify the TOP-5 by `weighted_total`. For each TOP-5
 
 For non-TOP-5 videos, only the `one_liner` is needed.
 
+## IEF Export Fields
+
+For each video in the batch, also produce these fields for Insight Exchange Format compatibility:
+
+- **tags**: 3-5 lowercase hyphenated keywords extracted from the video content (e.g., `[claude-code, agent-sdk, tool-use, mcp]`). Derive from transcript topics, technologies mentioned, and key concepts.
+- **category**: One of: `framework`, `tool`, `library`, `platform`, `pattern`, `ecosystem`, `security`, `performance`, `ai-ml`, `devex`, `business`, `community`. Choose the best match for the video's primary subject.
+- **domain**: The primary knowledge domain (e.g., `ai-ml`, `ios-development`, `web-development`, `indie-business`). If a `domains` list is provided in the prompt, match against it; otherwise infer.
+- **problem**: What question or gap does this video address? One sentence.
+- **technology**: What tools, frameworks, or methods does the video cover? One sentence.
+- **insight**: The single most valuable takeaway from the video. One sentence.
+- **difference**: What makes this video's perspective unique compared to typical coverage of the same topic? One sentence.
+
+Note: The `tags`, `category`, `domain`, `problem`, `technology`, `insight`, `difference` fields are required for ALL videos (not just TOP-K). They enable downstream systems to integrate YouTube findings with other intelligence sources.
+
 ```yaml
 - video_id: abc123
   scores: ...
   weighted_total: 4.05
   has_transcript: true
   one_liner: "Deep comparison of Claude 4 vs GPT-5 coding benchmarks"
+  tags: [claude-4, gpt-5, benchmarks, coding, llm-comparison]
+  category: ai-ml
+  domain: ai-ml
+  problem: "No independent benchmarks compare Claude 4 and GPT-5 on real coding tasks beyond synthetic tests."
+  technology: "Custom benchmark suite testing code generation, debugging, and refactoring across 5 languages."
+  insight: "Claude 4 outperforms on multi-file refactoring while GPT-5 leads on single-function generation — the gap narrows as task complexity increases."
+  difference: "First-party benchmarks from someone who built the test suite, not aggregated from published scores."
   recommendation_reason: |
     This video stands out for its original benchmarking methodology...
 
