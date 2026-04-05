@@ -1,7 +1,10 @@
 ---
 name: implementation-reviewer
 description: |
-  Use this agent after completing all tasks in an implementation plan, or when the user says 'review implementation', 'execution review', 'audit implementation'. Performs comprehensive plan-vs-code verification and optional design-vs-code fidelity audit.
+  Use this agent after completing all tasks in an implementation plan, or when the user says 'review implementation', 'review changes', 'review and validate', 'execution review', 'audit implementation'.
+  Requires an implementation plan in the current session or a plan file to audit against.
+  Do NOT use for general code quality review without a plan — that is a different reviewer's job.
+  Performs comprehensive plan-vs-code verification and optional design-vs-code fidelity audit.
 
   Examples:
 
@@ -15,6 +18,12 @@ description: |
   Context: User wants to check implementation fidelity against a design doc.
   user: "Check if the implementation matches the design"
   assistant: "I'll use the implementation-reviewer agent to perform a design fidelity audit."
+  </example>
+
+  <example>
+  Context: No plan exists in the session, user just wants a code review.
+  user: "Review this code"
+  assistant: DO NOT use implementation-reviewer — no plan to audit against. Use a code quality reviewer instead.
   </example>
 
 model: opus

@@ -1,20 +1,29 @@
 ---
 name: apple-reviewer
 description: |
-  Use this agent when the user requests a code review, says 'review this code', or before merging a branch. Performs read-only review for quality, correctness, and Apple platform-specific issues.
+  Use this agent when the user requests a code review of Swift or Apple platform (iOS/macOS/watchOS/tvOS) code.
+  Only use when the target files are .swift or the project is an Xcode project.
+  Do NOT use for non-Apple codebases (TypeScript, Python, Rust, Go, etc.).
+  Performs read-only review for quality, correctness, and Apple platform-specific issues.
 
   Examples:
 
   <example>
-  Context: User completed a feature and wants review.
+  Context: User completed a feature and wants review of Swift code.
   user: "Review the changes I just made to NodeDetailView"
   assistant: "I'll use the apple-reviewer agent to review your changes."
   </example>
 
   <example>
-  Context: User is about to merge a branch.
+  Context: User is about to merge a branch in a Swift/iOS project.
   user: "Review before I merge into main"
   assistant: "Let me have the apple-reviewer agent examine the changes."
+  </example>
+
+  <example>
+  Context: User is working on a TypeScript/Node.js project.
+  user: "Review these changes"
+  assistant: DO NOT use apple-reviewer — this is not an Apple platform project.
   </example>
 model: sonnet
 tools: Glob, Grep, Read, Bash
