@@ -13,7 +13,7 @@ description: |
   assistant: "I'll use the execute-plan agent to implement the plan."
   </example>
 
-model: sonnet
+model: sonnet[1m]
 maxTurns: 120
 tools: Glob, Grep, Read, Write, Edit, Bash, LSP
 color: green

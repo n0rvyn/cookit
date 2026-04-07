@@ -192,16 +192,25 @@ Do NOT modify the plan file. Return revision instructions only.
 类型匹配：{K}/{M} 测试类型正确
 ```
 
-**Gap 输出**（当覆盖率 < 100% 或类型不匹配）：
+**Gap 输出**：
 ```
-❌ T1 Gap: Task {N} ({代码类型}) 无测试覆盖
-   建议：添加测试 task 或在 Task {N} 的 Verify 中嵌入 {推荐测试类型} 验证步骤
+❌ T1 Gap [must-revise]: Task {N} ({代码类型}) 无测试覆盖
+   修订：添加 {推荐测试类型} 测试 task 或在 Task {N} 的 Verify 中嵌入测试步骤
 
-⚠️ T1 Gap: Task {N} ({代码类型}) 测试类型不匹配 — 实际: {实际测试类型}, 推荐: {推荐测试类型}
-   建议：将 {实际测试类型} 替换为 {推荐测试类型}，或说明偏离理由
+⚠️ T1 Gap [advisory]: Task {N} ({代码类型}) 测试类型不匹配 — 实际: {X}, 推荐: {Y}
+   建议：替换或说明偏离理由
+
+✅ T1 Skip: Task {N} 标注 ⚠️ No test: {reason} — 理由成立
+⚠️ T1 Skip [advisory]: Task {N} 标注 ⚠️ No test: {reason} — 理由不充分，建议补充测试
 ```
 
-**注意**：纯配置修改（改 .md、.yml、.json 且无逻辑）不计入"有逻辑 task"。测试覆盖率低不一定是 must-revise；仅当有逻辑 task 完全无测试时标记为 Gap。
+**注意**：纯配置修改（改 .md、.yml、.json 且无逻辑）不计入"有逻辑 task"。
+
+**严重程度**：
+- 业务逻辑 task 无 UT 覆盖 → **must-revise**（❌ T1 Gap）
+- 用户旅程 task 无 E2E 覆盖 → **must-revise**（❌ T1 Gap）
+- 标注了 `⚠️ No test: {reason}` 的 task → 审核理由是否成立：纯配置/纯样式/透传层为合法理由，其他理由标记为 ⚠️ advisory
+- 测试类型不匹配 → advisory（⚠️ T1 Gap），不阻塞
 
 ---
 

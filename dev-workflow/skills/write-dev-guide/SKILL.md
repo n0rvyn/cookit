@@ -224,6 +224,7 @@ current: true
 **Acceptance criteria:**
 - [ ] Specific verifiable condition 1
 - [ ] Specific verifiable condition 2
+- [ ] Tests pass for this Phase's scope (UT for logic, E2E for user journeys)
 
 **Review checklist:**
 - [ ] /execution-review
@@ -260,6 +261,7 @@ current: true
 - 「用户可见的变化」uses spatial/functional language the user would use (e.g., "打开 App 后底部有 3 个标签" not "MainTabView with 3 tabs"). Source: design doc User Journeys and feature descriptions. Infrastructure-only Phases (no UI) write "无" for this section.
 - **Section markers:** Each `## Phase N:` block is wrapped in `<!-- section: phase-N keywords: {kw1}, {kw2} -->` ... `<!-- /section -->`. Keywords are derived from the Phase's scope items: use noun forms of the key features and technologies (e.g., scope items "Implement SwiftData persistence", "Add offline queue" → keywords: `swiftdata, persistence, offline, queue`). 3-5 keywords per section.
 - **Frontmatter fields:** `type` is always `dev-guide`. `status` is always `active` when first written. `tags` — derive 2-5 keywords from the project name and major feature areas in the Phases (e.g., `[sync, offline, swiftdata]`). `refs` — list paths to the design doc and project brief referenced in the header. `current` — always `true`; the write-dev-guide skill manages toggling this to `false` on the previously-current dev-guide.
+- **Test acceptance criteria:** Every Phase must include at least one test-related acceptance criterion. Infrastructure Phases: "UT pass for {scope}". Phases with complete user journeys: "UT + E2E pass for {scope}". Phases with no logic (pure docs, ASC materials): may omit.
 
 ### Decisions
 
