@@ -1,8 +1,0 @@
-{
-  "name": "session-intel",
-  "version": "1.1.0",
-  "description": "AI session analytics: extract, analyze, and correlate Claude Code and Codex sessions with git history",
-  "author": {
-    "name": "Norvyn"
-  }
-}
