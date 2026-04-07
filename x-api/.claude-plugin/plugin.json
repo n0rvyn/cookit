@@ -1,0 +1,16 @@
+{
+  "name": "x-api",
+  "version": "1.0.0",
+  "description": "X (Twitter) API v2 MCP server with Bearer Token and OAuth2 PKCE support, exposing 120+ API operations as MCP tools.",
+  "author": {
+    "name": "Norvyn"
+  },
+  "mcpServers": {
+    "x-api": {
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/dist/server.js"
+      ]
+    }
+  }
+}
