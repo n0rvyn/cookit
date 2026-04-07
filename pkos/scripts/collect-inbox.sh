@@ -6,7 +6,12 @@
 set -euo pipefail
 
 PLUGIN_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-MACTOOLS_ROOT="$(cd "$PLUGIN_ROOT/../mactools" && pwd)"
+MACTOOLS_ROOT="$(ls -d "$PLUGIN_ROOT/../../mactools"/*/ 2>/dev/null | sort -V | tail -1)"
+MACTOOLS_ROOT="${MACTOOLS_ROOT%/}"
+if [ -z "$MACTOOLS_ROOT" ] || [ ! -d "$MACTOOLS_ROOT" ]; then
+    echo "ERROR: mactools plugin not found at $PLUGIN_ROOT/../../mactools/" >&2
+    exit 1
+fi
 VOICE_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/PKOS/voice"
 SOURCE="${1:-all}"
 

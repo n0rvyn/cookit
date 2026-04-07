@@ -22,17 +22,17 @@ Collect pending items from all sources (or filtered by `--source`).
 
 **Reminders:**
 ```bash
-${CLAUDE_PLUGIN_ROOT}/../mactools/skills/reminders/scripts/reminders.sh list "PKOS Inbox"
+${CLAUDE_PLUGIN_ROOT}/../../mactools/1.0.1/skills/reminders/scripts/reminders.sh list "PKOS Inbox"
 ```
 Parse output lines. Each reminder with title and notes becomes an inbox item with `source: reminder`, `raw_type: text` (or `url` if notes contain a URL).
 
 **Notes:**
 ```bash
-${CLAUDE_PLUGIN_ROOT}/../mactools/skills/notes/scripts/notes.sh list "PKOS Inbox"
+${CLAUDE_PLUGIN_ROOT}/../../mactools/1.0.1/skills/notes/scripts/notes.sh list "PKOS Inbox"
 ```
 For each note found, read its full content:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/../mactools/skills/notes/scripts/notes.sh read "Note Title"
+${CLAUDE_PLUGIN_ROOT}/../../mactools/1.0.1/skills/notes/scripts/notes.sh read "Note Title"
 ```
 Each note becomes an inbox item with `source: note`, `raw_type: text`.
 
@@ -155,7 +155,7 @@ NO_PROXY="*" python3 ~/.claude/skills/notion/scripts/notion_api.py create-db-ite
 
 2. If urgency is high or a due date is mentioned, create a Reminder:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/../mactools/skills/reminders/scripts/reminders.sh create "{title}" --list "Tasks" --due "{due_date}"
+${CLAUDE_PLUGIN_ROOT}/../../mactools/1.0.1/skills/reminders/scripts/reminders.sh create "{title}" --list "Tasks" --due "{due_date}"
 ```
 
 **C. feedback → .signals/ only (no Obsidian, no Notion)**
@@ -171,12 +171,12 @@ echo "- source: {source}
 
 **Reminders:**
 ```bash
-${CLAUDE_PLUGIN_ROOT}/../mactools/skills/reminders/scripts/reminders.sh complete "{title}" --list "PKOS Inbox"
+${CLAUDE_PLUGIN_ROOT}/../../mactools/1.0.1/skills/reminders/scripts/reminders.sh complete "{title}" --list "PKOS Inbox"
 ```
 
 **Notes:**
 ```bash
-${CLAUDE_PLUGIN_ROOT}/../mactools/skills/notes/scripts/notes.sh delete "{note_title}"
+${CLAUDE_PLUGIN_ROOT}/../../mactools/1.0.1/skills/notes/scripts/notes.sh delete "{note_title}"
 ```
 
 **Voice files:**

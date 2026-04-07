@@ -82,7 +82,7 @@ If a Weekly Review database exists in Notion, create an entry with the digest su
 
 For high-priority items (urgency: high), create a Reminder:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/../mactools/skills/reminders/scripts/reminders.sh create \
+${CLAUDE_PLUGIN_ROOT}/../../mactools/1.0.1/skills/reminders/scripts/reminders.sh create \
   "PKOS: {count} high-priority items need attention" --list "PKOS Inbox"
 ```
 
