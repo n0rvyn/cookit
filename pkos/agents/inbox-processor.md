@@ -61,6 +61,20 @@ Grep(pattern="{keyword1}|{keyword2}", path="~/Obsidian/PKOS", output_mode="files
 
 Return the top 3 most relevant file paths (by number of keyword matches).
 
+### 3b. Conflict Scan
+
+For items classified as **knowledge**, **idea**, or **reference** only (skip for task and feedback):
+
+1. From the related_notes found in Step 3, read the full content of the top 3 most relevant notes (not just frontmatter)
+2. Compare the new item's core claim, insight, or recommendation against each related note's content
+3. If a direct contradiction is detected (opposing recommendations, conflicting facts about the same subject, or incompatible conclusions):
+   - Add `conflict_status: needs-reconciliation` to the output for this item
+   - Add `conflicts_with: ["{path-to-conflicting-note}"]` listing all conflicting note paths
+   - Add `conflict_description: "{brief description of the contradiction}"` explaining the specific opposition
+4. If no contradiction is detected, omit these fields entirely
+
+This is a best-effort heuristic check. Only flag contradictions where the opposition is clear and specific. Different perspectives on the same topic are NOT contradictions; only flag when claims are mutually exclusive.
+
 ### 4. Determine Destination
 
 | Classification | Obsidian Path | Notion |
@@ -88,6 +102,9 @@ decisions:
     related_notes:
       - "10-Knowledge/related-note.md"
     obsidian_path: "10-Knowledge/descriptive-title-here.md"
+    conflict_status: needs-reconciliation          # optional — only when contradiction detected
+    conflicts_with: ["10-Knowledge/older-note.md"] # optional — paths to conflicting notes
+    conflict_description: "New item says X but older note says Y"  # optional — brief description
   - id: "voice-zh-2026-03-22"
     classification: idea
     title: "Product Idea Title"

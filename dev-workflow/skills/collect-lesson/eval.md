@@ -26,6 +26,11 @@
 - [ ] Output reports saved file path after completion
 - [ ] Dedup check uses Grep over ~/.claude/knowledge/ (not MCP search)
 - [ ] Supports multiple content types (lesson, API note, architecture decision, reference)
+- [ ] After saving, searches ~/.claude/knowledge/ for entries with >=2 overlapping keywords
+- [ ] Adds mutual `related:` frontmatter fields to both new and matched entries
+- [ ] Reports cross-reference count (related found, links added, contradictions flagged) after saving
+- [ ] Contradiction detection is best-effort and only flags obvious specific conflicts
+- [ ] Ripple step is skipped for project-local saves (docs/09-lessons-learned/)
 
 ## Redundancy Risk
 Baseline comparison: Base model can summarize sessions but lacks structured extraction, duplicate checking, and knowledge base conventions

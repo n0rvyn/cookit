@@ -105,6 +105,33 @@ For each candidate:
 
 5. Dispatch `pkos:ripple-compiler` for each imported note (sequentially).
 
+5b. **KB Bridge Export** (best-effort): If the imported note's classification + IEF tags match a dev-workflow KB category, also write a copy to `~/.claude/knowledge/`:
+
+   | Classification + Tag Contains | Target Category |
+   |-------------------------------|----------------|
+   | reference + api/sdk/library/framework | `api-usage` |
+   | knowledge + architecture/design/pattern | `architecture` |
+   | knowledge + bug/error/security | `bug-postmortem` |
+   | knowledge + platform/ios/swift | `platform-constraints` |
+
+   Write a simplified version (strip PKOS-specific frontmatter, use dev-workflow format):
+   ```yaml
+   ---
+   category: {mapped-category}
+   keywords: [{IEF tags}]
+   date: {IEF date}
+   source_project: domain-intel-via-pkos
+   pkos_source: "{obsidian_path}"
+   ---
+   # {title}
+
+   {IEF body content}
+   ```
+
+   Target path: `~/.claude/knowledge/{category}/{date}-{slug}.md`
+
+   If the category mapping doesn't match any rule, skip the KB export (the note still lives in PKOS vault). This step failing does not block the import pipeline.
+
 6. Add `id` to `imported_ids` list.
 
 ### Step 5: Update State

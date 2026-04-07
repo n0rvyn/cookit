@@ -113,13 +113,19 @@ topics: [{topics}]
 quality: 0
 citations: 0
 related: [{related_notes}]
-status: seed
+status: seed               # OR needs-reconciliation if conflict detected (see below)
 ---
 
 # {title}
 
 {raw_content}
 ```
+
+**Conflict handling:** If the inbox-processor returned `conflict_status: needs-reconciliation` for this item:
+- Set `status: needs-reconciliation` (instead of `seed`) in the frontmatter
+- Add `conflicts_with: [{conflicts_with paths}]` to the frontmatter
+- Add `conflict_description: "{conflict_description}"` to the frontmatter
+- The note is still written and routed normally — conflicts flag for human review, they do not block ingest.
 
 2. Create Notion Pipeline DB entry via Python API (token and proxy from env):
 ```bash
@@ -210,6 +216,7 @@ Wiki compilation:
   MOCs updated: {count}
   MOCs created: {count}
   Cross-references added: {count}
+  Conflicts flagged: {count} (need human reconciliation)
 
 All items synced to Notion Pipeline DB.
 ```

@@ -92,7 +92,58 @@ source_project: {current project name, optional}
 
 5. Report back: `Saved to {file_path}`
 
+### Step 5: Ripple (Cross-Reference)
+
+After saving, propagate links to related entries in `~/.claude/knowledge/`. Skip this step if the entry was saved to project-local `docs/09-lessons-learned/`.
+
+#### 5a. Find Related Entries
+
+Search for entries sharing keywords with the new entry:
+
+1. Join the new entry's keywords with `|` into a single regex: `Grep(pattern="{kw1}|{kw2}|{kw3}", path="~/.claude/knowledge/", glob="*.md", output_mode="files_with_matches")`
+2. For each matched file (excluding the new entry itself), read its frontmatter `keywords:` line
+3. Count how many of the new entry's keywords appear in the matched file's keywords
+4. Filter to files with >=2 keyword overlaps. Keep at most 5 related entries (sorted by overlap count descending).
+
+If no related entries found, skip to Step 5d.
+
+#### 5b. Add Cross-References
+
+For each related entry:
+
+1. Read the related entry's frontmatter
+2. If the related entry does NOT have a `related:` field:
+   - `Edit` the file to insert `related: [{new-entry-filename}]` after the `date:` line in frontmatter
+3. If the related entry already HAS a `related:` field and the new entry is not listed:
+   - `Edit` the file to append the new entry's filename to the existing `related:` array
+4. Collect all related entry filenames for the new entry
+
+After processing all related entries, `Edit` the new entry's frontmatter to add `related: [{list of related filenames}]` after the `date:` line.
+
+Related entries are referenced by filename only (e.g., `2026-04-07-some-slug.md`), not full paths, since category directories may differ.
+
+#### 5c. Contradiction Flag (best-effort)
+
+For each related entry with >=3 keyword overlaps:
+
+1. Read both entries' body content (below the frontmatter)
+2. If the new entry's core claim or recommendation directly contradicts the related entry (e.g., "use X" vs "avoid X", conflicting root causes for the same symptom):
+   - Append to the new entry's body: `> ⚠️ Potential conflict with [[{related-filename}]] — review both entries.`
+   - Append the same note to the related entry's body (at the end)
+3. Only flag obvious, specific contradictions. Do not flag stylistic differences or different-scope advice.
+
+#### 5d. Report Ripple Results
+
+After the "Saved to {file_path}" message from Step 4, append:
+
+```
+Cross-references: {N} related entries found, {M} mutual links added, {C} contradictions flagged
+```
+
+If no related entries: `Cross-references: no related entries (< 2 keyword overlap)`
+
 ## Completion Criteria
 
 - Entry saved to `~/.claude/knowledge/{category}/` or `docs/09-lessons-learned/` with correct frontmatter
 - User confirmed the draft before saving
+- Related entries (>=2 keyword overlap) have mutual `related:` cross-references in frontmatter

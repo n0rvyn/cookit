@@ -48,6 +48,12 @@ For each topic in the source note:
 - If the new note's content extends, contradicts, or significantly adds to the MOC's `## Overview`, revise the Overview paragraph
 - If contradiction detected: add entry to `## Contradictions & Open Questions`
 - Update `note_count` and `last_compiled` in frontmatter
+- **Update Related MOCs**: After updating the Notes section:
+  1. Read the current MOC's `topic` field
+  2. Scan other MOCs for topic overlap: `Grep(pattern="topic:", path="~/Obsidian/PKOS/80-MOCs", output_mode="content", head_limit=30)`
+  3. For each other MOC: check if any of the source note's `topics` overlap with that MOC's topic
+  4. If overlap found and that MOC is not already listed in `## Related MOCs`: add it as a `[[wikilink]]`
+  5. Also add the current MOC to the other MOC's `## Related MOCs` if not already listed (mutual linking)
 
 **B. No MOC exists, but topic has >=3 notes in vault:**
 ```
@@ -55,7 +61,24 @@ Grep(pattern="topics:.*{topic}", path="~/Obsidian/PKOS/{10-Knowledge,20-Ideas,50
 ```
 If >=3 results: create a new MOC seed page (see MOC format below).
 
+When creating the new MOC, also populate `## Related MOCs`:
+1. Scan existing MOCs: `Grep(pattern="topic:", path="~/Obsidian/PKOS/80-MOCs", output_mode="content", head_limit=30)`
+2. For each existing MOC: check if any of the new MOC's contributing notes share topics with that MOC
+3. If overlap found: add that MOC as a `[[wikilink]]` under `## Related MOCs`
+4. Also add the new MOC to the related MOC's `## Related MOCs` section (mutual linking)
+
 **C. No MOC exists, fewer than 3 notes:** Skip. Not enough material for synthesis.
+
+**D. Backfill check — threshold catch-up:**
+
+After processing all topics from the source note, check for topics that may have crossed the MOC creation threshold without a MOC being created (e.g., notes added before ripple-compiler existed, or earlier ripple runs that failed):
+
+1. For each topic in the source note that had NO MOC in step 2's scan:
+   ```
+   Grep(pattern="topics:.*{topic}", path="~/Obsidian/PKOS/{10-Knowledge,20-Ideas,50-References}", output_mode="files_with_matches")
+   ```
+2. If count >= `moc_creation_threshold` (default 3, from pkos-config.yaml if available) AND no MOC exists for this topic: create MOC following step B logic (including Related MOCs population).
+3. This ensures MOCs are eventually created even if the threshold was crossed during a period when ripple was not running.
 
 ### 4. Add Cross-References
 
