@@ -4,7 +4,7 @@ Indie Toolkit is a mono-repo of AI-facing plugins, skills, agents, and local too
 
 The current codebase contains:
 
-- 10 top-level modules
+- 11 top-level modules
 - 57 skill folders with `SKILL.md`
 - 22 agent files
 - 1 local MCP server (`rag-server`)
@@ -23,6 +23,7 @@ The current codebase contains:
 | `session-intel` | Claude Code plugin | AI session analytics: extract, analyze, and correlate Claude Code and Codex sessions with git history |
 | `youtube-scout` | Claude Code plugin | YouTube video intelligence: scrape, transcript extraction, AI scoring, TOP-5 recommendations + IEF-compliant export |
 | `pkos` | Claude Code plugin | Personal Knowledge Operating System: inbox processing, signal aggregation, digest generation, vault operations |
+| `x-api` | Claude Code plugin + MCP server | X (Twitter) API v2 — exposes 120+ API operations as MCP tools with Bearer Token and OAuth2 PKCE support |
 
 ## Repository Layout
 
@@ -38,6 +39,7 @@ The current codebase contains:
 ├── session-intel/
 ├── youtube-scout/
 ├── pkos/
+├── x-api/
 ├── docs/
 ├── .claude-plugin/   # marketplace manifest
 ├── .codex/           # Codex install docs
@@ -65,6 +67,7 @@ Install any plugin you want:
 /plugin install session-intel@indie-toolkit
 /plugin install youtube-scout@indie-toolkit
 /plugin install pkos@indie-toolkit
+/plugin install x-api@indie-toolkit
 ```
 
 Current marketplace entries from `.claude-plugin/marketplace.json`:
@@ -81,6 +84,7 @@ Current marketplace entries from `.claude-plugin/marketplace.json`:
 | `session-intel` | `1.1.0` | AI session analytics: extract, analyze, correlate sessions with git history | `session-intel/README.md` |
 | `youtube-scout` | `1.0.0` | YouTube video intelligence: scrape, transcript extraction, AI scoring, recommendations + IEF export | `youtube-scout/README.md` |
 | `pkos` | `0.1.0` | Personal Knowledge OS: inbox, signals, digests, vault, profiles, serendipity | — |
+| `x-api` | `1.0.0` | X (Twitter) API v2 MCP server with Bearer Token and OAuth2 PKCE support | `x-api/README.md` |
 
 Note:
 
@@ -144,3 +148,4 @@ Detailed notes live in `docs/README.opencode.md`.
 - `skill-audit/README.md`
 - `domain-intel/README.md`
 - `session-intel/README.md`
+- `x-api/README.md`

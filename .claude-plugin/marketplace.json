@@ -169,6 +169,21 @@
         "channels"
       ],
       "strict": true
+    },
+    {
+      "name": "x-api",
+      "source": "./x-api",
+      "description": "X (Twitter) API v2 MCP server — exposes 120+ API operations as MCP tools with Bearer Token and OAuth2 PKCE support.",
+      "version": "1.0.0",
+      "category": "integration",
+      "tags": [
+        "x",
+        "twitter",
+        "api",
+        "mcp",
+        "social"
+      ],
+      "strict": true
     }
   ]
 }

@@ -41,7 +41,7 @@ jobs:
           set -euo pipefail
 
           MARKET_FILE=".claude-plugin/marketplace.json"
-          ALL_PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "skill-audit" "domain-intel" "session-reflect" "youtube-scout" "pkos" "wechat-bridge")
+          ALL_PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "skill-audit" "domain-intel" "session-reflect" "youtube-scout" "pkos" "wechat-bridge" "x-api")
 
           bump_semver() {
             local version="$1"
