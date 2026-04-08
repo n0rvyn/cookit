@@ -14,6 +14,7 @@ on:
           - mactools
           - product-lens
           - skill-audit
+          - skill-master
           - domain-intel
           - session-reflect
           - youtube-scout
@@ -83,7 +84,7 @@ jobs:
           }
 
           if [[ "$TARGET" == "all" ]]; then
-            PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "skill-audit" "domain-intel" "session-reflect" "youtube-scout" "pkos" "wechat-bridge" "x-api")
+            PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "skill-audit" "skill-master" "domain-intel" "session-reflect" "youtube-scout" "pkos" "wechat-bridge" "x-api")
           else
             PLUGINS=("$TARGET")
           fi

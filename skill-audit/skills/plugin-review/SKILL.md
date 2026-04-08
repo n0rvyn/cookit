@@ -7,6 +7,10 @@ description: "Use when the user says 'review skill', 'review agent', 'review plu
 
 以 Claude Code 执行者视角审查 plugin 产物（skills, agents, hooks, commands），发现逻辑 bug、触发机制问题和执行可行性缺陷。
 
+> **DEPRECATED:** This skill has been absorbed into `skill-master:master`.
+> Use `/master` with review intent instead. This skill remains functional
+> but will not receive updates.
+
 ## Overview
 
 This skill orchestrates plugin review across 9 dimensions. It detects whether the optional `plugin-dev` plugin is installed and routes accordingly:
