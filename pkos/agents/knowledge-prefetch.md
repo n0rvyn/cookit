@@ -25,7 +25,7 @@ You receive:
 1. Extract 3-5 keywords from the query
 2. Search vault frontmatter for topic matches:
    ```
-   Grep(pattern="topics:.*{keyword}", path="~/Obsidian/PKOS/10-Knowledge", output_mode="files_with_matches", head_limit=10)
+   Grep(pattern="tags:.*{keyword}", path="~/Obsidian/PKOS/10-Knowledge", output_mode="files_with_matches", head_limit=10)
    ```
 3. Search vault content for keyword matches:
    ```
@@ -42,11 +42,11 @@ Return a compact list:
 Related PKOS Knowledge ({N} notes found):
 
 1. **{title}** (10-Knowledge/file.md)
-   Topics: {topics} | Quality: {quality} | Citations: {citations}
+   Tags: {tags} | Quality: {quality} | Citations: {citations}
    Key point: {first paragraph or key takeaway}
 
 2. **{title}** (20-Ideas/file.md)
-   Topics: {topics}
+   Tags: {tags}
    Key point: {summary}
 ```
 

@@ -1,7 +1,7 @@
 ---
 name: pkos
 description: "Use when the user says 'pkos', 'knowledge base', '知识库', 'what's in my inbox', 'what do I know about', or wants to interact with their personal knowledge system. Unified entry point for status, query, ingest, and review."
-user_invocable: true
+user-invocable: true
 model: sonnet
 ---
 
@@ -62,7 +62,7 @@ When user provides a topic or question:
 
 1. Search vault frontmatter for topic matches:
    ```
-   Grep(pattern="topics:.*{keyword}", path="~/Obsidian/PKOS", output_mode="files_with_matches", head_limit=10)
+   Grep(pattern="tags:.*{keyword}", path="~/Obsidian/PKOS", output_mode="files_with_matches", head_limit=10)
    ```
 
 2. Search vault content:
@@ -132,3 +132,14 @@ Show the latest lint report:
 
 2. If found: read and display the summary + high-severity items.
 3. If not found: report "No lint data. Lint runs automatically every Sunday, or invoke internally."
+
+### Route: harvest
+
+Trigger: user says "harvest", "scan projects", "import knowledge", "收割"
+
+Invoke the `harvest` skill:
+- No args → full harvest across all projects
+- `--dry-run` → preview only
+- `--project {name}` → single project
+- `--force` → re-import all
+- `--skip-ripple` → skip MOC compilation (faster for bulk)

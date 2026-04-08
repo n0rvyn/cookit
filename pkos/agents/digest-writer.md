@@ -65,7 +65,7 @@ Add these additional sections:
 **Knowledge Growth**: Topic trends, new MOC candidates:
 ```markdown
 ### Knowledge Growth
-- Hottest topics: {topic1} ({N} notes), {topic2} ({N})
+- Hottest tags: {tag1} ({N} notes), {tag2} ({N})
 - New links: {N} total
 - Orphan notes: {N} (consider linking or archiving)
 ```

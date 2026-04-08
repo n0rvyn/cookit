@@ -8,58 +8,99 @@ model: haiku
 
 Obsidian vault operations for the PKOS knowledge graph at `~/Obsidian/PKOS/`.
 
+## Execution Channel
+
+This skill uses a dual-channel approach:
+
+**Primary: Obsidian CLI** (`obsidian-cli` command) — when Obsidian is running, use CLI for all operations. Benefits: instant index updates, backlink tracking, search uses Obsidian's built-in engine.
+
+**Fallback: Direct file operations** (Read/Write/Grep) — when Obsidian is not running or CLI is unavailable.
+
+### Channel Detection
+
+At the start of every vault command, detect which channel to use:
+
+```bash
+obsidian-cli version 2>/dev/null
+```
+
+- Exit code 0 → use CLI channel
+- Non-zero or command not found → use file fallback channel
+
+Cache the result for the duration of the skill invocation (don't re-check per sub-operation).
+
 ## Commands
 
 Parse the user's intent to determine which operation to perform:
 
 ### vault search \<query\>
 
-Full-text search across the vault:
-```
-Grep(pattern="{query}", path="~/Obsidian/PKOS", output_mode="content", context=2, head_limit=20)
+**CLI channel:**
+```bash
+obsidian-cli search query="{query}" vault="PKOS" limit=20
 ```
 
-Also search frontmatter topics:
+Also search frontmatter:
+```bash
+obsidian-cli search-content query="tags:.*{query}" vault="PKOS" limit=10
 ```
-Grep(pattern="topics:.*{query}", path="~/Obsidian/PKOS", output_mode="files_with_matches")
+
+**File fallback:**
+```
+Grep(pattern="{query}", path="~/Obsidian/PKOS", output_mode="content", context=2, head_limit=20)
+Grep(pattern="tags:.*{query}", path="~/Obsidian/PKOS", output_mode="files_with_matches")
+```
+
+Also search frontmatter tags:
+```
+Grep(pattern="tags:.*{query}", path="~/Obsidian/PKOS", output_mode="files_with_matches")
 ```
 
 Present results grouped by directory (10-Knowledge, 20-Ideas, etc.) with matched context.
 
 ### vault read \<path\>
 
-Read a note's full content:
+**CLI channel:**
+```bash
+obsidian-cli read file="{path}" vault="PKOS"
+```
+
+**File fallback:**
 ```
 Read(file_path="~/Obsidian/PKOS/{path}")
 ```
-
-If path is ambiguous (no directory prefix), search for it:
-```
-Glob(pattern="**/{path}*", path="~/Obsidian/PKOS")
-```
+If path is ambiguous: `Glob(pattern="**/{path}*", path="~/Obsidian/PKOS")`
 
 ### vault write \<path\> \<content\>
 
-Write or update a note. If the file exists, confirm before overwriting.
+**CLI channel:**
+```bash
+obsidian-cli create name="{title}" content="{content}" vault="PKOS" silent
+```
+For updates (file exists):
+```bash
+obsidian-cli append file="{path}" content="{content}" vault="PKOS"
+```
+Or for full replacement, use file fallback (CLI doesn't support full overwrite cleanly).
 
-Use the Write tool with the full path: `~/Obsidian/PKOS/{path}`
+**File fallback:**
+Use the Write tool with `~/Obsidian/PKOS/{path}`. Confirm before overwriting.
 
 Ensure frontmatter is valid YAML if present.
 
 ### vault frontmatter \<path\> [--set key=value]
 
-Read or update frontmatter fields:
+**CLI channel:**
+```bash
+obsidian-cli property:set name="{key}" value="{value}" file="{path}" vault="PKOS"
+```
 
-**Read**: Parse YAML frontmatter between `---` markers. Display as table.
-
-**Update** (with --set): Parse existing frontmatter, update specified key, write back.
-For numeric fields (quality, citations): parse as number.
-For array fields (topics, related): parse as YAML array.
-For string fields (status, type): direct replacement.
+**File fallback:**
+Parse YAML frontmatter manually as before.
 
 ### vault stats
 
-Vault statistics:
+Vault statistics (file operations only — CLI doesn't expose aggregate stats):
 ```bash
 echo "Notes by directory:"
 for dir in 10-Knowledge 20-Ideas 30-Projects 40-People 50-References 60-Digests 70-Reviews 80-MOCs; do
@@ -81,12 +122,12 @@ For each note in 10-Knowledge, check if any other note links to it.
 ### vault related \<path\>
 
 Find notes related to a given note:
-1. Read the note's frontmatter `topics` array
-2. Search for other notes with overlapping topics
+1. Read the note's frontmatter `tags` array
+2. Search for other notes with overlapping tags
 3. Rank by overlap count, return top 5
 
 ```
-Grep(pattern="topics:.*{topic1}|topics:.*{topic2}", path="~/Obsidian/PKOS", output_mode="files_with_matches")
+Grep(pattern="tags:.*{topic1}|tags:.*{topic2}", path="~/Obsidian/PKOS", output_mode="files_with_matches")
 ```
 
 ## Vault Structure Reference

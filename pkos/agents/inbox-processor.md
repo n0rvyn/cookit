@@ -45,9 +45,9 @@ If `raw_type` is `url`, fetch the URL with WebFetch to get title and summary bef
 For each item, generate:
 - **title**: Concise descriptive title (not the raw text). If raw_content starts with a clear title, use it.
 - **keywords**: 3-5 keywords for search
-- **topics**: 2-4 topic tags. Prefer existing topics from the vault. To find existing topics:
+- **tags**: 2-4 topic tags. Prefer existing tags from the vault. To find existing tags:
   ```
-  Grep(pattern="^topics:", path="~/Obsidian/PKOS/10-Knowledge", output_mode="content", head_limit=50)
+  Grep(pattern="^tags:", path="~/Obsidian/PKOS/10-Knowledge", output_mode="content", head_limit=50)
   ```
   Extract topic names from results and reuse matching ones.
 - **urgency**: low (default) | medium (time-sensitive) | high (blocking or deadline-mentioned)
@@ -97,7 +97,7 @@ decisions:
     classification: knowledge
     title: "Descriptive Title Here"
     keywords: [keyword1, keyword2, keyword3]
-    topics: [existing-topic, new-topic]
+    tags: [existing-tag, new-tag]
     urgency: low
     related_notes:
       - "10-Knowledge/related-note.md"
@@ -109,7 +109,7 @@ decisions:
     classification: idea
     title: "Product Idea Title"
     keywords: [idea1, idea2]
-    topics: [product, feature]
+    tags: [product, feature]
     urgency: medium
     related_notes: []
     obsidian_path: "20-Ideas/product-idea-title.md"

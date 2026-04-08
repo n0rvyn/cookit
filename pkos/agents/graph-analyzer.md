@@ -35,18 +35,18 @@ Glob(pattern="**/*.md", path="~/Obsidian/PKOS/50-References")
 For each note, read and extract:
 - **path**: relative path from vault root
 - **title**: from `# heading` or filename
-- **topics**: from frontmatter `topics: [...]`
+- **tags**: from frontmatter `tags: [...]`
 - **created**: from frontmatter `created: YYYY-MM-DD`
 - **links_out**: list of `[[wikilink]]` targets found in body
 
-Build a map: `{path → {title, topics, created, links_out}}`
+Build a map: `{path → {title, tags, created, links_out}}`
 
 ### 2. Compute Similarity Matrix
 
 For each pair (A, B) where A ≠ B:
-- Skip if len(topics_A) == 0 or len(topics_B) == 0
-- Compute intersection: topics in both A and B
-- Compute union: topics in either A or B
+- Skip if len(tags_A) == 0 or len(tags_B) == 0
+- Compute intersection: tags in both A and B
+- Compute union: tags in either A or B
 - Jaccard = |intersection| / |union|
 - Only keep pairs where Jaccard > 0.3
 
@@ -74,14 +74,14 @@ discoveries:
   - note_a:
       path: "10-Knowledge/swift-concurrency.md"
       title: "Swift Concurrency"
-      topics: [swift, concurrency, actors]
+      tags: [swift, concurrency, actors]
       created: "2025-12-15"
     note_b:
       path: "20-Ideas/local-agent-orchestration.md"
       title: "Local Agent Orchestration"
-      topics: [agents, concurrency, local-llm]
+      tags: [agents, concurrency, local-llm]
       created: "2026-03-20"
-    shared_topics: [concurrency]
+    shared_tags: [concurrency]
     jaccard: 0.33
     temporal_distance_days: 96
     surprise_score: 0.83
@@ -99,7 +99,7 @@ stats:
     20-Ideas: {N}
     50-References: {N}
   total_links: {N}
-  avg_topics_per_note: {N}
+  avg_tags_per_note: {N}
   orphan_notes: [{paths}]
   most_connected: [{path: link_count}]
   topic_distribution: [{topic: note_count}]

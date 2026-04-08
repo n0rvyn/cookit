@@ -10,7 +10,7 @@ Consumes insights from domain-intel's insights directory. Maintains an imported-
 
 ## Configuration
 
-The skill reads the intel source path from `~/Obsidian/PKOS/.state/pkos-config.yaml`:
+The skill reads the intel source path from `~/.claude/pkos/config.yaml`:
 
 ```yaml
 intel_sources:
@@ -21,8 +21,8 @@ intel_sources:
 ```
 
 Validation:
-- If config file does not exist → log `[pkos] intel-sync: ~/Obsidian/PKOS/.state/pkos-config.yaml not found. Copy from pkos/config/pkos-config.template.yaml and configure.` → stop.
-- If `insights_path` is empty or missing → log `[pkos] intel-sync: insights_path not configured. Set intel_sources.domain_intel.insights_path in pkos-config.yaml.` → stop.
+- If config file does not exist → log `[pkos] intel-sync: ~/.claude/pkos/config.yaml not found. Copy from pkos/config/pkos-config.template.yaml and configure.` → stop.
+- If `insights_path` is empty or missing → log `[pkos] intel-sync: insights_path not configured. Set intel_sources.domain_intel.insights_path in ~/.claude/pkos/config.yaml.` → stop.
 - If resolved path does not exist → log `[pkos] intel-sync: insights path {path} does not exist.` → stop.
 
 ## Process
@@ -75,21 +75,39 @@ For each candidate:
    - `security`, `performance`, `devex` → `knowledge`
    - `business`, `community` → `reference`
 
-2. Map IEF fields to PKOS frontmatter:
+2. Map IEF fields to PKOS frontmatter and body:
    ```yaml
    ---
    type: {classification}
    source: domain-intel
    created: {IEF date field}
-   topics: [{IEF tags, mapped to existing vault topics where possible}]
+   tags: [{IEF tags, mapped to existing vault tags where possible}]
    quality: 0
    citations: 0
    related: []
    status: seed
    ief_id: "{IEF id}"
    ief_source: "{IEF source}"
+   aliases: []
    ---
+
+   # {title}
+
+   > [!insight] Key Insight
+   > {IEF Insight field — the single most valuable takeaway}
+
+   **Problem:** {IEF Problem field}
+
+   **Technology:** {IEF Technology field}
+
+   **Difference:** {IEF Difference field}
+
+   ## Connections
+
+   {If IEF category maps to a known MOC topic, add: `- See also: [[MOC-{topic}]]`}
    ```
+
+   > Format reference: see `references/obsidian-format.md` for wikilink and callout conventions.
 
 3. Write note to Obsidian:
    - `reference` → `~/Obsidian/PKOS/50-References/{title-slug}.md`

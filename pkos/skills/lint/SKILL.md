@@ -54,11 +54,11 @@ health_score: {score}
 If `--fix` flag is set, apply these mechanical fixes:
 
 **Orphan notes (low):**
-- For each orphan, find notes with >=2 overlapping topics
+- For each orphan, find notes with >=2 overlapping tags
 - Add mutual entries to `related:` frontmatter arrays
 
 **Frontmatter incomplete (medium):**
-- Missing `topics`: infer from content keywords, add to frontmatter
+- Missing `tags`: infer from content keywords, add to frontmatter
 - Missing `status`: set to `seed`
 - Missing `type`: infer from directory (10-Knowledge → knowledge, etc.)
 

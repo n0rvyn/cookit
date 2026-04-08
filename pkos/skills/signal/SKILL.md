@@ -39,7 +39,7 @@ grep -rl "created: {date_pattern}" ~/Obsidian/PKOS/10-Knowledge/ ~/Obsidian/PKOS
 ```
 
 For each note found:
-- Count `topics` from frontmatter → topic hotness distribution
+- Count `tags` from frontmatter → topic hotness distribution
 - Count `[[wikilinks]]` in body → new links added
 - Find notes with zero incoming links → orphan count
 
@@ -97,7 +97,7 @@ Pipeline:
 
 Knowledge Graph:
   New notes: {N} | New links: {N} | Orphans: {N}
-  Hottest topics: {topic1} ({N}), {topic2} ({N})
+  Hottest tags: {tag1} ({N}), {tag2} ({N})
 
 Signal written to .signals/{date}-feedback.yaml
 ```

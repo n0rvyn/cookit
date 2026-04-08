@@ -19,7 +19,7 @@ You are the PKOS ripple compiler. When a new note lands in the vault, you propag
 You receive:
 - `note_path`: path to the newly created source note (relative to vault root)
 - `title`: note title
-- `topics`: array of topic tags from frontmatter
+- `tags`: array of tag names from frontmatter
 - `related_notes`: array of related note paths (from inbox-processor)
 
 ## Process
@@ -30,7 +30,7 @@ Read `~/Obsidian/PKOS/{note_path}` to understand its content.
 
 ### 2. Scan Existing MOCs
 
-For each topic in the note's `topics` array:
+For each tag in the note's `tags` array:
 
 ```
 Glob(pattern="**/*.md", path="~/Obsidian/PKOS/80-MOCs")
@@ -51,19 +51,19 @@ For each topic in the source note:
 - **Update Related MOCs**: After updating the Notes section:
   1. Read the current MOC's `topic` field
   2. Scan other MOCs for topic overlap: `Grep(pattern="topic:", path="~/Obsidian/PKOS/80-MOCs", output_mode="content", head_limit=30)`
-  3. For each other MOC: check if any of the source note's `topics` overlap with that MOC's topic
+  3. For each other MOC: check if any of the source note's `tags` overlap with that MOC's topic
   4. If overlap found and that MOC is not already listed in `## Related MOCs`: add it as a `[[wikilink]]`
   5. Also add the current MOC to the other MOC's `## Related MOCs` if not already listed (mutual linking)
 
 **B. No MOC exists, but topic has >=3 notes in vault:**
 ```
-Grep(pattern="topics:.*{topic}", path="~/Obsidian/PKOS/{10-Knowledge,20-Ideas,50-References}", output_mode="files_with_matches")
+Grep(pattern="tags:.*{tag}", path="~/Obsidian/PKOS/{10-Knowledge,20-Ideas,50-References}", output_mode="files_with_matches")
 ```
 If >=3 results: create a new MOC seed page (see MOC format below).
 
 When creating the new MOC, also populate `## Related MOCs`:
 1. Scan existing MOCs: `Grep(pattern="topic:", path="~/Obsidian/PKOS/80-MOCs", output_mode="content", head_limit=30)`
-2. For each existing MOC: check if any of the new MOC's contributing notes share topics with that MOC
+2. For each existing MOC: check if any of the new MOC's contributing notes share tags with that MOC
 3. If overlap found: add that MOC as a `[[wikilink]]` under `## Related MOCs`
 4. Also add the new MOC to the related MOC's `## Related MOCs` section (mutual linking)
 
@@ -71,13 +71,13 @@ When creating the new MOC, also populate `## Related MOCs`:
 
 **D. Backfill check — threshold catch-up:**
 
-After processing all topics from the source note, check for topics that may have crossed the MOC creation threshold without a MOC being created (e.g., notes added before ripple-compiler existed, or earlier ripple runs that failed):
+After processing all tags from the source note, check for tags that may have crossed the MOC creation threshold without a MOC being created (e.g., notes added before ripple-compiler existed, or earlier ripple runs that failed):
 
 1. For each topic in the source note that had NO MOC in step 2's scan:
    ```
-   Grep(pattern="topics:.*{topic}", path="~/Obsidian/PKOS/{10-Knowledge,20-Ideas,50-References}", output_mode="files_with_matches")
+   Grep(pattern="tags:.*{tag}", path="~/Obsidian/PKOS/{10-Knowledge,20-Ideas,50-References}", output_mode="files_with_matches")
    ```
-2. If count >= `moc_creation_threshold` (default 3, from pkos-config.yaml if available) AND no MOC exists for this topic: create MOC following step B logic (including Related MOCs population).
+2. If count >= `moc_creation_threshold` (default 3, from ~/.claude/pkos/config.yaml if available) AND no MOC exists for this topic: create MOC following step B logic (including Related MOCs population).
 3. This ensures MOCs are eventually created even if the threshold was crossed during a period when ripple was not running.
 
 ### 4. Add Cross-References
@@ -92,9 +92,14 @@ For each note in `related_notes`:
 
 Also search for additional related notes not found by inbox-processor:
 ```
-Grep(pattern="topics:.*{topic1}|topics:.*{topic2}", path="~/Obsidian/PKOS/{10-Knowledge,20-Ideas,50-References}", output_mode="files_with_matches", head_limit=10)
+Grep(pattern="tags:.*{tag1}|tags:.*{tag2}", path="~/Obsidian/PKOS/{10-Knowledge,20-Ideas,50-References}", output_mode="files_with_matches", head_limit=10)
 ```
-For notes with >=2 topic overlap that aren't already linked: add mutual `related:` entries.
+For notes with >=2 tag overlap that aren't already linked: add mutual `related:` entries.
+
+4b. Ensure the source note body has a `## Connections` section.
+    - If it exists: append any new related note wikilinks that aren't already listed
+    - If it doesn't exist: create it before the end of file with wikilinks for all `related:` entries
+    Format: `- [[{note-title}]]` (filename without path/extension)
 
 ### 5. Update Entity Pages
 
@@ -126,6 +131,7 @@ When creating a new MOC:
 ---
 type: moc
 topic: {topic-slug}
+tags: [{topic-slug}]
 note_count: {N}
 last_compiled: {YYYY-MM-DD}
 ---
@@ -144,7 +150,7 @@ last_compiled: {YYYY-MM-DD}
 {Any detected contradictions between notes, or open questions that emerge from the synthesis. If none: "None detected."}
 
 ## Related MOCs
-{Links to MOCs with overlapping topics. If none: "None yet."}
+{Links to MOCs with overlapping tags. If none: "None yet."}
 ```
 
 ## Rules
@@ -152,5 +158,5 @@ last_compiled: {YYYY-MM-DD}
 - NEVER fabricate content. Every statement in a MOC Overview must be traceable to a specific note.
 - When revising a MOC Overview, preserve existing accurate statements. Add/modify only what the new note changes.
 - Cross-reference additions are mechanical (add to `related:` array). Do not rewrite note content.
-- If a note's `topics` array is empty, skip ripple for that note.
+- If a note's `tags` array is empty, skip ripple for that note.
 - Log every action to ripple-log.yaml for digest consumption.

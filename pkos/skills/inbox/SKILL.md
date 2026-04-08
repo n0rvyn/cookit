@@ -48,9 +48,29 @@ Present a summary to the user:
   🔔 Reminders: {count}
   📝 Notes: {count}
   🎤 Voice: {count}
+  🌐 Web (cleaned): {count}
 ```
 
 If zero items found, report "Inbox is empty." and stop.
+
+### Step 1.5: Clean Web Content (URL items only)
+
+For each inbox item where `raw_type` is `url` or `raw_content` contains a URL (http:// or https://):
+
+1. Extract the URL from the content
+2. Run defuddle to get clean markdown:
+   ```bash
+   defuddle parse "{url}" --md
+   ```
+3. If defuddle succeeds (exit code 0):
+   - Replace `raw_content` with defuddle output
+   - Set `raw_type` to `cleaned_web`
+   - Preserve the original URL in a new field `source_url`
+4. If defuddle fails (URL unreachable, timeout, etc.):
+   - Keep original `raw_content` unchanged
+   - Log: `[inbox] defuddle failed for {url}: {error}. Using raw content.`
+
+> Defuddle removes navigation, ads, and boilerplate from web pages, reducing noise before classification. Install: `npm install -g defuddle`
 
 ### Step 2: Transcribe Voice Files
 
@@ -87,7 +107,7 @@ decisions:
     classification: knowledge
     title: "Generated Title"
     keywords: [k1, k2, k3]
-    topics: [topic1, topic2]
+    tags: [tag1, tag2]
     urgency: low
     related_notes: ["10-Knowledge/related-note.md"]
     obsidian_path: "10-Knowledge/generated-title.md"
@@ -109,17 +129,28 @@ Route each item based on its classification. Different types go to different des
 type: {classification}
 source: {source}
 created: {today's date}
-topics: [{topics}]
+tags: [{tags}]
 quality: 0
 citations: 0
 related: [{related_notes}]
 status: seed               # OR needs-reconciliation if conflict detected (see below)
+aliases: []
 ---
 
 # {title}
 
+> [!insight] Source
+> Captured from {source} on {today's date}.
+
 {raw_content}
+
+## Connections
+
+{For each item in related_notes, output: `- [[{note-title}]]` using just the filename without path or extension}
+{If inbox-processor identified a matching MOC topic, add: `- See also: [[MOC-{topic}]]`}
 ```
+
+> Format reference: see `references/obsidian-format.md` for wikilink and callout conventions.
 
 **Conflict handling:** If the inbox-processor returned `conflict_status: needs-reconciliation` for this item:
 - Set `status: needs-reconciliation` (instead of `seed`) in the frontmatter
@@ -127,12 +158,15 @@ status: seed               # OR needs-reconciliation if conflict detected (see b
 - Add `conflict_description: "{conflict_description}"` to the frontmatter
 - The note is still written and routed normally — conflicts flag for human review, they do not block ingest.
 
+> [!warning] Conflict Detected
+> Conflicts with [[{conflicts_with note title}]]: {conflict_description}
+
 2. Create Notion Pipeline DB entry via Python API (token and proxy from env):
 ```bash
 NO_PROXY="*" python3 ~/.claude/skills/notion/scripts/notion_api.py create-db-item \
   32a1bde4-ddac-81ff-8f82-f2d8d7a361d7 \
   "{title}" \
-  --props '{"Status": "inbox", "Source": "{source}", "Type": "{classification}", "Topics": "{topics_csv}", "Priority": "{urgency}"}'
+  --props '{"Status": "inbox", "Source": "{source}", "Type": "{classification}", "Topics": "{tags_csv}", "Priority": "{urgency}"}'
 ```
 Note the returned page ID from output.
 
@@ -150,7 +184,7 @@ NO_PROXY="*" python3 ~/.claude/skills/notion/scripts/notion_api.py update-db-ite
 NO_PROXY="*" python3 ~/.claude/skills/notion/scripts/notion_api.py create-db-item \
   32a1bde4-ddac-81ff-8f82-f2d8d7a361d7 \
   "{title}" \
-  --props '{"Status": "actionable", "Source": "{source}", "Type": "task", "Topics": "{topics_csv}", "Priority": "{urgency}"}'
+  --props '{"Status": "actionable", "Source": "{source}", "Type": "task", "Topics": "{tags_csv}", "Priority": "{urgency}"}'
 ```
 
 2. If urgency is high or a due date is mentioned, create a Reminder:
@@ -193,7 +227,7 @@ Dispatch `pkos:ripple-compiler` agent with:
 ```yaml
 note_path: "{obsidian_path}"
 title: "{title}"
-topics: [{topics from inbox-processor decision}]
+tags: [{tags from inbox-processor decision}]
 related_notes: [{related_notes from inbox-processor decision}]
 ```
 

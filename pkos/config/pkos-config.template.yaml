@@ -1,5 +1,5 @@
 # PKOS Configuration
-# Copy this file to ~/Obsidian/PKOS/.state/pkos-config.yaml and customize.
+# Copy this file to ~/.claude/pkos/config.yaml and customize.
 
 # External intelligence source integration
 intel_sources:

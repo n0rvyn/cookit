@@ -17,32 +17,33 @@ Discover surprising cross-domain connections in the Obsidian PKOS vault using me
 
 ### Step 1: Build Note Index
 
-Dispatch `pkos:graph-analyzer` agent to scan the vault and build a note index with topics and link structure.
+Dispatch `pkos:graph-analyzer` agent to scan the vault and build a note index with tags and link structure.
 
 Alternatively, scan directly:
 
 ```bash
-# Find all notes with frontmatter
-find ~/Obsidian/PKOS/{10-Knowledge,20-Ideas,50-References} -name "*.md" 2>/dev/null
+# Find all notes with frontmatter, including cross-project harvested docs
+find ~/Obsidian/PKOS/{10-Knowledge,20-Ideas,50-References,30-Projects} -name "*.md" 2>/dev/null
 ```
 
 For each note, extract:
 - File path
-- `topics` array from frontmatter
+- `tags` array from frontmatter
 - `created` date from frontmatter
 - Wikilinks (`[[note-name]]`) in body
+- `harvest_project` from frontmatter (if present — indicates a cross-project note)
 
 ### Step 2: Compute Topic Similarity
 
 For each pair of notes (A, B):
-- Compute Jaccard coefficient: `|topics_A ∩ topics_B| / |topics_A ∪ topics_B|`
+- Compute Jaccard coefficient: `|tags_A ∩ tags_B| / |tags_A ∪ tags_B|`
 - Only consider pairs where Jaccard > 0.3 (at least 30% topic overlap)
 
 ### Step 3: Filter for Surprise
 
 A pair is "surprising" if:
 
-**Structural distance**: Notes A and B share topics but are NOT directly linked (no `[[A]]` in B or `[[B]]` in A). The more topic overlap WITHOUT a direct link = more surprising.
+**Structural distance**: Notes A and B share tags but are NOT directly linked (no `[[A]]` in B or `[[B]]` in A). The more topic overlap WITHOUT a direct link = more surprising.
 
 **Temporal distance** (bonus): One note created within last 7 days, the other created > `--min-age` days ago. This catches "old idea meets new information" connections.
 
@@ -59,9 +60,14 @@ Sort by surprise_score descending. Select top `--count` pairs.
 ### Step 5: Generate Explanations
 
 For each selected pair, generate a one-paragraph explanation:
-- What topics they share
+- What tags they share
 - Why they're not obviously connected (different directories, different time periods)
 - What the connection might imply (potential insight, action item, or new research direction)
+
+If either note has `harvest_project` set, enhance the explanation:
+- Mention which project(s) the notes come from
+- Highlight that this is a cross-project connection
+- Format: "**Cross-project insight:** {note_A} from {project_A} connects to {note_B} from {project_B / PKOS vault} via shared tags {tags}. This suggests {potential insight}."
 
 ### Step 6: Output
 
@@ -79,11 +85,13 @@ For each selected pair, generate a one-paragraph explanation:
 - Creating links between these notes
 - Exploring the connections in a Canvas board
 - Adding to this week's digest
+
+Cross-project connections: {count of pairs where at least one note is from 30-Projects/}
 ```
 
 Write discoveries to `~/Obsidian/PKOS/70-Reviews/serendipity-{date}.md` for the weekly digest to pick up.
 
 ## Algorithm Notes
 
-- Current: Metadata similarity (Jaccard on topics). Fast, uses existing frontmatter.
+- Current: Metadata similarity (Jaccard on tags). Fast, uses existing frontmatter.
 - Future upgrade path: Embedding-based similarity for deeper semantic connections (issue #2).

@@ -27,7 +27,7 @@ Filter to files within the --days window. If no signal files found, report "No s
 ### Step 2: Dispatch Signal Aggregator
 
 For weekly analysis, dispatch `pkos:signal-aggregator` agent with accumulated signal data. The agent returns:
-- Rising/declining topics
+- Rising/declining tags
 - Source health assessments
 - Concrete recommendations
 
@@ -78,7 +78,7 @@ For LENS.md updates:
 
 For FOCUS.md updates:
 - Read existing FOCUS.md
-- Add new topics / adjust weights
+- Add new tags / adjust weights
 - Write back
 
 Report what was changed.

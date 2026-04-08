@@ -32,7 +32,7 @@ Glob(pattern="*-feedback.yaml", path="~/Obsidian/PKOS/.signals")
 ### 2. Trend Detection
 
 Across the window:
-- **Rising topics**: Topics with increasing note count day-over-day
+- **Rising tags**: Tags with increasing note count day-over-day
 - **Declining sources**: Sources with increasing archive rate
 - **Knowledge gaps**: Repeated search misses on same keywords
 - **Graph growth**: New notes vs orphan ratio trend
@@ -60,7 +60,7 @@ Return structured analysis:
 ```yaml
 period: "{start_date} to {end_date}"
 trends:
-  rising_topics: [{topic: count_increase}]
+  rising_tags: [{tag: count_increase}]
   declining_sources: [{source: archive_rate_increase}]
 source_health:
   - source: voice

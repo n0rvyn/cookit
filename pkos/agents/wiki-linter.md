@@ -29,7 +29,7 @@ Glob(pattern="**/*.md", path="~/Obsidian/PKOS/40-People")
 
 For each note, extract:
 - path, title (from `# heading` or filename)
-- frontmatter fields: type, topics, created, quality, citations, related, status
+- frontmatter fields: type, tags, created, quality, citations, related, status
 - outgoing wikilinks: `[[target]]` patterns in body
 - incoming wikilinks: count via Grep
 
@@ -73,8 +73,8 @@ For each outgoing wikilink `[[target]]` in any note:
 ### 6. Check: Frontmatter Inconsistencies
 
 For each note in 10/20/50:
-- Missing required fields: type, source, created, topics, status
-- `topics` is empty array or missing
+- Missing required fields: type, source, created, tags, status
+- `tags` is empty array or missing
 - `type` doesn't match directory (e.g., `type: idea` in 10-Knowledge/)
 
 ### 7. Check: MOC Staleness
@@ -122,7 +122,7 @@ issues:
       suggestion: "Create MOC for {topic} ({N} notes)"
     - type: frontmatter_incomplete
       note: "{path}"
-      missing_fields: [topics, status]
+      missing_fields: [tags, status]
     - type: moc_stale
       moc: "{path}"
       expected_count: {N}
@@ -131,7 +131,7 @@ issues:
   low:
     - type: orphan
       note: "{path}"
-      suggestion: "Add to related notes with overlapping topics: [{paths}]"
+      suggestion: "Add to related notes with overlapping tags: [{paths}]"
     - type: stale
       note: "{path}"
       created: "{date}"
