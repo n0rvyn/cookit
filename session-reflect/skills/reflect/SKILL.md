@@ -19,6 +19,21 @@ Parse from user input:
 
 Also check `~/.claude/session-reflect.local.md` for configuration overrides (YAML frontmatter with `default_days`, `include_codex`, `projects` fields). If file doesn't exist, use defaults.
 
+## Arguments (query mode)
+
+Query mode is triggered when any of these flags are present:
+- `--dimension DIMENSION`: Query by dimension (token_audit, session_outcomes, session_features, context_gaps, rhythm_stats, skill_invocations, corrections)
+- `--min-significance N`: Return sessions with significance >= N
+- `--outcome VALUE`: Return sessions with specific outcome (completed, interrupted, failed)
+- `--project-complexity OP:VALUE`: Return sessions by complexity threshold (e.g., gt:0.8, lt:0.3, eq:0.5)
+
+When query flags are present, Steps 1-7 are skipped and the skill goes directly to Step 9 (Query Execution).
+
+## Query Mode Routing
+
+If any query flag is present (`--dimension`, `--min-significance`, `--outcome`, `--project-complexity`):
+Skip to Step 9 (Query Execution)
+
 ## Process
 
 ### Step 1: Discover Sessions
@@ -117,6 +132,53 @@ After Step 5 (default mode only), check if growth tracking is possible:
    - Dispatch `session-reflect:growth-tracker` agent with current reflection + previous reflections + profile
    - Append growth observations to the output
 3. If <3 files: append note "Growth tracking will activate after 3+ reflections."
+
+### Step 7: Routing
+
+If any query flag is present:
+Skip to Step 9
+
+Otherwise:
+Continue to Step 8 (Insight Export)
+
+### Step 8: Insight Export
+
+After coaching feedback is saved, export high-significance sessions as IEF for PKOS.
+
+1. Query sessions.db for insights from the analyzed set:
+   ```bash
+   python3 ${CLAUDE_PLUGIN_ROOT}/scripts/sessions_db.py --query-insights --min-significance 3 --limit 20
+   ```
+
+2. If insights are returned (non-empty list):
+   - Dispatch `session-reflect:insight-exporter` agent with the insights JSON
+   - Agent writes IEF files to `~/.claude/session-reflect/insights/{YYYY-MM}/`
+   - Report: "Exported {N} insights to PKOS intel queue."
+
+3. If no insights (empty list): skip silently.
+
+### Step 9: Query Execution
+
+When query flags are present (bypass Steps 1-7):
+
+1. Determine query type from flags:
+   - `--dimension`: call `sessions_db.py --query dimension --dimension {dim}`
+   - `--min-significance`: call `sessions_db.py --query significance --min-sig {N}`
+   - `--outcome`: call `sessions_db.py --query outcomes --outcome {val}`
+   - `--project-complexity gt:0.8`: call `sessions_db.py --query complexity --op gt --value 0.8`
+
+2. Build and execute the sessions_db.py command:
+   ```bash
+   python3 ${CLAUDE_PLUGIN_ROOT}/scripts/sessions_db.py --query {type} [filters]
+   ```
+
+3. Parse JSON results and format as readable data table:
+   - For `--dimension`: group by dimension field, show session_id, project, date, key metric
+   - For `--outcome`: show session list with outcome details
+   - For `--project-complexity`: sort by complexity descending, show top sessions
+   - For `--min-significance`: show sessions with significance scores
+
+4. Present formatted table to user. No coaching feedback in query mode.
 
 ## Error Handling
 

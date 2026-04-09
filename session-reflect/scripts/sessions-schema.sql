@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS rhythm_stats (
 CREATE TABLE IF NOT EXISTS analysis_meta (
     session_id        TEXT PRIMARY KEY,
     analyzer_version  TEXT,             -- e.g. '2.1.0'
-    parsed_fields     INTEGER,          -- bitmask of which fields are populated
+    parsed_fields     INTEGER,          -- significance score (3-5), pre-computed by session-parser
     FOREIGN KEY (session_id) REFERENCES sessions(session_id)
 );
 

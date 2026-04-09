@@ -4,6 +4,7 @@
 import argparse
 import json
 import os
+import subprocess
 import sys
 from collections import Counter
 from datetime import datetime
@@ -209,6 +210,11 @@ def main():
         default=None,
         help="Path to sessions.db to upsert results",
     )
+    parser.add_argument(
+        "--enrich",
+        action="store_true",
+        help="Invoke session-parser agent for dimension enrichment",
+    )
     args = parser.parse_args()
 
     result = parse_codex_session(args.input)
@@ -235,6 +241,36 @@ def main():
         for name in result.get("tools", {}).get("sequence", []):
             tool_list.append({"tool_name": name, "file_path": None, "is_error": 0})
         sessions_db.upsert_tool_calls(result["session_id"], tool_list)
+
+    if args.enrich:
+        # sessions_db needed for enrich_session
+        sys.path.insert(0, str(Path(__file__).parent))
+        import sessions_db
+        # Read session-parser.md as system prompt
+        agent_path = Path(__file__).parent.parent / "agents" / "session-parser.md"
+        with open(agent_path) as f:
+            system_prompt = f.read()
+
+        # Invoke LLM with session JSON as user input
+        user_input = json.dumps(result, ensure_ascii=False)
+        proc = subprocess.run(
+            ["claude", "-p", "--system", system_prompt, user_input],
+            capture_output=True,
+            text=True,
+        )
+        if proc.returncode != 0:
+            print(f"Warning: LLM enrichment failed: {proc.stderr}", file=sys.stderr)
+        else:
+            # Parse enriched response JSON
+            try:
+                enriched = json.loads(proc.stdout.strip())
+                if "dimensions" in enriched:
+                    sessions_db.init_db()
+                    sessions_db.enrich_session(result["session_id"], enriched.get("dimensions", {}))
+                # Replace result with enriched output
+                result = enriched
+            except json.JSONDecodeError as e:
+                print(f"Warning: failed to parse enriched JSON: {e}", file=sys.stderr)
 
     output = json.dumps(result, indent=2, ensure_ascii=False)
     if args.output:

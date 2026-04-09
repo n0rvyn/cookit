@@ -147,3 +147,88 @@ For each gap:
 - `suggestion`: concrete action the user can take next time
 
 If no gaps detected, return empty array.
+
+## Output Schema
+
+Your output must be a JSON block with the following top-level structure:
+
+```json
+{
+  "session_id": "...",
+  "significance": 4,
+  "dimensions": {
+    "context_gaps": [...],
+    "token_audit": {...},
+    "session_outcomes": {...},
+    "skill_invocations": [...],
+    "error_patterns": [...],
+    "file_graph": [...],
+    "rhythm_stats": {...},
+    "session_features": {...}
+  }
+}
+```
+
+All 10 new dimensions must appear under the `dimensions` key. The `significance` field (integer 3-5) is required at the top level.
+
+## Dimension Extraction
+
+When analyzing a session, extract and include these 10 new dimensions in your output JSON under a `dimensions` key. The top-level output must also include `significance` (3-5 integer).
+
+### context_gaps
+Identify turns where the user had to re-supply information that should have been inferred or provided proactively.
+- `gap_turn`: turn number where the gap occurred
+- `missing_info`: one of 'error_msg'|'file_context'|'goal_detail'|'constraint'
+- `described_turn`: turn number where the missing info was finally provided
+
+### token_audit
+Calculate token efficiency metrics from available data.
+- `total_tokens`: sum of tokens_in + tokens_out
+- `cache_hit_rate`: cache_read / (cache_read + cache_create) if available
+- `wasted_tokens`: estimated tokens from repeated context or redundant explanations
+- `efficiency_score`: 0-1 score; 1 = perfect efficiency, 0 = high waste
+
+### session_outcomes
+Classify how the session ended.
+- `outcome`: 'completed'|'interrupted'|'failed'
+- `end_trigger`: 'user_abrupt'|'goal_achieved'|'build_failure_loop'|'max_turns'
+- `last_tool`: tool name of the last tool call in the session
+- `satisfaction_signal`: 1 if a satisfaction emotion was detected in the last 3 turns, else 0
+
+### skill_invocations
+Track which skills were used vs direct tool calls.
+- For each known skill (e.g., /reflect, /retro, /search): `invoked`: 1 if skill was used, 0 if equivalent direct tool call was made instead
+
+### error_patterns
+Identify recurring error patterns. Global — upserted by pattern_id.
+- `pattern_id`: stable identifier (e.g., 'bash-rm-rf', 'git-conflict-unresolved')
+- `description`: what the pattern is
+- `bash_sample`: sample error text from bash
+- `resolution`: common resolution approach
+
+### file_graph
+Track file interaction patterns.
+- For each file path: `read_count`, `edit_count`, `last_read_at`, `last_edited_at`
+
+### rhythm_stats
+Analyze collaboration pacing.
+- `avg_response_interval_s`: average seconds between user turns
+- `long_pause_count`: number of pauses > 60 seconds
+- `turn_count`: total turns in session
+
+### session_features
+Per-session ML-ready feature snapshot.
+- `dna`: session DNA classification (explore|build|fix|chat|mixed)
+- `tool_density`: tool calls / total turns
+- `correction_ratio`: corrections / total turns
+- `token_per_turn`: total_tokens / total_turns
+- `project_complexity`: 0-1 score based on file_graph size and edit diversity
+
+### project_stats (deferred — skip for now)
+### tool_mastery (deferred — skip for now)
+
+### significance
+Pre-computed insight significance score (3-5). Required on every session output.
+- 3: notable pattern found (e.g., tool mastery gap, repeated error)
+- 4: significant pattern (e.g., context drip feeding, high failure rate)
+- 5: critical insight (e.g., session resulting in abandonment, skill never used despite need)
