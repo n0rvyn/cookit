@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Indie toolkit with iOS development, macOS tooling, and more",
-    "version": "1.34.1"
+    "version": "1.34.2"
   },
   "plugins": [
     {
@@ -160,7 +160,7 @@
       "name": "pkos",
       "source": "./pkos",
       "description": "Personal Knowledge Operating System: inbox processing, signal aggregation, digest generation, vault operations, profile evolution, and serendipity discovery",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "category": "productivity",
       "tags": [
         "knowledge-management",
