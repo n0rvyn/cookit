@@ -267,8 +267,14 @@ def main():
                 if "dimensions" in enriched:
                     sessions_db.init_db()
                     sessions_db.enrich_session(result["session_id"], enriched.get("dimensions", {}))
-                # Replace result with enriched output
-                result = enriched
+                # Update sessions.session_dna if enriched provides it
+                if enriched.get("session_dna"):
+                    sessions_db.update_session_dna(result["session_id"], enriched["session_dna"])
+                # Merge enriched top-level fields back into flat for complete output
+                for key in ("session_dna", "task_summary", "corrections", "emotion_signals", "prompt_assessments", "process_gaps"):
+                    if key in enriched:
+                        flat[key] = enriched[key]
+                result = flat
             except json.JSONDecodeError as e:
                 print(f"Warning: failed to parse enriched JSON: {e}", file=sys.stderr)
 

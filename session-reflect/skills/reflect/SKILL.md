@@ -163,7 +163,7 @@ When query flags are present (bypass Steps 1-7):
 
 1. Determine query type from flags:
    - `--dimension`: call `sessions_db.py --query dimension --dimension {dim}`
-   - `--min-significance`: call `sessions_db.py --query significance --min-sig {N}`
+   - `--min-significance`: call `sessions_db.py --query significance --min-significance {N}`
    - `--outcome`: call `sessions_db.py --query outcomes --outcome {val}`
    - `--project-complexity gt:0.8`: call `sessions_db.py --query complexity --op gt --value 0.8`
 

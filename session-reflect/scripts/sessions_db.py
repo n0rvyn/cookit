@@ -67,6 +67,19 @@ def upsert_session(session_id: str, session_data: dict):
     conn.close()
 
 
+def update_session_dna(session_id: str, session_dna: str):
+    """Update session_dna for an existing session after enrichment."""
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        conn.execute(
+            "UPDATE sessions SET session_dna = ? WHERE session_id = ?",
+            (session_dna, session_id),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
 def upsert_tool_calls(session_id: str, tool_calls: list):
     """Insert tool call sequence into tool_calls table."""
     conn = sqlite3.connect(DB_PATH)
@@ -218,7 +231,7 @@ def query_significance_above(threshold, project=None, days=None, limit=50):
                s.outcome, am.parsed_fields as significance
         FROM sessions s
         JOIN analysis_meta am ON s.session_id = am.session_id
-        WHERE am.parsed_fields >= ?
+        WHERE COALESCE(am.parsed_fields, 0) >= ?
     """
     params = [threshold]
     if project:
@@ -269,7 +282,7 @@ def get_ief_insights(significance_min=3, limit=20, session_ids=None):
             FROM sessions s
             LEFT JOIN session_features sf ON s.session_id = sf.session_id
             LEFT JOIN analysis_meta am ON s.session_id = am.session_id
-            WHERE am.parsed_fields >= ? AND s.session_id IN ({placeholders})
+            WHERE COALESCE(am.parsed_fields, 0) >= ? AND s.session_id IN ({placeholders})
             ORDER BY am.parsed_fields DESC
             LIMIT ?
         """
@@ -283,7 +296,7 @@ def get_ief_insights(significance_min=3, limit=20, session_ids=None):
             FROM sessions s
             LEFT JOIN session_features sf ON s.session_id = sf.session_id
             LEFT JOIN analysis_meta am ON s.session_id = am.session_id
-            WHERE am.parsed_fields >= ?
+            WHERE COALESCE(am.parsed_fields, 0) >= ?
             ORDER BY am.parsed_fields DESC
             LIMIT ?
         """

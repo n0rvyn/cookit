@@ -156,6 +156,12 @@ Your output must be a JSON block with the following top-level structure:
 {
   "session_id": "...",
   "significance": 4,
+  "task_summary": "1-2 sentence summary of what the user worked on",
+  "session_dna": "explore | build | fix | chat | mixed",
+  "corrections": [...],
+  "emotion_signals": [...],
+  "prompt_assessments": [...],
+  "process_gaps": [...],
   "dimensions": {
     "context_gaps": [...],
     "token_audit": {...},
@@ -169,7 +175,7 @@ Your output must be a JSON block with the following top-level structure:
 }
 ```
 
-All 10 new dimensions must appear under the `dimensions` key. The `significance` field (integer 3-5) is required at the top level.
+All 10 new dimensions must appear under the `dimensions` key. The `significance` field (integer 3-5) is required at the top level. The six coaching fields (`task_summary`, `session_dna`, `corrections`, `emotion_signals`, `prompt_assessments`, `process_gaps`) are required at the top level for coach agent consumption.
 
 ## Dimension Extraction
 
