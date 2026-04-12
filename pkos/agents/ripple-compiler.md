@@ -8,8 +8,8 @@ description: |
   from Get笔记 and adds those references as external cross-links.
 
 model: sonnet
-tools: [Read, Write, Edit, Grep, Glob]
-allowed-tools: Write(~/Obsidian/PKOS/*) Edit(~/Obsidian/PKOS/*)
+tools: [Read, Write, Edit, Grep, Glob, Bash]
+allowed-tools: Write(~/Obsidian/PKOS/*) Edit(~/Obsidian/PKOS/*) Bash(curl:*)
 color: yellow
 maxTurns: 30
 ---
@@ -49,7 +49,7 @@ getnote_api:
   api_key: ""       # REQUIRED
   client_id: ""     # REQUIRED
   base_url: "https://openapi.biji.com/open/api/v1"
-  max_recall_results: 5
+  max_recall_results: 10
   include_external_types: false
 ```
 
@@ -74,7 +74,7 @@ Headers:
 Body:
 {
   "query": "{constructed query}",
-  "top_k": {max_recall_results, default 5}
+  "top_k": {max_recall_results, default 10}
 }
 ```
 

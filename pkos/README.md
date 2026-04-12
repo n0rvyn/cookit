@@ -8,6 +8,7 @@ Automated knowledge compilation system for Obsidian vaults. Ingests, links, evol
 /pkos                  # Status dashboard
 /pkos {topic}          # Query your knowledge base
 /pkos ingest {url}     # Ingest a URL into your vault
+/pkos ingest-exchange  # Convert producer exchange artifacts into canonical PKOS notes
 /pkos review           # Today's wiki changes
 /pkos lint             # Latest health report
 ```
@@ -22,6 +23,7 @@ Automated knowledge compilation system for Obsidian vaults. Ingests, links, evol
 | `/digest` | Internal (cron) | Generate daily/weekly digest reports |
 | `/signal` | Internal (cron) | Cross-source signal aggregation for weekly review |
 | `/inbox` | Internal | Process captured items: classify, route, ripple |
+| `/ingest-exchange` | Internal | Convert `.exchange/` artifacts from producer plugins into canonical PKOS notes |
 | `/lint` | Internal (cron, Sundays) | Wiki health check: orphans, broken links, frontmatter |
 | `/evolve` | Internal | Generate LENS/FOCUS profile updates |
 | `/vault` | Internal | Obsidian vault operations (atomic writes, state management) |
@@ -61,6 +63,11 @@ Harvest (~/Code/Projects/*/docs/)
 Intel Sync (IEF imports from domain-intel)
   → inbox-processor (IEF → inbox item)
   → ripple-compiler
+
+Producer Exchange (structured artifacts from plugins such as product-lens)
+  → ingest-exchange (validate + normalize + place)
+  → canonical vault note
+  → downstream summary projection
 
 Cron (daily/weekly)
   → signal-aggregator (weekly) → signal report
@@ -143,6 +150,73 @@ When `/pkos ingest <url>` or harvest finds new content:
 2. **Extract** — pulls title, summary, key quotes, tags
 3. **Route** — writes to appropriate folder (10-Knowledge, 50-References, etc.)
 4. **Ripple** — ripple-compiler propagates knowledge to relevant MOCs, adds cross-references
+
+## Producer Exchange Flow
+
+Some producer plugins do not write final vault notes directly. They publish structured artifacts into:
+
+```text
+~/Obsidian/PKOS/.exchange/{producer}/
+```
+
+PKOS then ingests those artifacts:
+
+1. **Validate** — confirm schema and required fields
+2. **Normalize** — map producer intent to canonical PKOS note type
+3. **Place** — choose final folder and frontmatter
+4. **Project** — optionally mark downstream summary sync as pending
+
+Current intended producer:
+- `product-lens`
+
+## Product Lens Notion Projection
+
+`product-lens` does not write to Notion directly. The flow is:
+
+1. `product-lens` publishes an exchange artifact
+2. `ingest-exchange` writes the canonical PKOS note
+3. `sync_product_lens_notion.py` projects summary fields to Notion
+
+Required config in `~/.claude/pkos/config.yaml`:
+
+```yaml
+product_lens_notion:
+  enabled: true
+  database_id: 3401bde4-ddac-8143-80aa-d65ca05ff26c
+```
+
+Current verified target:
+- Workspace: `Knowledge Base`
+- Database: `Product Lens Summary DB`
+- Database ID: `3401bde4-ddac-8143-80aa-d65ca05ff26c`
+
+Trigger rule:
+- Artifact must request projection with `notion_sync_requested: true`
+- In normal use this comes from `product-lens/scripts/publish_exchange.py --sync-notion`
+
+Live commands:
+
+```bash
+python3 product-lens/scripts/publish_exchange.py \
+  --intent repo_reprioritize \
+  --decision focus \
+  --project AppA \
+  --risk "Main blocker is still demand validation." \
+  --reason "Recent progress is coherent and user-facing." \
+  --action "Keep the current focus for one more review window." \
+  --evidence "Recent commits stayed on the core path." \
+  --exchange-root /tmp/pkos-live/.exchange/product-lens \
+  --sync-notion
+
+python3 pkos/skills/ingest-exchange/scripts/ingest_exchange.py \
+  --source /tmp/pkos-live/.exchange/product-lens/reprioritize/<file>.md \
+  --vault-root /tmp/pkos-live \
+  --sync-notion
+```
+
+Verified result:
+- `AppA Verdict` row exists in the database
+- `AppA Smart Tagging Feature Review` row exists in the database
 
 ## MOC (Map of Contents)
 

@@ -17,6 +17,8 @@ These files live inside the PKOS vault because their content references vault no
 | `imported-insights.yaml` | `~/Obsidian/PKOS/.state/` | intel-sync | Tracks imported IEF insight IDs to prevent duplicates |
 | `kb-bridge-exported.yaml` | `~/Obsidian/PKOS/.state/` | kb-bridge | Tracks forward (vault→KB) and reverse (KB→vault) exports by path + date |
 | `harvest-state.yaml` | `~/Obsidian/PKOS/.state/` | harvest | Tracks harvested project docs by source path + md5 hash |
+| `exchange-ingest.yaml` | `~/Obsidian/PKOS/.state/` | ingest-exchange | Tracks imported `.exchange/` artifacts by source path, checksum, and canonical note path |
+| `product-lens-notion-sync.yaml` | `~/Obsidian/PKOS/.state/` | sync_product_lens_notion | Tracks canonical note path to Notion summary row/page mapping and sync status |
 | `ripple-log.yaml` | `~/Obsidian/PKOS/.state/` | ripple-compiler | Append-only changelog of MOC updates, cross-refs added, entities updated |
 | `last-review-marker` | `~/Obsidian/PKOS/.state/` | signal, evolve | Timestamp marker for "since last review" queries |
 

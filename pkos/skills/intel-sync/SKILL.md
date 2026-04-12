@@ -17,12 +17,12 @@ intel_sources:
   domain_intel:
     insights_path: ""    # REQUIRED — set to your domain-intel workspace's insights/ path
     significance_threshold: 3
-    max_per_sync: 10
+    max_per_sync: 20
     source_name: domain-intel
   session_reflect:
     insights_path: ~/.claude/session-reflect/insights/
     significance_threshold: 3
-    max_per_sync: 10
+    max_per_sync: 20
     category: pattern
     source_name: session-reflect
 ```

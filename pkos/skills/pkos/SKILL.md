@@ -16,6 +16,7 @@ Parse from user input (natural language routing):
 - No args / `status` → Status Dashboard
 - `<question or topic>` → Knowledge Query
 - `ingest <url|text>` → Manual Ingest
+- `ingest-exchange [--producer NAME] [--intent INTENT] [--dry-run]` → Producer Exchange Ingest
 - `review` → Today's Wiki Changes
 - `lint` → Latest Health Report
 - `intel [getnote]` → Get笔记 Intelligence Feed
@@ -99,6 +100,20 @@ When user says `ingest <url|text>`:
    - Route to Obsidian + Notion
    - Trigger ripple compilation via `pkos:ripple-compiler` agent
 3. Report what was created and what MOCs were updated.
+
+### Route: Producer Exchange Ingest
+
+When user says `ingest-exchange`, `exchange ingest`, `ingest product-lens exchange`, or `导入 exchange`:
+
+Invoke the `ingest-exchange` skill.
+
+Supported forms:
+- `/pkos ingest-exchange`
+- `/pkos ingest-exchange --producer product-lens`
+- `/pkos ingest-exchange --producer product-lens --intent reprioritize`
+- `/pkos ingest-exchange --dry-run`
+
+Use this route when another plugin has already written structured artifacts into `~/Obsidian/PKOS/.exchange/` and PKOS now needs to convert them into canonical vault notes.
 
 ### Route: Review
 
