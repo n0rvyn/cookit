@@ -21,6 +21,7 @@ Multi-plugin monorepo for Claude Code plugins, published to the `indie-toolkit` 
 | `health-insights` | health | Personal health intelligence: ingest Apple Health data, establish baselines, generate AI-driven narrative insights |
 | `minimax-platform` | integration | MiniMax platform helper: coding-plan quota checks and browser-session based auth management |
 | `netease-cloud-music` | integration | NetEase Cloud Music helper: cookie-based login flows and cloud-drive upload via maintained CLI |
+| `shared-utils` | development | Reusable utility scripts and skills shared across plugins: Notion API, MongoDB queries, cross-plugin primitives |
 
 ## Repository Layout
 
@@ -41,6 +42,7 @@ Multi-plugin monorepo for Claude Code plugins, published to the `indie-toolkit` 
 ├── health-insights/
 ├── minimax-platform/
 ├── netease-cloud-music/
+├── shared-utils/
 ├── docs/
 ├── .claude-plugin/   # marketplace manifest
 ├── .codex/           # Codex install docs
@@ -107,6 +109,7 @@ Install plugins:
 /plugin install health-insights@indie-toolkit
 /plugin install minimax-platform@indie-toolkit
 /plugin install netease-cloud-music@indie-toolkit
+/plugin install shared-utils@indie-toolkit
 ```
 
 Current marketplace entries from `.claude-plugin/marketplace.json`:
@@ -128,6 +131,7 @@ Current marketplace entries from `.claude-plugin/marketplace.json`:
 | `health-insights` | `1.0.0` | Personal health intelligence |
 | `minimax-platform` | `0.1.0` | MiniMax platform helper |
 | `netease-cloud-music` | `0.1.0` | NetEase Cloud Music helper |
+| `shared-utils` | `0.1.0` | Reusable cross-plugin utility scripts and skills |
 
 ## Codex / OpenCode
 
@@ -157,3 +161,4 @@ Each plugin has its own `README.md`:
 - `health-insights/README.md` — Personal health intelligence
 - `minimax-platform/README.md` — MiniMax platform helper
 - `netease-cloud-music/README.md` — NetEase Cloud Music helper
+- `shared-utils/README.md` — Reusable cross-plugin utility scripts and skills

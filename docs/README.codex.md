@@ -22,8 +22,15 @@ Command source of truth is `.codex/INSTALL.md`.
 ## Notes
 
 - Codex directly loads `skills/`; `agents/` and `hooks/` are plugin internals and are not linked directly.
-- Current Codex-loadable plugin skill folders: `dev-workflow`, `apple-dev`, `mactools`, `product-lens`, `skill-audit`.
-- `rag-server` is not a Codex skill folder. It is a separate MCP server component; see `rag-server/README.md`.
+- Current Codex-loadable plugin skill folders: `dev-workflow`, `apple-dev`, `mactools`, `product-lens`, `skill-master`, `skill-audit`, `domain-intel`, `session-reflect`, `youtube-scout`, `pkos`, `wechat-bridge`, `health-insights`, `minimax-platform`, `netease-cloud-music`.
+- `x-api` is not a Codex skill folder. It is an MCP server plugin and needs separate MCP setup.
+
+## Utility Scripts
+
+- `scripts/minimax-coding-plan-remains.mjs`
+- Purpose: compatibility entry that forwards to `minimax-platform/skills/minimax-coding-plan/scripts/minimax-coding-plan.mjs`.
+- Auth boundary: current live verification shows this internal endpoint accepts `HERTZ-SESSION` cookie and returns `status_code: 1004` when cookie is missing; there is no verified env-only username/password login flow in this repo.
+- Refresh model: if `MINIMAX_SESSION_COMMAND` is set, the script will call it once to obtain a fresh `HERTZ-SESSION` and cache it to `MINIMAX_COOKIE_FILE`.
 
 ## How To Install
 
