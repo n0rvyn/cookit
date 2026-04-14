@@ -39,6 +39,14 @@ Search the central knowledge base for similar entries:
 
 If `~/.claude/knowledge/` does not exist yet, skip this step.
 
+### Step 2.5: Reject Drafts with Unresolved Gaps
+
+A lesson must describe a settled conclusion, not work-in-progress. Before drafting, check whether the claim has unresolved follow-ups (pending fixes, unverified assumptions, "TODO: confirm X" notes from the session).
+
+If gaps exist, stop and report them to the user. Do not proceed to Step 3 until either:
+- The user resolves the gap, or
+- The user explicitly scopes the lesson to exclude the unresolved part
+
 ### Step 3: Ask User to Confirm
 
 Present the draft entry:
