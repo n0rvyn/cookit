@@ -80,6 +80,7 @@ This pattern applies to "understand X" / "explore Y" dispatches. Verification ag
 | write-plan | interactive | Writes implementation plan in main context (full conversation context) |
 | verify-plan | dispatcher | Gathers context, dispatches plan-verifier agent |
 | write-dev-guide | interactive | Writes phased dev-guide in main context, dispatches verifier agent |
+| next-increment | interactive | Proposes 3-5 archetype-diverse next-step candidates for mature codebases, writes mini-spec for chosen one |
 | write-feature-spec | dispatcher | Gathers context, dispatches feature-spec-writer agent |
 | audit-rules | dispatcher | Gathers context, dispatches rules-auditor agent |
 | design-drift | dispatcher | Design document vs codebase drift audit |
