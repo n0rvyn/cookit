@@ -41,6 +41,16 @@ After collecting plan and design doc paths, extract technical keywords from the 
 2. If results are returned: collect them as `retrieved_context` — a compact list of (source_path, section, content preview) for each hit
 3. If the search tool is unavailable or returns no results: set `retrieved_context` to empty and continue
 
+### Step 1.7: Resolve Plugin Agents Directory
+
+The plan-verifier agent reads supporting files (`design-faithfulness.md`, `crystal-fidelity.md`, `architecture-review.md`) from this plugin's `agents/` directory. Resolve the absolute path before dispatching:
+
+1. Run via the Bash tool: `echo "${CLAUDE_PLUGIN_ROOT:?CLAUDE_PLUGIN_ROOT is not set}/agents"`
+2. Trim trailing newline; store the output as `{plugin_agents_dir}`
+3. If the Bash call fails (variable unset), stop and report the error to the user — do not dispatch the agent with an empty path
+
+Do NOT use inline `` !`...` `` auto-substitution here; Claude Code's permission checker rejects any `` !`...` `` pattern containing shell expansion.
+
 ### Step 2: Dispatch Agent
 
 Use the Task tool to launch the `dev-workflow:plan-verifier` agent:
@@ -65,7 +75,7 @@ Design analysis: {path or "none"}
 Crystal file: {path or "none"}
 Project root: {path}
 
-Plugin agents dir: !`echo "${CLAUDE_PLUGIN_ROOT:?CLAUDE_PLUGIN_ROOT is not set}/agents"`
+Plugin agents dir: {plugin_agents_dir}
 Previously resolved decisions (do not re-ask these):
 {List of "DP-xxx: Title → Chosen Option X" or "none"}
 
