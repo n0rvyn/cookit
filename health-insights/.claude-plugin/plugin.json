@@ -1,6 +1,0 @@
-{
-  "name": "health-insights",
-  "version": "1.0.0",
-  "description": "Personal health intelligence: ingest Apple Health data to MongoDB, compute baselines, evaluate early warnings, generate AI analysis via Notion dashboards, render annual heatmaps, and publish Grafana dashboards",
-  "author": { "name": "Norvyn" }
-}

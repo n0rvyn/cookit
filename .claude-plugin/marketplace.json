@@ -58,7 +58,7 @@
     {
       "name": "product-lens",
       "source": "./product-lens",
-      "description": "Product evaluation plugin for indie developers: demand validation, market/moat assessment, portfolio scans, progress pulses, verdict refresh, recent feature review, repo reprioritization, and PKOS exchange publishing",
+      "description": "Product evaluation for indie developers: demand validation, market/moat assessment, feature assessment, and product comparison",
       "version": "1.0.0",
       "category": "product",
       "tags": [
@@ -67,8 +67,11 @@
         "indie",
         "market-analysis",
         "comparison",
-        "portfolio",
-        "exchange"
+        "product",
+        "evaluation",
+        "indie",
+        "market-analysis",
+        "comparison"
       ],
       "strict": true
     },
@@ -104,77 +107,6 @@
       "strict": true
     },
     {
-      "name": "domain-intel",
-      "source": "./domain-intel",
-      "description": "Domain intelligence engine: automated collection, AI analysis, and trend synthesis from GitHub, RSS, official changelogs, notable figures, and companies. Includes targeted deep research with evolving focus profiles. LENS-personalized with evolving profiles.",
-      "version": "1.4.0",
-      "category": "intelligence",
-      "tags": [
-        "intelligence",
-        "trends",
-        "collection",
-        "analysis",
-        "rss",
-        "github",
-        "synthesis",
-        "figures",
-        "lens",
-        "evolution",
-        "research",
-        "deep-research"
-      ],
-      "strict": true
-    },
-    {
-      "name": "session-reflect",
-      "source": "./session-reflect",
-      "description": "AI collaboration coach: analyzes Claude Code and Codex sessions to improve your prompting, workflow, and AI collaboration skills.",
-      "version": "2.0.0",
-      "category": "coaching",
-      "tags": [
-        "sessions",
-        "coaching",
-        "reflection",
-        "prompting",
-        "growth",
-        "codex"
-      ],
-      "strict": true
-    },
-    {
-      "name": "youtube-scout",
-      "source": "./youtube-scout",
-      "description": "YouTube video intelligence — scrapes recommended/search videos, extracts transcripts, scores with Claude AI on 6 quality dimensions, exports IEF-compliant insights for cross-plugin consumption",
-      "version": "1.0.1",
-      "category": "intelligence",
-      "tags": [
-        "youtube",
-        "intelligence",
-        "insight-exchange",
-        "curation",
-        "video",
-        "recommendations",
-        "transcripts"
-      ],
-      "strict": true
-    },
-    {
-      "name": "pkos",
-      "source": "./pkos",
-      "description": "Personal Knowledge Operating System: inbox processing, signal aggregation, digest generation, vault operations, profile evolution, serendipity discovery, and IEF-compliant exchange ingestion from producer plugins",
-      "version": "0.6.1",
-      "category": "productivity",
-      "tags": [
-        "knowledge-management",
-        "obsidian",
-        "notion",
-        "automation",
-        "intelligence",
-        "exchange"
-      ],
-      "strict": true
-    },
-    {
       "name": "wechat-bridge",
       "source": "./wechat-bridge",
       "description": "Bridge WeChat messages to Claude Code sessions via MCP --channels protocol. Enables permission relay and bidirectional messaging.",
@@ -201,23 +133,6 @@
         "api",
         "mcp",
         "social"
-      ],
-      "strict": true
-    },
-    {
-      "name": "health-insights",
-      "source": "./health-insights",
-      "description": "Personal health intelligence: ingest Apple Health data, establish baselines, generate AI-driven narrative insights, render annual heatmaps, and publish Grafana dashboards",
-      "version": "1.0.0",
-      "category": "health",
-      "tags": [
-        "health",
-        "apple-health",
-        "baselines",
-        "insights",
-        "obsidian",
-        "grafana",
-        "heatmap"
       ],
       "strict": true
     },

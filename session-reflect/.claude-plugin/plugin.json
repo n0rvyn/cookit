@@ -1,8 +1,0 @@
-{
-  "name": "session-reflect",
-  "version": "2.0.0",
-  "description": "AI collaboration coach: analyzes Claude Code and Codex sessions to improve your prompting, workflow, and AI collaboration skills",
-  "author": {
-    "name": "Norvyn"
-  }
-}

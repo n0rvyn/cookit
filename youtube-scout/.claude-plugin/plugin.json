@@ -1,8 +1,0 @@
-{
-  "name": "youtube-scout",
-  "version": "1.0.1",
-  "description": "YouTube video intelligence — scrapes recommended/search videos, extracts transcripts, scores with Claude AI on 6 quality dimensions, exports IEF-compliant insights for cross-plugin consumption",
-  "author": {
-    "name": "Norvyn"
-  }
-}

@@ -15,13 +15,8 @@ on:
           - product-lens
           - skill-audit
           - skill-master
-          - domain-intel
-          - session-reflect
-          - youtube-scout
-          - pkos
           - wechat-bridge
           - x-api
-          - health-insights
           - minimax-quota
           - netease-cloud-music
           - shared-utils
@@ -89,7 +84,7 @@ jobs:
           }
 
           if [[ "$TARGET" == "all" ]]; then
-            PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "skill-audit" "skill-master" "domain-intel" "session-reflect" "youtube-scout" "pkos" "wechat-bridge" "x-api" "health-insights" "minimax-quota" "netease-cloud-music" "shared-utils")
+            PLUGINS=("dev-workflow" "apple-dev" "mactools" "product-lens" "skill-audit" "skill-master" "wechat-bridge" "x-api" "minimax-quota" "netease-cloud-music" "shared-utils")
           else
             PLUGINS=("$TARGET")
           fi
