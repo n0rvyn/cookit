@@ -1,61 +1,42 @@
 ---
 name: minimax-coding-plan
-description: "查询 MiniMax coding plan 剩余额度，使用官方 OpenAPI Bearer token (MINIMAX_API_KEY)。Use when the user asks to check MiniMax coding plan quota, remains, usage, or MiniMax API usage. Keywords: MiniMax, minimax, coding plan, remains, quota."
-context: fork
-model: haiku
-allowed-tools: Bash(*skills/minimax-coding-plan/scripts/*)
+description: "查询 MiniMax coding plan 剩余额度。Triggered by: check MiniMax quota, remains, usage, 额度。"
+allowed-tools: Bash
 ---
 
 # MiniMax Coding Plan
 
-查询 MiniMax `coding_plan/remains` 接口，使用官方 OpenAPI `MINIMAX_API_KEY` 进行认证。
-
-## 认证
-
-- 需要有效的 `MINIMAX_API_KEY`（MiniMax 开放平台 API 密钥）
-- 可选 `MINIMAX_GROUP_ID`（若不提供则使用 API KEY 关联的默认组）
-
-## Path Setup
-
 ```bash
-BASE="${CLAUDE_PLUGIN_ROOT:-${CODEX_HOME:-$HOME/.codex}}"
-SKILLS_ROOT="$BASE/skills"
-[ -d "$SKILLS_ROOT/minimax-coding-plan/scripts" ] || SKILLS_ROOT="$BASE/indie-toolkit/minimax-quota/skills"
+curl -s --location 'https://www.minimaxi.com/v1/token_plan/remains' \
+  --header 'Authorization: Bearer '$MINIMAX_API_KEY \
+  | jq -r '
+    def pad2: tostring | if length < 2 then "0" + . else . end;
+    def fmt_remains:
+      ( . / 1000 | floor ) as $s |
+      [ ($s / 3600 | floor | tostring | pad2),
+        (($s % 3600) / 60 | floor | tostring | pad2),
+        ($s % 60 | tostring | pad2) ] | join(":");
+    def to_shanghai:
+      ( . / 1000 | floor ) as $ts |
+      ( $ts + 8 * 3600 ) |
+      strftime("%m-%d %H:%M");
+    .model_remains | sort_by(.model_name) |
+    "| 模型 | 当次区间用量 | 当周用量 | 区间重置于 | 剩余时间 |",
+    "|------|------------|----------|------------|----------|",
+    (foreach .[] as $r (.; .; $r
+      | "| \($r.model_name) |"
+        + " \($r.current_interval_usage_count)/\($r.current_interval_total_count) |"
+        + " \($r.current_weekly_usage_count)/\($r.current_weekly_total_count) |"
+        + " \($r.end_time | to_shanghai) |"
+        + " \($r.remains_time | fmt_remains) |"))'
 ```
 
-## 工具
+输出示例：
 
-```bash
-${SKILLS_ROOT}/minimax-coding-plan/scripts/minimax_coding_plan.sh
-```
+| 模型 | 当次区间用量 | 当周用量 | 区间重置于 | 剩余时间 |
+|------|------------|----------|------------|----------|
+| MiniMax-M* | 629/4500 | 34460/45000 | 04-17 10:00 | 00:12:35 |
+| speech-hd | 1788/19000 | 45561/133000 | 04-18 00:00 | 14:12:35 |
+| ... | ... | ... | ... | ... |
 
-## 常用命令
-
-### 查看额度摘要
-
-```bash
-MINIMAX_API_KEY='your-api-key' \
-${SKILLS_ROOT}/minimax-coding-plan/scripts/minimax_coding_plan.sh
-```
-
-### 指定 GroupId
-
-```bash
-MINIMAX_API_KEY='your-api-key' \
-MINIMAX_GROUP_ID='2036327615073096267' \
-${SKILLS_ROOT}/minimax-coding-plan/scripts/minimax_coding_plan.sh
-```
-
-### 输出原始 JSON
-
-```bash
-MINIMAX_API_KEY='your-api-key' \
-MINIMAX_OUTPUT=json \
-${SKILLS_ROOT}/minimax-coding-plan/scripts/minimax_coding_plan.sh
-```
-
-## 错误处理
-
-- `MINIMAX_API_KEY` 缺失时退出并提示
-- API 返回错误时输出原始响应内容
-- 网络问题导致请求失败时提示检查网络/代理/DNS
+`MINIMAX_API_KEY` 必填，从 platform.minimaxi.com 获取。
