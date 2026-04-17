@@ -1,6 +1,6 @@
 {
   "name": "minimax-quota",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "MiniMax coding plan quota checker — only requires MINIMAX_API_KEY",
   "author": {
     "name": "Norvyn"
