@@ -1,6 +1,6 @@
 {
   "name": "product-lens",
   "version": "1.0.0",
-  "description": "Product decision plugin for indie developers: idea checks, product evaluation, portfolio intelligence, recent feature review, and PKOS-first local fact publishing",
+  "description": "Product evaluation for indie developers: demand validation, market/moat assessment, feature assessment, and product comparison",
   "author": { "name": "Norvyn" }
 }
