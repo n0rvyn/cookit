@@ -68,7 +68,7 @@ Current marketplace entries from `.claude-plugin/marketplace.json`:
 
 | Plugin | Version | Description |
 |---|---|---|
-| `dev-workflow` | `2.24.1` | Cross-stack workflow with plan-execute-review |
+| `dev-workflow` | `2.24.2` | Cross-stack workflow with plan-execute-review |
 | `apple-dev` | `1.10.2` | iOS/macOS/iPadOS development workflows |
 | `mactools` | `1.0.1` | macOS automation for Apple apps |
 | `product-lens` | `1.0.0` | Product evaluation and market analysis |
