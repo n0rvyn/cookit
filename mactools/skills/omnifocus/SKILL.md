@@ -16,70 +16,62 @@ Connect to OmniFocus 4 on macOS and perform authorized operations: list tasks, c
 - OmniFocus 4 must be installed on macOS
 - OmniFocus must be running (the skill will prompt to launch if not)
 
-## Path Setup
-
-```bash
-BASE="${CLAUDE_PLUGIN_ROOT:-${CODEX_HOME:-$HOME/.codex}}"
-SKILLS_ROOT="$BASE/skills"
-[ -d "$SKILLS_ROOT/omnifocus/scripts" ] || SKILLS_ROOT="$BASE/indie-toolkit/mactools/skills"
-```
-
 ## Core Commands
 
 ### Status Overview
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py status
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py status
 ```
 
 ### List Tasks
 
 ```bash
 # List all incomplete tasks (limit 20)
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py list
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py list
 
 # List tasks in specific project
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py list "Project Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py list "Project Name"
 ```
 
 ### Inbox Tasks
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py inbox
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py inbox
 ```
 
 ### Flagged Tasks
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py flagged
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py flagged
 ```
 
 ### Due Tasks
 
 ```bash
 # Due within 7 days (default)
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py due
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py due
 
 # Due within custom days
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py due 14
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py due 14
 
 # Due today
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py due today
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py due today
 
 # Due tomorrow
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py due tomorrow
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py due tomorrow
 
 # Due this week
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py due week
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py due week
 
 # Overdue tasks
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py due overdue
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py due overdue
 ```
 
 ### List Projects
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py projects
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py projects
 ```
 
 ## Contexts 上下文
@@ -87,19 +79,19 @@ python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py projects
 ### List All Contexts
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py contexts
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py contexts
 ```
 
 ### Set Task Context
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py set-context "Task Name" "Context Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py set-context "Task Name" "Context Name"
 ```
 
 ### Clear Task Context
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py clear-context "Task Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py clear-context "Task Name"
 ```
 
 ## Due Dates 截止日期
@@ -108,19 +100,19 @@ python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py clear-context "Task Na
 
 ```bash
 # Set with natural language
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py set-due "Task Name" "tomorrow"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py set-due "Task Name" "tomorrow"
 
 # Set with relative format
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py set-due "Task Name" "+3d"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py set-due "Task Name" "+3d"
 
 # Set with absolute date
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py set-due "Task Name" "2025-02-01"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py set-due "Task Name" "2025-02-01"
 ```
 
 ### Clear Task Due Date
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py clear-due "Task Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py clear-due "Task Name"
 ```
 
 ## Defer Dates 开始日期
@@ -128,13 +120,13 @@ python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py clear-due "Task Name"
 ### Set Task Defer Date
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py set-defer "Task Name" "+3d"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py set-defer "Task Name" "+3d"
 ```
 
 ### Clear Task Defer Date
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py clear-defer "Task Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py clear-defer "Task Name"
 ```
 
 ## Repetition Rules 重复规则
@@ -143,22 +135,22 @@ python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py clear-defer "Task Name
 
 ```bash
 # Daily
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py set-repeat "Task Name" "FREQ=DAILY"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py set-repeat "Task Name" "FREQ=DAILY"
 
 # Weekly
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py set-repeat "Task Name" "FREQ=WEEKLY"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py set-repeat "Task Name" "FREQ=WEEKLY"
 
 # Every 2 weeks
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py set-repeat "Task Name" "FREQ=WEEKLY;INTERVAL=2"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py set-repeat "Task Name" "FREQ=WEEKLY;INTERVAL=2"
 
 # Monthly
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py set-repeat "Task Name" "FREQ=MONTHLY"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py set-repeat "Task Name" "FREQ=MONTHLY"
 ```
 
 ### Clear Task Repetition
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py clear-repeat "Task Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py clear-repeat "Task Name"
 ```
 
 ## Note Operations 备注
@@ -166,7 +158,7 @@ python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py clear-repeat "Task Nam
 ### Append Note to Task
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py append-note "Task Name" "Additional note text"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py append-note "Task Name" "Additional note text"
 ```
 
 ## Task Operations
@@ -175,31 +167,31 @@ python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py append-note "Task Name
 
 ```bash
 # Create task in inbox
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py add "Task Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py add "Task Name"
 
 # Create task with options
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py add "Task Name" --project "Project" --context "Context" --due "tomorrow" --defer "+1d" --note "Task note"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py add "Task Name" --project "Project" --context "Context" --due "tomorrow" --defer "+1d" --note "Task note"
 
 # Create task with repetition
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py add "Daily Task" --repeat "FREQ=DAILY"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py add "Daily Task" --repeat "FREQ=DAILY"
 ```
 
 ### Complete Task
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py complete "Task Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py complete "Task Name"
 ```
 
 ### Toggle Flag
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py flag "Task Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py flag "Task Name"
 ```
 
 ### Delete Task
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py delete "Task Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py delete "Task Name"
 ```
 
 ## Project Operations
@@ -207,17 +199,17 @@ python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py delete "Task Name"
 ### Show Project Details
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py show-project "Project Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py show-project "Project Name"
 ```
 
 ### Create Project
 
 ```bash
 # Create project in root
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py create-project "Project Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py create-project "Project Name"
 
 # Create project in folder
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py create-project "Project Name" "Folder Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py create-project "Project Name" "Folder Name"
 ```
 
 ## Folder Operations
@@ -225,13 +217,13 @@ python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py create-project "Projec
 ### List All Folders
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py folders
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py folders
 ```
 
 ### Create Folder
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py create-folder "Folder Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py create-folder "Folder Name"
 ```
 
 ## Perspective Operations 透视
@@ -239,13 +231,13 @@ python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py create-folder "Folder 
 ### List All Perspectives
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py perspectives
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py perspectives
 ```
 
 ### Activate Perspective
 
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py activate-perspective "Perspective Name"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py activate-perspective "Perspective Name"
 ```
 
 ## Date Formats 日期格式
@@ -275,42 +267,42 @@ python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py activate-perspective "
 
 ### Daily Review
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py status
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py inbox
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py flagged
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py due today
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py status
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py inbox
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py flagged
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py due today
 ```
 
 ### Weekly Review
 ```bash
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py projects
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py contexts
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py due week
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py due overdue
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py projects
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py contexts
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py due week
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py due overdue
 ```
 
 ### Quick Capture
 ```bash
 # Quick add to inbox
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py add "Buy milk"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py add "Buy milk"
 
 # Add with context and due date
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py add "Call John" --context "Phone" --due "tomorrow"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py add "Call John" --context "Phone" --due "tomorrow"
 
 # Add recurring task
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py add "Daily standup" --project "Work" --repeat "FREQ=DAILY"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py add "Daily standup" --project "Work" --repeat "FREQ=DAILY"
 ```
 
 ### Context-Based Work
 ```bash
 # List all contexts
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py contexts
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py contexts
 
 # Start working in a context
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py activate-perspective "Context: Errands"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py activate-perspective "Context: Errands"
 
 # Assign context to task
-python3 ${SKILLS_ROOT}/omnifocus/scripts/omnifocus_cli.py set-context "Buy groceries" "Errands"
+python3 ${CLAUDE_SKILL_DIR}/scripts/omnifocus_cli.py set-context "Buy groceries" "Errands"
 ```
 
 ## Troubleshooting

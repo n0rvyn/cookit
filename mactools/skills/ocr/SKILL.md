@@ -11,20 +11,12 @@ allowed-tools: Bash(*skills/ocr/scripts/*)
 
 使用 macOS Vision 框架从图片和扫描件 PDF 中提取文字，支持中英文等多语言识别。
 
-## Path Setup
-
-```bash
-BASE="${CLAUDE_PLUGIN_ROOT:-${CODEX_HOME:-$HOME/.codex}}"
-SKILLS_ROOT="$BASE/skills"
-[ -d "$SKILLS_ROOT/ocr/scripts" ] || SKILLS_ROOT="$BASE/indie-toolkit/mactools/skills"
-```
-
 ## 工具
 
 ### OCR 脚本（解释执行）
 
 ```bash
-swift ${SKILLS_ROOT}/ocr/scripts/ocr.swift <file_path> [options]
+swift ${CLAUDE_SKILL_DIR}/scripts/ocr.swift <file_path> [options]
 ```
 
 ### OCR 二进制（编译后，更快）
@@ -32,13 +24,13 @@ swift ${SKILLS_ROOT}/ocr/scripts/ocr.swift <file_path> [options]
 首次使用前需编译：
 
 ```bash
-bash ${SKILLS_ROOT}/ocr/scripts/build_ocr.sh
+bash ${CLAUDE_SKILL_DIR}/scripts/build_ocr.sh
 ```
 
 编译后使用：
 
 ```bash
-${SKILLS_ROOT}/ocr/scripts/ocr <file_path> [options]
+${CLAUDE_SKILL_DIR}/scripts/ocr <file_path> [options]
 ```
 
 优先使用编译后的二进制。如果二进制不存在，先运行 build_ocr.sh 编译，再执行。
@@ -79,29 +71,29 @@ ${SKILLS_ROOT}/ocr/scripts/ocr <file_path> [options]
 ### 识别截图文字
 
 ```bash
-swift ${SKILLS_ROOT}/ocr/scripts/ocr.swift ~/Desktop/screenshot.png
+swift ${CLAUDE_SKILL_DIR}/scripts/ocr.swift ~/Desktop/screenshot.png
 ```
 
 ### 识别扫描件 PDF
 
 ```bash
-swift ${SKILLS_ROOT}/ocr/scripts/ocr.swift ~/Documents/scanned.pdf
+swift ${CLAUDE_SKILL_DIR}/scripts/ocr.swift ~/Documents/scanned.pdf
 ```
 
 ### 指定识别语言
 
 ```bash
 # 仅英文
-swift ${SKILLS_ROOT}/ocr/scripts/ocr.swift image.png --lang en-US
+swift ${CLAUDE_SKILL_DIR}/scripts/ocr.swift image.png --lang en-US
 
 # 中日英混合
-swift ${SKILLS_ROOT}/ocr/scripts/ocr.swift image.png --lang zh-Hans,en-US,ja
+swift ${CLAUDE_SKILL_DIR}/scripts/ocr.swift image.png --lang zh-Hans,en-US,ja
 ```
 
 ### 限制 PDF 处理页数
 
 ```bash
-swift ${SKILLS_ROOT}/ocr/scripts/ocr.swift large.pdf --max-pages 5
+swift ${CLAUDE_SKILL_DIR}/scripts/ocr.swift large.pdf --max-pages 5
 ```
 
 ## 工作流程
@@ -115,19 +107,19 @@ swift ${SKILLS_ROOT}/ocr/scripts/ocr.swift large.pdf --max-pages 5
 优先使用编译后的二进制（更快）。如果不存在，先编译：
 
 ```bash
-bash ${SKILLS_ROOT}/ocr/scripts/build_ocr.sh
+bash ${CLAUDE_SKILL_DIR}/scripts/build_ocr.sh
 ```
 
 ### Step 3: 执行 OCR
 
 ```bash
-${SKILLS_ROOT}/ocr/scripts/ocr <file_path>
+${CLAUDE_SKILL_DIR}/scripts/ocr <file_path>
 ```
 
 如果二进制不可用，回退到解释执行：
 
 ```bash
-swift ${SKILLS_ROOT}/ocr/scripts/ocr.swift <file_path>
+swift ${CLAUDE_SKILL_DIR}/scripts/ocr.swift <file_path>
 ```
 
 ### Step 4: 返回结果
@@ -140,20 +132,20 @@ Spotlight 搜索找到图片文件后，用 OCR 提取图中文字：
 
 ```bash
 # 1. 用 Spotlight 找到图片文件
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh search -t image "会议"
+${CLAUDE_PLUGIN_ROOT}/skills/spotlight/scripts/spotlight.sh search -t image "会议"
 
 # 2. 对搜索到的图片执行 OCR
-${SKILLS_ROOT}/ocr/scripts/ocr /path/to/found_image.png
+${CLAUDE_SKILL_DIR}/scripts/ocr /path/to/found_image.png
 ```
 
 也可以对 Spotlight 搜出的扫描件 PDF 执行 OCR（spotlight extract_text.py 无法处理扫描件，OCR 可以）：
 
 ```bash
 # 1. Spotlight 搜索 PDF
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh search -t pdf "合同"
+${CLAUDE_PLUGIN_ROOT}/skills/spotlight/scripts/spotlight.sh search -t pdf "合同"
 
 # 2. 如果 extract_text.py 提示 "no extractable text"，用 OCR
-${SKILLS_ROOT}/ocr/scripts/ocr /path/to/scanned.pdf
+${CLAUDE_SKILL_DIR}/scripts/ocr /path/to/scanned.pdf
 ```
 
 ## 注意事项

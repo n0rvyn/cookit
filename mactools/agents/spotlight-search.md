@@ -42,19 +42,15 @@ Use the spotlight.sh script to search file content. Prefer markdown and text
 file types for knowledge-base queries.
 
 ```bash
-BASE="${CLAUDE_PLUGIN_ROOT:-${CODEX_HOME:-$HOME/.codex}}"
-SKILLS_ROOT="$BASE/skills"
-[ -d "$SKILLS_ROOT/spotlight/scripts" ] || SKILLS_ROOT="$BASE/indie-toolkit/mactools/skills"
-
 # Primary search: markdown and text files
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh search -t md -n 10 "<QUERY>"
+${CLAUDE_PLUGIN_ROOT}/skills/spotlight/scripts/spotlight.sh search -t md -n 10 "<QUERY>"
 ```
 
 If fewer than 3 results are returned, run a second search without the type
 filter:
 
 ```bash
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh search -n 10 "<QUERY>"
+${CLAUDE_PLUGIN_ROOT}/skills/spotlight/scripts/spotlight.sh search -n 10 "<QUERY>"
 ```
 
 ### Step 2: Select top 3 results
@@ -67,7 +63,7 @@ From all results, select the 3 most likely to contain a useful answer:
 ### Step 3: Extract content from each selected file
 
 ```bash
-python3 ${SKILLS_ROOT}/spotlight/scripts/extract_text.py "<FILE_PATH>" --max-chars 3000
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/spotlight/scripts/extract_text.py "<FILE_PATH>" --max-chars 3000
 ```
 
 For plain text or markdown files, you may use the Read tool directly instead

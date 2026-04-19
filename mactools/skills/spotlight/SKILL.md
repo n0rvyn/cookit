@@ -11,26 +11,18 @@ allowed-tools: Bash(*skills/spotlight/scripts/*) Bash(mdfind*)
 
 通过 macOS Spotlight 索引全局检索本地文件，提取文档内容，搜索 + 阅读 + 理解。
 
-## Path Setup
-
-```bash
-BASE="${CLAUDE_PLUGIN_ROOT:-${CODEX_HOME:-$HOME/.codex}}"
-SKILLS_ROOT="$BASE/skills"
-[ -d "$SKILLS_ROOT/spotlight/scripts" ] || SKILLS_ROOT="$BASE/indie-toolkit/mactools/skills"
-```
-
 ## 工具
 
 ### 1. 搜索工具
 
 ```
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh
+${CLAUDE_SKILL_DIR}/scripts/spotlight.sh
 ```
 
 ### 2. 文本提取工具
 
 ```
-python3 ${SKILLS_ROOT}/spotlight/scripts/extract_text.py <file_path> [--max-chars N]
+python3 ${CLAUDE_SKILL_DIR}/scripts/extract_text.py <file_path> [--max-chars N]
 ```
 
 支持提取的格式：
@@ -52,30 +44,30 @@ python3 ${SKILLS_ROOT}/spotlight/scripts/extract_text.py <file_path> [--max-char
 ### 内容搜索（默认）
 
 ```bash
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh search "关键词"
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh search -d ~/Documents "关键词"
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh search -t md "关键词"
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh search -t pdf -d ~/Downloads "机器学习"
+${CLAUDE_SKILL_DIR}/scripts/spotlight.sh search "关键词"
+${CLAUDE_SKILL_DIR}/scripts/spotlight.sh search -d ~/Documents "关键词"
+${CLAUDE_SKILL_DIR}/scripts/spotlight.sh search -t md "关键词"
+${CLAUDE_SKILL_DIR}/scripts/spotlight.sh search -t pdf -d ~/Downloads "机器学习"
 ```
 
 ### 文件名搜索
 
 ```bash
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh search -name "README"
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh search -name -d ~/Code -t swift "ViewModel"
+${CLAUDE_SKILL_DIR}/scripts/spotlight.sh search -name "README"
+${CLAUDE_SKILL_DIR}/scripts/spotlight.sh search -name -d ~/Code -t swift "ViewModel"
 ```
 
 ### 最近修改的文件
 
 ```bash
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh recent 7
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh recent -d ~/Code -t md 3
+${CLAUDE_SKILL_DIR}/scripts/spotlight.sh recent 7
+${CLAUDE_SKILL_DIR}/scripts/spotlight.sh recent -d ~/Code -t md 3
 ```
 
 ### 文件元数据
 
 ```bash
-${SKILLS_ROOT}/spotlight/scripts/spotlight.sh meta /path/to/file
+${CLAUDE_SKILL_DIR}/scripts/spotlight.sh meta /path/to/file
 ```
 
 ## 搜索参数
@@ -140,10 +132,10 @@ ${SKILLS_ROOT}/spotlight/scripts/spotlight.sh meta /path/to/file
 **提取命令**：
 ```bash
 # 提取单个文件
-python3 ${SKILLS_ROOT}/spotlight/scripts/extract_text.py "/path/to/file.xlsx"
+python3 ${CLAUDE_SKILL_DIR}/scripts/extract_text.py "/path/to/file.xlsx"
 
 # 限制提取长度（大文件时使用）
-python3 ${SKILLS_ROOT}/spotlight/scripts/extract_text.py "/path/to/large.docx" --max-chars 20000
+python3 ${CLAUDE_SKILL_DIR}/scripts/extract_text.py "/path/to/large.docx" --max-chars 20000
 ```
 
 **对于纯文本格式**（txt/md/code 等），也可以直接用 Read 工具读取。extract_text.py 的优势在于处理二进制文档格式（Office/PDF）。

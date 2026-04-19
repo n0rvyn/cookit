@@ -11,18 +11,10 @@ allowed-tools: Bash(*skills/contacts/scripts/*)
 
 通过 macOS Contacts.app 搜索和查看联系人信息。
 
-## Path Setup
-
-```bash
-BASE="${CLAUDE_PLUGIN_ROOT:-${CODEX_HOME:-$HOME/.codex}}"
-SKILLS_ROOT="$BASE/skills"
-[ -d "$SKILLS_ROOT/contacts/scripts" ] || SKILLS_ROOT="$BASE/indie-toolkit/mactools/skills"
-```
-
 ## 工具
 
 ```
-${SKILLS_ROOT}/contacts/scripts/contacts.sh
+${CLAUDE_SKILL_DIR}/scripts/contacts.sh
 ```
 
 ## 命令
@@ -32,8 +24,8 @@ ${SKILLS_ROOT}/contacts/scripts/contacts.sh
 按名称模糊搜索，返回匹配的联系人及其电话、邮箱摘要。
 
 ```bash
-${SKILLS_ROOT}/contacts/scripts/contacts.sh search "张三"
-${SKILLS_ROOT}/contacts/scripts/contacts.sh search -n 10 "Zhang"
+${CLAUDE_SKILL_DIR}/scripts/contacts.sh search "张三"
+${CLAUDE_SKILL_DIR}/scripts/contacts.sh search -n 10 "Zhang"
 ```
 
 ### 查看联系人详情
@@ -41,7 +33,7 @@ ${SKILLS_ROOT}/contacts/scripts/contacts.sh search -n 10 "Zhang"
 显示完整联系人信息：电话、邮箱、地址、公司、职位、生日、备注。
 
 ```bash
-${SKILLS_ROOT}/contacts/scripts/contacts.sh show "张三"
+${CLAUDE_SKILL_DIR}/scripts/contacts.sh show "张三"
 ```
 
 ### 列出所有联系人
@@ -49,21 +41,21 @@ ${SKILLS_ROOT}/contacts/scripts/contacts.sh show "张三"
 仅显示姓名列表。
 
 ```bash
-${SKILLS_ROOT}/contacts/scripts/contacts.sh list
-${SKILLS_ROOT}/contacts/scripts/contacts.sh list -n 50
+${CLAUDE_SKILL_DIR}/scripts/contacts.sh list
+${CLAUDE_SKILL_DIR}/scripts/contacts.sh list -n 50
 ```
 
 ### 列出所有群组
 
 ```bash
-${SKILLS_ROOT}/contacts/scripts/contacts.sh groups
+${CLAUDE_SKILL_DIR}/scripts/contacts.sh groups
 ```
 
 ### 查看群组成员
 
 ```bash
-${SKILLS_ROOT}/contacts/scripts/contacts.sh group "同事"
-${SKILLS_ROOT}/contacts/scripts/contacts.sh group -n 50 "家人"
+${CLAUDE_SKILL_DIR}/scripts/contacts.sh group "同事"
+${CLAUDE_SKILL_DIR}/scripts/contacts.sh group -n 50 "家人"
 ```
 
 ## 参数
