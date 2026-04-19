@@ -41,20 +41,6 @@ After collecting plan and design doc paths, extract technical keywords from the 
 2. If results are returned: collect them as `retrieved_context` — a compact list of (source_path, section, content preview) for each hit
 3. If the search tool is unavailable or returns no results: set `retrieved_context` to empty and continue
 
-### Step 1.7: Resolve Plugin Agents Directory
-
-The plan-verifier agent reads supporting files (`design-faithfulness.md`, `crystal-fidelity.md`, `architecture-review.md`) from this plugin's `agents/` directory.
-
-Resolve the absolute path by invoking the Bash tool with this exact command (it does not reference any environment variable — it searches the Claude Code plugin install tree directly):
-
-```
-d=$(ls -d "$HOME"/.claude/plugins/marketplaces/*/dev-workflow/agents 2>/dev/null | head -1); if [ -z "$d" ]; then d=$(ls -d "$HOME"/.claude/plugins/cache/*/dev-workflow/*/agents 2>/dev/null | sort -V | tail -1); fi; echo "$d"
-```
-
-Set `{plugin_agents_dir}` to the command's stdout (one absolute path). If stdout is empty, report: `⚠️ Unable to locate dev-workflow plugin agents directory` and abort — the agent cannot run DF/CF/AR strategies without those files.
-
-Rationale: `${CLAUDE_PLUGIN_ROOT}` is only expanded in `hooks.json` command fields and `.mcp.json` args — not in skill markdown content. Earlier attempts to rely on inline expansion or on the variable being exported into the Bash tool environment both fail (the variable is unset in the Bash tool's shell, and no text-level substitution runs over skill content).
-
 ### Step 2: Dispatch Agent
 
 Use the Task tool to launch the `dev-workflow:plan-verifier` agent:
@@ -79,7 +65,7 @@ Design analysis: {path or "none"}
 Crystal file: {path or "none"}
 Project root: {path}
 
-Plugin agents dir: {plugin_agents_dir}
+Plugin agents dir: ${CLAUDE_PLUGIN_ROOT}/agents
 Previously resolved decisions (do not re-ask these):
 {List of "DP-xxx: Title → Chosen Option X" or "none"}
 
@@ -99,11 +85,12 @@ When the agent completes:
    - **Must revise** — the summary includes revision items; apply revisions to the plan, then re-dispatch the verifier (max 2 revision cycles)
 4. For detailed analysis: read the full report at the path returned by the agent
 5. **Decision Points:** Check the agent's return for `Decisions:` count.
-   - If Decisions > 0: read the `## Decisions` section from the verification report
-   - For each `blocking` decision: present to user via AskUserQuestion with options from the decision point
-   - For `recommended` decisions: present as a group via a single AskUserQuestion. **Critical:** all DP content must be inside the `question` field — text printed before AskUserQuestion gets visually covered by the question widget. Read each recommended DP's full block (heading + Context + Options + Recommendation) from the verification report and concatenate them verbatim in the question field, separated by `\n---\n`. End with: `\n\n全部接受推荐，还是逐个审查？`
-   - If the user does NOT choose "Accept all defaults": present each DP individually via separate AskUserQuestion calls. Do not assume any DP is accepted until the user explicitly confirms it
-   - Record user choices: edit the verification report, replace the `**Recommendation:**` or `**Recommendation (unverified):**` line with `**Chosen:** {user's choice}`
+   - If Decisions > 0:
+     - First time this session: Read `${CLAUDE_PLUGIN_ROOT}/references/decision-points.md`
+     - Apply the rules with parameters:
+       - Source file: the verification report
+       - Mode: `mixed`
+       - Recording: `default`
    - Then proceed to Step 4
 
 ### Step 4: Mark Verified

@@ -15,11 +15,13 @@ This skill dispatches the `dev-workflow:execute-plan` agent (sonnet) to execute 
 2. **Verification pre-check**: Look for a `## Verification` section with `Verdict: Approved` in the plan file
    - If found: verification is done, continue
    - If not found: invoke `dev-workflow:verify-plan` before proceeding. If verify-plan returns "must-revise", apply revisions and re-verify before continuing
+<!-- Inline short-form DP handling. Full ruleset at ${CLAUDE_PLUGIN_ROOT}/references/decision-points.md §"Note on inline variant" — sync on rule changes. -->
 3. **Decision Points:** If the plan file contains a `## Decisions` section with unresolved decisions (no `**Chosen:**` line), present them before dispatching:
-   - For each `blocking` decision: present to user via AskUserQuestion with options from the decision point
-   - For `recommended` decisions: present as a group via a single AskUserQuestion. **Critical:** all DP content must be inside the `question` field — text printed before AskUserQuestion gets visually covered by the question widget. Read each recommended DP's full block (heading + Context + Options + Recommendation) from the plan file and concatenate them verbatim in the question field, separated by `\n---\n`. End with: `\n\n全部接受推荐，还是逐个审查？`
-   - If the user does NOT choose to accept all: present each DP individually via separate AskUserQuestion calls. Do not assume any DP is accepted until the user explicitly confirms it
-   - Record user choices: edit the plan file, replace the `**Recommendation:**` or `**Recommendation (unverified):**` line with `**Chosen:** {user's choice}`
+   - For each DP, write a short-form translation in the `question` field: one-line summary of what the decision controls + each option prefixed with its original `A:` / `B:` / `C:` label describing what concretely happens. Do NOT paste the full DP block (Context / Options / Recommendation headings) verbatim. The plan file's DP body stays unchanged.
+   - For each `blocking` decision: present via AskUserQuestion (one call per DP).
+   - For `recommended` decisions: batch via a single AskUserQuestion; all content inside the `question` field, DPs separated by `\n---\n`, ending with `\n\n全部接受推荐，还是逐个审查？`.
+   - If the user does NOT choose to accept all: present each DP individually via separate AskUserQuestion calls. Do not assume any DP is accepted until the user explicitly confirms it.
+   - Record user choices: edit the plan file, replace `**Recommendation:**` or `**Recommendation (unverified):**` with `**Chosen:** {Option A | B | C}` using the original label.
 
 ### Step 2: Initialize and Dispatch
 

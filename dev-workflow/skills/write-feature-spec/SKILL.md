@@ -65,11 +65,12 @@ When the agent completes:
    - Number of deviations detected
 3. If deviations were found, briefly list them
 4. **Decision Points:** Check the agent's return for `Decisions:` count.
-   - If Decisions > 0: read the `## Decisions` section from the spec file
-   - For each `blocking` decision: present to user via AskUserQuestion with options from the decision point
-   - For `recommended` decisions: present as a group via a single AskUserQuestion. **Critical:** all DP content must be inside the `question` field — text printed before AskUserQuestion gets visually covered by the question widget. Read each recommended DP's full block (heading + Context + Options + Recommendation) from the source file and concatenate them verbatim in the question field, separated by `\n---\n`. End with: `\n\n全部接受推荐，还是逐个审查？`
-   - If the user does NOT choose to accept all: present each DP individually via separate AskUserQuestion calls. Do not assume any DP is accepted until the user explicitly confirms it
-   - Record user choices: edit the spec file, replace the `**Recommendation:**` or `**Recommendation (unverified):**` line with `**Chosen:** {user's choice}`
+   - If Decisions > 0:
+     - First time this session: Read `${CLAUDE_PLUGIN_ROOT}/references/decision-points.md`
+     - Apply the rules with parameters:
+       - Source file: the spec file
+       - Mode: `mixed`
+       - Recording: `default`
 5. After spec is saved, offer:
    "Spec saved at {path}. This can be used to:"
    - "Quickly restore context in a future session (share spec with new Claude session)"

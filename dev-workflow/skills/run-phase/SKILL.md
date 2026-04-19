@@ -214,11 +214,12 @@ This checkpoint catches scope pollution and aligns visual expectations before wr
 7. Update state: `plan_file: <path>`, `last_updated: <now>`
 8. Present plan summary to user (task count, key files)
 9. **Decision Points:** Check the `## Decisions` section of the plan file.
-   - If Decisions > 0: read the section
-   - For each `blocking` decision: present to user via AskUserQuestion with options from the decision point
-   - For `recommended` decisions: present as a group via a single AskUserQuestion. **Critical:** all DP content must be inside the `question` field — text printed before AskUserQuestion gets visually covered by the question widget. Read each recommended DP's full block (heading + Context + Options + Recommendation) from the plan file and concatenate them verbatim in the question field, separated by `\n---\n`. End with: `\n\n全部接受推荐，还是逐个审查？`
-   - If the user does NOT choose to accept all: present each DP individually via separate AskUserQuestion calls. Do not assume any DP is accepted until the user explicitly confirms it
-   - Record user choices: edit the plan file, replace the `**Recommendation:**` or `**Recommendation (unverified):**` line with `**Chosen:** {user's choice}`
+   - If Decisions > 0:
+     - First time this session: Read `${CLAUDE_PLUGIN_ROOT}/references/decision-points.md`
+     - Apply the rules with parameters:
+       - Source file: the plan file
+       - Mode: `full`
+       - Recording: `default`
 10. Auto-select verification speed: count tasks in the plan file.
     If task count < 5: mark `--fast` flag for Step 3 (use Sonnet for verification).
     If task count ≥ 5: no flag (use Opus default).
@@ -383,11 +384,12 @@ Wait for user choice. If A: stop. If B: mark state `verification_report: "partia
 | Feature Review | ✅/❌ | {counts} | {path} |
 
 6. **Feature spec decision points:** If feature-spec-writer was dispatched, check its return for `Decisions:` count.
-   - If Decisions > 0: read the `## Decisions` section from the spec file
-   - For each `blocking` decision: present to user via AskUserQuestion with options from the decision point
-   - For `recommended` decisions: present as a group via a single AskUserQuestion. **Critical:** all DP content must be inside the `question` field — text printed before AskUserQuestion gets visually covered by the question widget. Read each recommended DP's full block (heading + Context + Options + Recommendation) from the spec file and concatenate them verbatim in the question field, separated by `\n---\n`. End with: `\n\n全部接受推荐，还是逐个审查？`
-   - If the user does NOT choose to accept all: present each DP individually via separate AskUserQuestion calls. Do not assume any DP is accepted until the user explicitly confirms it
-   - Record user choices: edit the spec file, replace the `**Recommendation:**` or `**Recommendation (unverified):**` line with `**Chosen:** {user's choice}`
+   - If Decisions > 0:
+     - First time this session: Read `${CLAUDE_PLUGIN_ROOT}/references/decision-points.md`
+     - Apply the rules with parameters:
+       - Source file: the spec file
+       - Mode: `full`
+       - Recording: `default`
 
 7. **Surface human verification items:** If any review report's compact summary shows 人工验证项 > 0 or 设备验证项 > 0:
    - Read each report file that has verification items
@@ -451,11 +453,12 @@ If any of the following have issues: execution report (blocked/failed tasks), te
 6. If skipping: note the known issues and proceed
 7. Update state: `gaps_remaining: <count>`, `last_updated: <now>`
 8. **Decision Points:** Check each review report for `Decisions:` count.
-   - If any report has Decisions > 0: read the `## Decisions` section from that report
-   - For each `blocking` decision: present to user via AskUserQuestion with options from the decision point
-   - For `recommended` decisions: present as a group via a single AskUserQuestion. **Critical:** all DP content must be inside the `question` field — text printed before AskUserQuestion gets visually covered by the question widget. Read each recommended DP's full block (heading + Context + Options + Recommendation) from the report file and concatenate them verbatim in the question field, separated by `\n---\n`. End with: `\n\n全部接受推荐，还是逐个审查？`
-   - If the user does NOT choose to accept all: present each DP individually via separate AskUserQuestion calls. Do not assume any DP is accepted until the user explicitly confirms it
-   - Record user choices: edit the report file, replace the `**Recommendation:**` or `**Recommendation (unverified):**` line with `**Chosen:** {user's choice}`
+   - If any report has Decisions > 0:
+     - First time this session: Read `${CLAUDE_PLUGIN_ROOT}/references/decision-points.md`
+     - Apply the rules with parameters:
+       - Source file: the review report
+       - Mode: `mixed`
+       - Recording: `default`
    - Then proceed to Step 8
 
 ### Step 8: Phase Completion

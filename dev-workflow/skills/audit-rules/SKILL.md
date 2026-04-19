@@ -56,11 +56,12 @@ When the agent completes:
 1. **Validate DP count**: Parse the `Decisions:` line for N+M total, count actual `DP-\d+` entries in headings. If mismatch, prepend warning to report: `⚠️ 报告声称 {N+M} 个决策点，实际只列了 {actual} 个。以实际条目为准。`
 2. Present the Rules Review Report returned by the agent
 3. **Decision Points:** Check the agent's return for `Decisions:` count.
-   - If Decisions > 0: read the `## Decisions` section from the report
-   - For each `blocking` decision: present to user via AskUserQuestion with options from the decision point
-   - For `recommended` decisions: present as a group via a single AskUserQuestion. **Critical:** all DP content must be inside the `question` field — text printed before AskUserQuestion gets visually covered by the question widget. Read each recommended DP's full block (heading + Context + Options + Recommendation) from the report and concatenate them verbatim in the question field, separated by `\n---\n`. End with: `\n\n全部接受推荐，还是逐个审查？`
-   - If the user does NOT choose to accept all: present each DP individually via separate AskUserQuestion calls. Do not assume any DP is accepted until the user explicitly confirms it
-   - Record user choices in conversation (note which option was chosen for each DP)
+   - If Decisions > 0:
+     - First time this session: Read `${CLAUDE_PLUGIN_ROOT}/references/decision-points.md`
+     - Apply the rules with parameters:
+       - Source file: the audit report
+       - Mode: `mixed`
+       - Recording: `conversation-only`
 4. If fix recommendations were made:
    - List each recommendation
    - Ask the user: "Execute these fixes?"

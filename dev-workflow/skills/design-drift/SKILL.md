@@ -136,11 +136,12 @@ Mark any breaks: signal with no consumer, call to nonexistent target, field writ
    - 需决策 — 两边都可能对，需要用户判断
 4. **Unresolved 项处理**：如果有 `[unresolved]` 项，在报告末尾列出，建议用户手动验证或提供更精确的起点后重新 trace
 5. **Decision Points:** Check the agent's report for `Decisions:` count.
-   - If Decisions > 0: read the `## Decisions` section from the drift report
-   - For each `blocking` decision: present to user via AskUserQuestion with options from the decision point
-   - For `recommended` decisions: present as a group via a single AskUserQuestion. **Critical:** all DP content must be inside the `question` field — text printed before AskUserQuestion gets visually covered by the question widget. Read each recommended DP's full block (heading + Context + Options + Recommendation) from the drift report and concatenate them verbatim in the question field, separated by `\n---\n`. End with: `\n\n全部接受推荐，还是逐个审查？`
-   - If the user does NOT choose to accept all: present each DP individually via separate AskUserQuestion calls. Do not assume any DP is accepted until the user explicitly confirms it
-   - Record user choices in conversation (note which option was chosen for each DP)
+   - If Decisions > 0:
+     - First time this session: Read `${CLAUDE_PLUGIN_ROOT}/references/decision-points.md`
+     - Apply the rules with parameters:
+       - Source file: the drift report
+       - Mode: `mixed`
+       - Recording: `conversation-only`
    - Then proceed to Completion Criteria
 
 ## Completion Criteria
