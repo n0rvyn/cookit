@@ -50,7 +50,7 @@ QR login is documented upstream as currently blocked by NetEase risk control, so
 
 ## Examples
 
-Installed via `/plugin install`, invoke the skill by description (e.g. "帮我上传 music.mp3 到网易云云盘") — the skill resolves `SKILLS_ROOT` via `CLAUDE_PLUGIN_ROOT` and runs the wrapper.
+Installed via `/plugin install`, invoke the skill by description (e.g. "帮我上传 music.mp3 到网易云云盘") — the skill resolves its script paths via the render-time `${CLAUDE_SKILL_DIR}` substitution and runs the wrapper.
 
 For repo-local development, the scripts can be called directly from this repo's root:
 

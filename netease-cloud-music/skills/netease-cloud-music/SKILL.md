@@ -22,19 +22,11 @@ allowed-tools: Bash(*skills/netease-cloud-music/scripts/*)
 - 需要网易云音乐登录态
 - 推荐优先使用 Cookie 或 CookieCloud
 
-## Path Setup
-
-```bash
-BASE="${CLAUDE_PLUGIN_ROOT:-${CODEX_HOME:-$HOME/.codex}}"
-SKILLS_ROOT="$BASE/skills"
-[ -d "$SKILLS_ROOT/netease-cloud-music/scripts" ] || SKILLS_ROOT="$BASE/indie-toolkit/netease-cloud-music/skills"
-```
-
 ## 工具
 
 ```bash
-${SKILLS_ROOT}/netease-cloud-music/scripts/netease_cloud_music_doctor.sh
-${SKILLS_ROOT}/netease-cloud-music/scripts/netease_cloud_music.sh
+${CLAUDE_SKILL_DIR}/scripts/netease_cloud_music_doctor.sh
+${CLAUDE_SKILL_DIR}/scripts/netease_cloud_music.sh
 ```
 
 ## 推荐流程
@@ -42,7 +34,7 @@ ${SKILLS_ROOT}/netease-cloud-music/scripts/netease_cloud_music.sh
 ### 1. 先检查环境
 
 ```bash
-${SKILLS_ROOT}/netease-cloud-music/scripts/netease_cloud_music_doctor.sh
+${CLAUDE_SKILL_DIR}/scripts/netease_cloud_music_doctor.sh
 ```
 
 ### 2. 登录
@@ -50,13 +42,13 @@ ${SKILLS_ROOT}/netease-cloud-music/scripts/netease_cloud_music_doctor.sh
 Cookie 文件导入：
 
 ```bash
-${SKILLS_ROOT}/netease-cloud-music/scripts/netease_cloud_music.sh login cookie -f cookie.txt
+${CLAUDE_SKILL_DIR}/scripts/netease_cloud_music.sh login cookie -f cookie.txt
 ```
 
 CookieCloud：
 
 ```bash
-${SKILLS_ROOT}/netease-cloud-music/scripts/netease_cloud_music.sh login cookiecloud -u <用户名> -p <密码> -s http://127.0.0.1:8088
+${CLAUDE_SKILL_DIR}/scripts/netease_cloud_music.sh login cookiecloud -u <用户名> -p <密码> -s http://127.0.0.1:8088
 ```
 
 说明：
@@ -69,13 +61,13 @@ ${SKILLS_ROOT}/netease-cloud-music/scripts/netease_cloud_music.sh login cookiecl
 上传单文件：
 
 ```bash
-${SKILLS_ROOT}/netease-cloud-music/scripts/netease_cloud_music.sh cloud '/path/to/music.mp3'
+${CLAUDE_SKILL_DIR}/scripts/netease_cloud_music.sh cloud '/path/to/music.mp3'
 ```
 
 上传目录：
 
 ```bash
-${SKILLS_ROOT}/netease-cloud-music/scripts/netease_cloud_music.sh cloud '/path/to/music/'
+${CLAUDE_SKILL_DIR}/scripts/netease_cloud_music.sh cloud '/path/to/music/'
 ```
 
 目录上传说明：
